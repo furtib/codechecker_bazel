@@ -1,7 +1,8 @@
 load("@bazel_tools//tools/build_defs/cc:action_names.bzl", "ACTION_NAMES")
 load("@bazel_tools//tools/cpp:toolchain_utils.bzl", "find_cpp_toolchain")
 
-CLANG_CTU_WRAPPER_SCRIPT = """#set -x
+CLANG_CTU_WRAPPER_SCRIPT = """#!/usr/bin/env bash
+#set -x
 REPORT_TYPE=$1
 shift
 REPORT_FILE=$1
