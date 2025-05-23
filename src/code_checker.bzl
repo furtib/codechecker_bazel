@@ -27,9 +27,9 @@ eval "$@" $COMPILE_COMMANDS_ABS >> $LOG_FILE 2>&1
 # NOTE: the following we do to get rid of md5 hash in plist file names
 ret_code=$?
 echo "===-----------------------------------------------------===" >> $LOG_FILE
-if [ $ret_code -eq 1 ]; then
+if [ $ret_code -eq 1 ] || [ $ret_code -ge 128 ]; then
     echo "===-----------------------------------------------------==="
-    echo "[ERROR]: CodeChecker returned with -1!"
+    echo "[ERROR]: CodeChecker returned with $ret_code!"
     cat $LOG_FILE
     exit 1
 fi
