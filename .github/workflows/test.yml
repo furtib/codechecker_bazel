@@ -1,0 +1,19 @@
+name: codechecker-bazel-tests
+
+# Triggers the workflow on push or pull request events.
+on: [push, pull_request]
+
+permissions: read-all
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  rules_test:
+    name: Analysis
+    runs-on: ubuntu-24.04
+
+    steps:
+      - name: Example step
+        run: echo "Running tests on branch '${{ github.ref }}'"
