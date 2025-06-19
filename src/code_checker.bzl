@@ -211,6 +211,8 @@ def _collect_all_sources(ctx):
     return sources
 
 def _compile_info_aspect_impl(target, ctx):
+    if not CcInfo in target:
+        continue
     compilation_context = target[CcInfo].compilation_context
 
     rule_flags = ctx.rule.attr.copts if hasattr(ctx.rule.attr, "copts") else []
