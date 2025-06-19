@@ -19,7 +19,6 @@ import logging
 import os
 import re
 import shlex
-import shutil
 import subprocess
 import sys
 import unittest
@@ -169,8 +168,6 @@ class TestBasic(TestBase):
         """Test: bazel test :clang_ctu_pass"""
         self.check_command("bazel test :clang_ctu_pass", exit_code=0)
 
-    @unittest.skipIf(shutil.which("clang-extdef-mapping") is None,
-                     "Missing 'clang-extdef-mapping")
     def test_bazel_test_clang_ctu_fail(self):
         """Test: bazel test :clang_ctu_fail"""
         self.check_command("bazel test :clang_ctu_fail", exit_code=3)
