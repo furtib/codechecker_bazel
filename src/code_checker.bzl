@@ -211,6 +211,8 @@ def _collect_all_sources(ctx):
     return sources
 
 def _compile_info_aspect_impl(target, ctx):
+    if not CcInfo in target:
+        return []
     compilation_context = target[CcInfo].compilation_context
 
     rule_flags = ctx.rule.attr.copts if hasattr(ctx.rule.attr, "copts") else []
@@ -300,6 +302,7 @@ def _code_checker_impl(ctx):
     sources_and_headers = _collect_all_sources_and_headers(ctx)
     options = ctx.attr.default_options + ctx.attr.options
     all_files = [compile_commands_json]
+    header_extensions = (".h", ".hh", ".hpp", ".hxx", ".inc", ".inl", ".H")
     for target in ctx.attr.targets:
         if not CcInfo in target:
             continue
@@ -310,6 +313,8 @@ def _code_checker_impl(ctx):
                 compilation_context = target[CcInfo].compilation_context
                 for src in srcs:
                     args = target[CompileInfo].arguments[src]
+                    if src.path.endswith(header_extensions):
+                        continue
                     outputs = _run_code_checker(
                         ctx,
                         src,
