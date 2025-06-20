@@ -34,6 +34,7 @@ if [ $ret_code -eq 1 ] || [ $ret_code -ge 128 ]; then
     exit 1
 fi
 cat $LOG_FILE
+echo $LOG_FILE
 cp $DATA_DIR/*_clang-tidy_*.plist $CLANG_TIDY_PLIST
 cp $DATA_DIR/*_clangsa_*.plist    $CLANGSA_PLIST
 
