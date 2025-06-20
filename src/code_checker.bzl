@@ -315,7 +315,7 @@ def _code_checker_impl(ctx):
                 compilation_context = target[CcInfo].compilation_context
                 for src in srcs:
                     args = target[CompileInfo].arguments[src]
-                    if src.path endswith(header_extensions):
+                    if src.path.endswith(header_extensions):
                         continue
                     outputs = _run_code_checker(
                         ctx,
