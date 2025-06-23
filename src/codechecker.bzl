@@ -198,23 +198,6 @@ def _codechecker_impl(ctx):
         # use_default_shell_env = True,
     )
 
-
-    # Add write permission to all files
-    gen = ctx.actions.declare_file(ctx.label.name + ".done")
-    ctx.actions.run_shell(
-        outputs = [gen],
-        command = """
-          echo "============" 
-          echo "chmod for {output_dir}"
-          echo "============"
-          chmod -R +w {output_dir}
-          touch {marker}
-        """.format(
-          output_dir = codechecker_files.path,
-          marker = gen.path,
-        ),
-    )
-
     # List all files required at build and run (test) time
     all_files = [
         ctx.outputs.compile_commands,
@@ -229,8 +212,23 @@ def _codechecker_impl(ctx):
     # List files required for test
     run_files = [
         codechecker_files,
-        gen
     ] + source_files
+
+    # Add write permission to all files
+    gen = ctx.actions.declare_file(ctx.label.name + ".done")
+    ctx.actions.run_shell(
+        outputs = [gen],
+        command = """
+          echo "============" 
+          echo "chmod for {output_dir}"
+          echo "============"
+          chmod -R +w {output_dir}
+          touch {marker}
+        """.format(
+          output_dir = codechecker_files,
+          marker = gen.path,
+        ),
+    )
 
     # Return all files
     return [
