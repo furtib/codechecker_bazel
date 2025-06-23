@@ -230,6 +230,8 @@ def _codechecker_impl(ctx):
         ),
     )
 
+    run_files = run_files + gen
+    
     # Return all files
     return [
         DefaultInfo(
