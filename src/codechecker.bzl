@@ -214,6 +214,19 @@ def _codechecker_impl(ctx):
         codechecker_files,
     ] + source_files
 
+    # Add write permission to all files
+    gen = ctx.actions.declare_file(ctx.label.name + ".done")
+    ctx.actions.run_shell(
+        outputs = [gen],
+        command = """
+          chmod -R +w {output_dir}
+          touch {marker}
+        """.format(
+          output_dir = ctx.outputs.dir.path,
+          marker = gen.path,
+        ),
+    )
+
     # Return all files
     return [
         DefaultInfo(
