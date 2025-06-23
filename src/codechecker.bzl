@@ -209,10 +209,6 @@ def _codechecker_impl(ctx):
         ctx.outputs.codechecker_log,
     ] + source_files
 
-    # List files required for test
-    run_files = [
-        codechecker_files,
-    ] + source_files
 
     # Add write permission to all files
     gen = ctx.actions.declare_file(ctx.label.name + ".done")
@@ -230,7 +226,11 @@ def _codechecker_impl(ctx):
         ),
     )
 
-    run_files = [gen] + run_files
+    # List files required for test
+    run_files = [
+        codechecker_files,
+        gen
+    ] + source_files
 
     # Return all files
     return [
