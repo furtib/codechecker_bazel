@@ -219,10 +219,11 @@ def _codechecker_impl(ctx):
     ctx.actions.run_shell(
         outputs = [gen],
         command = """
+          echo {output_dir}
           chmod -R +w {output_dir}
           touch {marker}
         """.format(
-          output_dir = ctx.outputs.dir.path,
+          output_dir = codechecker_files,
           marker = gen.path,
         ),
     )
