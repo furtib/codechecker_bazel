@@ -217,7 +217,7 @@ def _codechecker_impl(ctx):
     # Add write permission to all files
     gen = ctx.actions.declare_file(ctx.label.name + ".done")
     ctx.actions.run_shell(
-        outputs = [gen],
+        outputs = [gen, codechecker_files],
         command = """
           echo "============" 
           echo "chmod for {output_dir}"
