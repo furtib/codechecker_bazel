@@ -79,6 +79,22 @@ cc_binary(
     ],
 )
 
+# Test for stip virtual include prefix
+cc_binary(
+    name = "virtual_include",
+    srcs = ["src/virtual_include.cc"],
+    deps = [":virtual_include_lib"],
+    includes = ["inc"],
+)
+
+# Header lib for virtual include
+cc_library(
+    name = "virtual_include_lib",
+    hdrs = glob(["inc/virtual_include_lib/*.h"]),
+    strip_include_prefix = "inc",
+    visibility = ["//visibility:public"],
+)
+
 # Generate compile_commands.json file for host test
 compile_commands(
     name = "compile_commands_pass",
@@ -152,6 +168,9 @@ codechecker_test(
     targets = [
         "test_fail",
     ],
+    analyze = [
+        "--analyzers clangsa clang-tidy",
+    ],
 )
 
 # This codechecker_test CTU example supposed to fail showing findings report
@@ -166,6 +185,18 @@ codechecker_test(
     ],
     targets = [
         "test_fail",
+    ],
+)
+
+# This codechecker_test trims virtual includes path, shouldn't fail
+# Note "manual" tag (means should not be run with other tests)
+codechecker_test(
+    name = "codechecker_virtual_include",
+    tags = [
+        "manual"
+    ],
+    targets = [
+        "virtual_include",
     ],
 )
 
