@@ -309,10 +309,7 @@ def _code_checker_impl(ctx):
             if hasattr(target[CompileInfo], "arguments"):
                 srcs = target[CompileInfo].arguments.keys()
                 print("===SRCS===")
-                print(srcs)
-                print("=====")
-                print("===SOURCES_AND_HEADERS===")
-                print(sources_and_headers)
+                print(_collect_all_sources(ctx))
                 print("=====")
                 all_files += srcs
                 compilation_context = target[CcInfo].compilation_context
