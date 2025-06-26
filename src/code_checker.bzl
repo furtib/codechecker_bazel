@@ -212,6 +212,7 @@ def _collect_all_sources(ctx):
 
 def _compile_info_aspect_impl(target, ctx):
     if not CcInfo in target:
+        print(target)
         return []
     compilation_context = target[CcInfo].compilation_context
 
