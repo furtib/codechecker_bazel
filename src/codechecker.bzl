@@ -108,7 +108,6 @@ def _codechecker_impl(ctx):
             # "-v",  # -vv for debug
             "--input=" + ctx.outputs.compile_commands.path,
             "--output=" + ctx.outputs.codechecker_commands.path,
-            "--verbose=debug_analyzer"
         ],
         mnemonic = "CodeCheckerConvertFlaccToClang",
         progress_message = "Filtering %s" % str(ctx.label),
@@ -193,7 +192,7 @@ def _codechecker_impl(ctx):
             ctx.outputs.codechecker_log,
         ],
         executable = ctx.outputs.codechecker_script,
-        arguments = [],
+        arguments = ["--verbose=debug_analyzer"],
         mnemonic = "CodeChecker",
         progress_message = "CodeChecker %s" % str(ctx.label),
         # use_default_shell_env = True,
