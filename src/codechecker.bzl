@@ -108,6 +108,7 @@ def _codechecker_impl(ctx):
             # "-v",  # -vv for debug
             "--input=" + ctx.outputs.compile_commands.path,
             "--output=" + ctx.outputs.codechecker_commands.path,
+            "--verbose=debug_analyzer"
         ],
         mnemonic = "CodeCheckerConvertFlaccToClang",
         progress_message = "Filtering %s" % str(ctx.label),
