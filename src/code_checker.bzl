@@ -302,8 +302,6 @@ def _code_checker_impl(ctx):
     sources_and_headers = _collect_all_sources_and_headers(ctx)
     options = ctx.attr.default_options + ctx.attr.options
     all_files = [compile_commands_json]
-    print("===CTX.ATTR===")
-    print(ctx.attr)
 
     for target in ctx.attr.targets:
         if not CcInfo in target:
