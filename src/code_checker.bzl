@@ -254,6 +254,7 @@ def _compile_commands_data(ctx):
     compile_commands = []
     for target in ctx.attr.targets:
         if not CcInfo in target:
+            print(target)
             continue
         if CompileInfo in target:
             if hasattr(target[CompileInfo], "arguments"):
@@ -286,6 +287,7 @@ def _collect_all_sources_and_headers(ctx):
     headers = depset()
     for target in ctx.attr.targets:
         if not CcInfo in target:
+            print(target)
             continue
         if CompileInfo in target:
             if hasattr(target[CompileInfo], "arguments"):
@@ -306,6 +308,7 @@ def _code_checker_impl(ctx):
 
     for target in ctx.attr.targets:
         if not CcInfo in target:
+            print(target)
             continue
         if CompileInfo in target:
             if hasattr(target[CompileInfo], "arguments"):
