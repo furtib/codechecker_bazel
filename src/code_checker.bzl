@@ -131,7 +131,31 @@ def _rule_sources(ctx):
     if hasattr(ctx.rule.attr, "srcs"):
         for src in ctx.rule.attr.srcs:
             srcs += [src for src in src.files.to_list() if src.is_source and check_valid_file_type(src)]
-    return srcs
+    # Define a list of file extensions that are considered headers
+    header_extensions = [
+        ".h",
+        ".hh",
+        ".hpp",
+        ".hxx",
+        ".inc",
+        ".inl",
+        ".H",
+    ]
+
+    # Perform the after-the-fact filtering to exclude headers
+    filtered_sources = []
+    for src_file in sources:
+        is_header = False
+        for ext in header_extensions:
+            if src_file.basename.endswith(ext):
+                is_header = True
+                break
+        if not is_header:
+            filtered_sources.append(src_file)
+
+    # Remove duplicates from the filtered list
+    filtered_sources = depset(filtered_sources).to_list()
+    return filtered_sources
 
 def _toolchain_flags(ctx, action_name = ACTION_NAMES.cpp_compile):
     cc_toolchain = find_cpp_toolchain(ctx)
@@ -200,10 +224,9 @@ def _compile_info_sources(deps):
     return sources
 
 def _collect_all_sources(ctx):
-    #sources = _rule_sources(ctx)
-    sources = []
+    sources = _rule_sources(ctx)
     i=0
-    #print("Sources:" + str(i) + str(sources))
+    print("Sources:" + str(i) + str(sources))
     for attr in ["srcs", "deps", "data", "exports"]:
         i = i + 1
         if hasattr(ctx.rule.attr, attr):
