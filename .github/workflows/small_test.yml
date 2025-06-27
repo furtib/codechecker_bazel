@@ -79,18 +79,18 @@ jobs:
           cd yaml-cpp
           echo "#----------------------------------------------------" >> WORKSPACE
           echo "" >> WORKSPACE
-          echo "load("@bazel_tools//tools/build_defs/repo:git.bzl", "git_repository")" >> WORKSPACE
+          echo "load(\"@bazel_tools//tools/build_defs/repo:git.bzl\", \"git_repository\")" >> WORKSPACE
           echo "" >> WORKSPACE
           echo "git_repository(" >> WORKSPACE
-          echo "    name = "bazel_codechecker"," >> WORKSPACE
+          echo "    name = \"bazel_codechecker\"," >> WORKSPACE
           echo "    remote = \"https://github.com/${{ github.event.pull_request.head.repo.full_name }}.git\"," >> WORKSPACE
           echo "    branch = \"${{ github.event.pull_request.head.ref }}\"," >> WORKSPACE
           echo ")" >> WORKSPACE
           echo "" >> WORKSPACE
           echo "load(" >> WORKSPACE
-          echo "    "@bazel_codechecker//src:tools.bzl"," >> WORKSPACE
-          echo "    "register_default_codechecker"," >> WORKSPACE
-          echo "    "register_default_python_toolchain"," >> WORKSPACE
+          echo "    \"@bazel_codechecker//src:tools.bzl\"," >> WORKSPACE
+          echo "    \"register_default_codechecker\"," >> WORKSPACE
+          echo "    \"register_default_python_toolchain\"," >> WORKSPACE
           echo ")" >> WORKSPACE
           echo "" >> WORKSPACE
           echo "register_default_python_toolchain()" >> WORKSPACE
