@@ -30,7 +30,12 @@ jobs:
           python-version: '3.12'
 
       - name: Install CodeChecker analyzers
-        run: sh .github/workflows/install-deps.sh
+        run: |
+          sudo apt-get update --quiet
+          sudo apt-get install --no-install-recommends \
+            clang \
+            clang-tools \
+            clang-tidy
 
       - name: Install CodeChecker
         run: pip3 install codechecker
