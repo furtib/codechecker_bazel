@@ -48,25 +48,25 @@ jobs:
           echo "" >> BUILD.bazel
           echo "# codechecker rules" >> BUILD.bazel
           echo "load(" >> BUILD.bazel
-          echo "    "@bazel_codechecker//src:codechecker.bzl"," >> BUILD.bazel
-          echo "    "codechecker_test"," >> BUILD.bazel
+          echo "    \"@bazel_codechecker//src:codechecker.bzl\"," >> BUILD.bazel
+          echo "    \"codechecker_test\"," >> BUILD.bazel
           echo ")" >> BUILD.bazel
           echo "load(" >> BUILD.bazel
-          echo "    "@bazel_codechecker//src:code_checker.bzl"," >> BUILD.bazel
-          echo "    "code_checker_test"," >> BUILD.bazel
+          echo "    \"@bazel_codechecker//src:code_checker.bzl\"," >> BUILD.bazel
+          echo "    \"code_checker_test\"," >> BUILD.bazel
           echo ")" >> BUILD.bazel
           echo "" >> BUILD.bazel
           echo "codechecker_test(" >> BUILD.bazel
-          echo "    name = "codechecker_test_yaml-cpp"," >> BUILD.bazel
+          echo "    name = \"codechecker_test_yaml-cpp\"," >> BUILD.bazel
           echo "    targets = [" >> BUILD.bazel
-          echo "        ":yaml-cpp"," >> BUILD.bazel
+          echo "        \":yaml-cpp\"," >> BUILD.bazel
           echo "    ]," >> BUILD.bazel
           echo ")" >> BUILD.bazel
           echo "" >> BUILD.bazel
           echo "code_checker_test(" >> BUILD.bazel
-          echo "    name = "code_checker_test_yaml-cpp"," >> BUILD.bazel
+          echo "    name = \"code_checker_test_yaml-cpp\"," >> BUILD.bazel
           echo "    targets = [" >> BUILD.bazel
-          echo "        ":yaml-cpp"," >> BUILD.bazel
+          echo "        \":yaml-cpp\"," >> BUILD.bazel
           echo "    ]," >> BUILD.bazel
           echo ")" >> BUILD.bazel
           echo "" >> BUILD.bazel
