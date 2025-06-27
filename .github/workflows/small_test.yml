@@ -82,8 +82,8 @@ jobs:
           echo "" >> WORKSPACE
           echo "git_repository(" >> WORKSPACE
           echo "    name = "bazel_codechecker"," >> WORKSPACE
-          echo "    remote = "https://github.com/${{ github.event.pull_request.head.repo.full_name }}.git"," >> WORKSPACE
-          echo "    branch = "${{ github.event.pull_request.head.ref }}"," >> WORKSPACE
+          echo "    remote = \"https://github.com/${{ github.event.pull_request.head.repo.full_name }}.git\"," >> WORKSPACE
+          echo "    branch = \"${{ github.event.pull_request.head.ref }}\"," >> WORKSPACE
           echo ")" >> WORKSPACE
           echo "" >> WORKSPACE
           echo "load(" >> WORKSPACE
