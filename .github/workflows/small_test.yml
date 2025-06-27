@@ -44,61 +44,59 @@ jobs:
       - name: Patch yaml-cpp
         run: |
           cd yaml-cpp
-          cat <<'EOF' >> BUILD.bazel
-            #-------------------------------------------------------
-            
-            # codechecker rules
-            load(
-                "@bazel_codechecker//src:codechecker.bzl",
-                "codechecker_test",
-            )
-            load(
-                "@bazel_codechecker//src:code_checker.bzl",
-                "code_checker_test",
-            )
-            
-            codechecker_test(
-                name = "codechecker_test_yaml-cpp",
-                targets = [
-                    ":yaml-cpp",
-                ],
-            )
-            
-            code_checker_test(
-                name = "code_checker_test_yaml-cpp",
-                targets = [
-                    ":yaml-cpp",
-                ],
-            )
-            
-            #-------------------------------------------------------
-            EOF
+          cat "#-------------------------------------------------------" >> BUILD.bazel
+          cat "" >> BUILD.bazel
+          cat "# codechecker rules" >> BUILD.bazel
+          cat "load(" >> BUILD.bazel
+          cat "    "@bazel_codechecker//src:codechecker.bzl"," >> BUILD.bazel
+          cat "    "codechecker_test"," >> BUILD.bazel
+          cat ")" >> BUILD.bazel
+          cat "load(" >> BUILD.bazel
+          cat "    "@bazel_codechecker//src:code_checker.bzl"," >> BUILD.bazel
+          cat "    "code_checker_test"," >> BUILD.bazel
+          cat ")" >> BUILD.bazel
+          cat "" >> BUILD.bazel
+          cat "codechecker_test(" >> BUILD.bazel
+          cat "    name = "codechecker_test_yaml-cpp"," >> BUILD.bazel
+          cat "    targets = [" >> BUILD.bazel
+          cat "        ":yaml-cpp"," >> BUILD.bazel
+          cat "    ]," >> BUILD.bazel
+          cat ")" >> BUILD.bazel
+          cat "" >> BUILD.bazel
+          cat "code_checker_test(" >> BUILD.bazel
+          cat "    name = "code_checker_test_yaml-cpp"," >> BUILD.bazel
+          cat "    targets = [" >> BUILD.bazel
+          cat "        ":yaml-cpp"," >> BUILD.bazel
+          cat "    ]," >> BUILD.bazel
+          cat ")" >> BUILD.bazel
+          cat "" >> BUILD.bazel
+          cat "#-------------------------------------------------------" >> BUILD.bazel
+          cat BUILD.bazel
             
       - name: Patch WORKSPACE
         run: |
           cd yaml-cpp
-          cat <<EOF >> WORKSPACE
-            #----------------------------------------------------
-            
-            load("@bazel_tools//tools/build_defs/repo:git.bzl", "git_repository")
-            
-            git_repository(
-                name = "bazel_codechecker",
-                remote = "https://github.com/${{ github.event.pull_request.head.repo.full_name }}.git",
-                branch = "${{ github.event.pull_request.head.ref }}",
-            )
-            
-            load(
-                "@bazel_codechecker//src:tools.bzl",
-                "register_default_codechecker",
-                "register_default_python_toolchain",
-            )
-            
-            register_default_python_toolchain()
-            register_default_codechecker()
-            
-            #----------------------------------------------------
-            EOF
+          cat "#----------------------------------------------------" >> WORKSPACE
+          cat "" >> WORKSPACE
+          cat "load("@bazel_tools//tools/build_defs/repo:git.bzl", "git_repository")" >> WORKSPACE
+          cat "" >> WORKSPACE
+          cat "git_repository(" >> WORKSPACE
+          cat "    name = "bazel_codechecker"," >> WORKSPACE
+          cat "    remote = "https://github.com/${{ github.event.pull_request.head.repo.full_name }}.git"," >> WORKSPACE
+          cat "    branch = "${{ github.event.pull_request.head.ref }}"," >> WORKSPACE
+          cat ")" >> WORKSPACE
+          cat "" >> WORKSPACE
+          cat "load(" >> WORKSPACE
+          cat "    "@bazel_codechecker//src:tools.bzl"," >> WORKSPACE
+          cat "    "register_default_codechecker"," >> WORKSPACE
+          cat "    "register_default_python_toolchain"," >> WORKSPACE
+          cat ")" >> WORKSPACE
+          cat "" >> WORKSPACE
+          cat "register_default_python_toolchain()" >> WORKSPACE
+          cat "register_default_codechecker()" >> WORKSPACE
+          cat "" >> WORKSPACE
+          cat "#----------------------------------------------------" >> WORKSPACE
+          cat WORKSPACE
 
       - name: Run Bazel CodeChecker
         run: |
