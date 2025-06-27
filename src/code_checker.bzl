@@ -144,7 +144,7 @@ def _rule_sources(ctx):
 
     # Perform the after-the-fact filtering to exclude headers
     filtered_sources = []
-    for src_file in sources:
+    for src_file in srcs:
         is_header = False
         for ext in header_extensions:
             if src_file.basename.endswith(ext):
