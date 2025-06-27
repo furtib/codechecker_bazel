@@ -202,16 +202,16 @@ def _compile_info_sources(deps):
 def _collect_all_sources(ctx):
     sources = _rule_sources(ctx)
     i=0
-    print("Sources:" + i)
+    print("Sources:" + str(i))
     print(sources)
     for attr in ["srcs", "deps", "data", "exports"]:
         i = i + 1
         if hasattr(ctx.rule.attr, attr):
-            print("Attr:" + i)
+            print("Attr:" + str(i))
             print(attr)
             deps = getattr(ctx.rule.attr, attr)
             sources += _compile_info_sources(deps)
-            print("Sources:" + i)
+            print("Sources:" + str(i))
             print(sources)
 
     # Remove duplicates
