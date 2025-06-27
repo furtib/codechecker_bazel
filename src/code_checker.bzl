@@ -201,15 +201,17 @@ def _compile_info_sources(deps):
 
 def _collect_all_sources(ctx):
     sources = _rule_sources(ctx)
-    print("Sources:")
+    i=0
+    print("Sources:" + i)
     print(sources)
     for attr in ["srcs", "deps", "data", "exports"]:
+        i = i + 1
         if hasattr(ctx.rule.attr, attr):
-            print("Attr:")
+            print("Attr:" + i)
             print(attr)
             deps = getattr(ctx.rule.attr, attr)
             sources += _compile_info_sources(deps)
-            print("Sources:")
+            print("Sources:" + i)
             print(sources)
 
     # Remove duplicates
@@ -226,7 +228,7 @@ def _compile_info_aspect_impl(target, ctx):
     rule_flags = ctx.rule.attr.copts if hasattr(ctx.rule.attr, "copts") else []
     c_flags = _safe_flags(_toolchain_flags(ctx, ACTION_NAMES.c_compile) + rule_flags)  # + ["-xc"]
     cxx_flags = _safe_flags(_toolchain_flags(ctx, ACTION_NAMES.cpp_compile) + rule_flags)  # + ["-xc++"]
-
+    print("collecting sources:")
     srcs = _collect_all_sources(ctx)
 
     compile_args = _compile_args(compilation_context)
