@@ -201,6 +201,7 @@ def _compile_info_sources(deps):
 
 def _collect_all_sources(ctx):
     #sources = _rule_sources(ctx)
+    sources = []
     i=0
     #print("Sources:" + str(i) + str(sources))
     for attr in ["srcs", "deps", "data", "exports"]:
