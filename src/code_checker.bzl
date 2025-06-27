@@ -112,13 +112,6 @@ def check_valid_file_type(src):
         ".cxx",
         ".c++",
         ".C",
-        ".h",
-        ".hh",
-        ".hpp",
-        ".hxx",
-        ".inc",
-        ".inl",
-        ".H",
     ]
     for file_type in permitted_file_types:
         if src.basename.endswith(file_type):
@@ -131,31 +124,7 @@ def _rule_sources(ctx):
     if hasattr(ctx.rule.attr, "srcs"):
         for src in ctx.rule.attr.srcs:
             srcs += [src for src in src.files.to_list() if src.is_source and check_valid_file_type(src)]
-    # Define a list of file extensions that are considered headers
-    header_extensions = [
-        ".h",
-        ".hh",
-        ".hpp",
-        ".hxx",
-        ".inc",
-        ".inl",
-        ".H",
-    ]
-
-    # Perform the after-the-fact filtering to exclude headers
-    filtered_sources = []
-    for src_file in srcs:
-        is_header = False
-        for ext in header_extensions:
-            if src_file.basename.endswith(ext):
-                is_header = True
-                break
-        if not is_header:
-            filtered_sources.append(src_file)
-
-    # Remove duplicates from the filtered list
-    filtered_sources = depset(filtered_sources).to_list()
-    return filtered_sources
+    return srcs
 
 def _toolchain_flags(ctx, action_name = ACTION_NAMES.cpp_compile):
     cc_toolchain = find_cpp_toolchain(ctx)
