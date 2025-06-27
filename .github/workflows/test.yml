@@ -48,3 +48,44 @@ jobs:
                "CodeChecker finds different analyzers when running in " \
                "bazel's sandbox environment!"
           CodeChecker analyzers
+
+  small_test:
+    name: Small Project Test
+    runs-on: ubuntu-24.04
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set bazel version to 6.5.0
+        run: echo "6.5.0" > .bazelversion
+
+      - name: Setup Bazel
+        uses: bazel-contrib/setup-bazel@0.15.0
+
+      - name: Install python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install CodeChecker analyzers
+        run: |
+          sudo apt-get update --quiet
+          sudo apt-get install --no-install-recommends \
+            clang \
+            clang-tools \
+            clang-tidy
+
+      - name: Install CodeChecker
+        run: pip3 install codechecker
+
+      - name: Patch yaml-cpp
+        run:  |
+          sh .github/workflows/patch-test-proj.sh ${{ github.repository }} ${{ github.ref }}
+
+      - name: Run Bazel CodeChecker
+        run: |
+          cd yaml-cpp
+          bazel build :codechecker_test_yaml-cpp
+
+
