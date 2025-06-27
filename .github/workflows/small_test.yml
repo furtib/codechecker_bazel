@@ -40,6 +40,7 @@ jobs:
           git clone --recurse-submodules https://github.com/jbeder/yaml-cpp.git
           cd yaml-cpp
           git checkout yaml-cpp-0.7.0
+          echo "6.5.0" > .bazelversion
 
       - name: Patch yaml-cpp
         run: |
