@@ -202,17 +202,14 @@ def _compile_info_sources(deps):
 def _collect_all_sources(ctx):
     sources = _rule_sources(ctx)
     i=0
-    print("Sources:" + str(i))
-    print(sources)
+    print("Sources:" + str(i) + str(sources))
     for attr in ["srcs", "deps", "data", "exports"]:
         i = i + 1
         if hasattr(ctx.rule.attr, attr):
-            print("Attr:" + str(i))
-            print(attr)
+            print("Attr:" + str(i) + str(attr))
             deps = getattr(ctx.rule.attr, attr)
             sources += _compile_info_sources(deps)
-            print("Sources:" + str(i))
-            print(sources)
+            print("Sources:" + str(i) + str(sources))
 
     # Remove duplicates
     sources = depset(sources).to_list()
@@ -220,8 +217,7 @@ def _collect_all_sources(ctx):
 
 def _compile_info_aspect_impl(target, ctx):
     if not CcInfo in target:
-        print("No CcInfo:")
-        print(target)
+        print("No CcInfo:" + str(target))
         return []
     compilation_context = target[CcInfo].compilation_context
 
@@ -263,8 +259,7 @@ def _compile_commands_data(ctx):
     compile_commands = []
     for target in ctx.attr.targets:
         if not CcInfo in target:
-            print("No CcInfo")
-            print(target)
+            print("No CcInfo" + str(target))
             continue
         if CompileInfo in target:
             if hasattr(target[CompileInfo], "arguments"):
@@ -297,8 +292,7 @@ def _collect_all_sources_and_headers(ctx):
     headers = depset()
     for target in ctx.attr.targets:
         if not CcInfo in target:
-            print("No CcInfo")
-            print(target)
+            print("No CcInfo" + str(target))
             continue
         if CompileInfo in target:
             if hasattr(target[CompileInfo], "arguments"):
@@ -319,8 +313,7 @@ def _code_checker_impl(ctx):
 
     for target in ctx.attr.targets:
         if not CcInfo in target:
-            print("No CcInfo")
-            print(target)
+            print("No CcInfo" + str(target))
             continue
         if CompileInfo in target:
             if hasattr(target[CompileInfo], "arguments"):
