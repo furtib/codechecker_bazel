@@ -103,7 +103,7 @@ def _run_code_checker(
 def check_valid_file_type(src):
     """
     Returns True if the file type matches one of the permitted
-    srcs file types for C and C++ header/source files.
+    srcs file types for C and C++ source files.
     """
     permitted_file_types = [
         ".c",
@@ -112,13 +112,6 @@ def check_valid_file_type(src):
         ".cxx",
         ".c++",
         ".C",
-        ".h",
-        ".hh",
-        ".hpp",
-        ".hxx",
-        ".inc",
-        ".inl",
-        ".H",
     ]
     for file_type in permitted_file_types:
         if src.basename.endswith(file_type):
@@ -211,6 +204,8 @@ def _collect_all_sources(ctx):
     return sources
 
 def _compile_info_aspect_impl(target, ctx):
+    if not CcInfo in target:
+        return []
     compilation_context = target[CcInfo].compilation_context
 
     rule_flags = ctx.rule.attr.copts if hasattr(ctx.rule.attr, "copts") else []
