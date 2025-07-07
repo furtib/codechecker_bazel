@@ -1,6 +1,5 @@
 name: 'Setup environment'
 description: 'Sets up analyzers, CodeChecker and Bazel'
-
 runs:
   using: "composite"
   steps:
