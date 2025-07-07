@@ -13,6 +13,7 @@ jobs:
   rules_test:
     name: Analysis
     runs-on: ubuntu-24.04
+    container: metalg091/codechecker_bazel:latest
 
     steps:
       - name: Checkout repository
