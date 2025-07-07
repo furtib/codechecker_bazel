@@ -25,5 +25,3 @@ runs:
 
     - name: Install CodeChecker
       run: pip3 install codechecker
-  outputs:
-    setup_complete: true
