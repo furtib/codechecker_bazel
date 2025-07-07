@@ -1,7 +1,7 @@
 name: codechecker-bazel-tests-2
 
 # Triggers the workflow on push or pull request events.
-on: [pull_request]
+on: [pull_request, push]
 
 permissions: read-all
 
