@@ -32,5 +32,3 @@ jobs:
         run: |
           cd yaml-cpp
           bazel build :codechecker_test_yaml-cpp
-
-
