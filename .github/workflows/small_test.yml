@@ -13,6 +13,7 @@ jobs:
   small_test:
     name: Small Project Test
     runs-on: ubuntu-24.04
+    container: metalg091/codechecker_bazel:latest
 
     steps:
       - name: Checkout repository # needed for install-deps.sh
@@ -23,17 +24,6 @@ jobs:
 
       - name: Setup Bazel
         uses: bazel-contrib/setup-bazel@0.15.0
-
-      - name: Install python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.12'
-
-      - name: Install CodeChecker analyzers
-        run: sh .github/workflows/install-deps.sh
-
-      - name: Install CodeChecker
-        run: pip3 install codechecker
 
       - name: Patch yaml-cpp
         run:  |
