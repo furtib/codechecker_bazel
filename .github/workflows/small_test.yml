@@ -42,6 +42,9 @@ jobs:
 
       - name: Patch yaml-cpp
         run:  |
+          echo ${{ github.repository }}
+          echo ${{ github.ref }}
+          echo ================
           sh .github/workflows/patch-test-proj.sh ${{ github.repository }} ${{ github.ref }}
           cat yaml-cpp/BUILD.bazel
           cat yaml-cpp/WORKSPACE
