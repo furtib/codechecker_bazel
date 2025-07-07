@@ -35,69 +35,11 @@ jobs:
       - name: Install CodeChecker
         run: pip3 install codechecker
 
-      - name: Checkout yaml-cpp
-        run:  |
-          git clone --recurse-submodules https://github.com/jbeder/yaml-cpp.git
-          cd yaml-cpp
-          git checkout yaml-cpp-0.7.0
-          echo "6.5.0" > .bazelversion
-
       - name: Patch yaml-cpp
-        run: |
-          cd yaml-cpp
-          echo "#-------------------------------------------------------" >> BUILD.bazel
-          echo "" >> BUILD.bazel
-          echo "# codechecker rules" >> BUILD.bazel
-          echo "load(" >> BUILD.bazel
-          echo "    \"@bazel_codechecker//src:codechecker.bzl\"," >> BUILD.bazel
-          echo "    \"codechecker_test\"," >> BUILD.bazel
-          echo ")" >> BUILD.bazel
-          echo "load(" >> BUILD.bazel
-          echo "    \"@bazel_codechecker//src:code_checker.bzl\"," >> BUILD.bazel
-          echo "    \"code_checker_test\"," >> BUILD.bazel
-          echo ")" >> BUILD.bazel
-          echo "" >> BUILD.bazel
-          echo "codechecker_test(" >> BUILD.bazel
-          echo "    name = \"codechecker_test_yaml-cpp\"," >> BUILD.bazel
-          echo "    targets = [" >> BUILD.bazel
-          echo "        \":yaml-cpp\"," >> BUILD.bazel
-          echo "    ]," >> BUILD.bazel
-          echo ")" >> BUILD.bazel
-          echo "" >> BUILD.bazel
-          echo "code_checker_test(" >> BUILD.bazel
-          echo "    name = \"code_checker_test_yaml-cpp\"," >> BUILD.bazel
-          echo "    targets = [" >> BUILD.bazel
-          echo "        \":yaml-cpp\"," >> BUILD.bazel
-          echo "    ]," >> BUILD.bazel
-          echo ")" >> BUILD.bazel
-          echo "" >> BUILD.bazel
-          echo "#-------------------------------------------------------" >> BUILD.bazel
-          cat BUILD.bazel
-            
-      - name: Patch WORKSPACE
-        run: |
-          cd yaml-cpp
-          echo "#----------------------------------------------------" >> WORKSPACE
-          echo "" >> WORKSPACE
-          echo "load(\"@bazel_tools//tools/build_defs/repo:git.bzl\", \"git_repository\")" >> WORKSPACE
-          echo "" >> WORKSPACE
-          echo "git_repository(" >> WORKSPACE
-          echo "    name = \"bazel_codechecker\"," >> WORKSPACE
-          echo "    remote = \"https://github.com/${{ github.event.pull_request.head.repo.full_name }}.git\"," >> WORKSPACE
-          echo "    branch = \"${{ github.event.pull_request.head.ref }}\"," >> WORKSPACE
-          echo ")" >> WORKSPACE
-          echo "" >> WORKSPACE
-          echo "load(" >> WORKSPACE
-          echo "    \"@bazel_codechecker//src:tools.bzl\"," >> WORKSPACE
-          echo "    \"register_default_codechecker\"," >> WORKSPACE
-          echo "    \"register_default_python_toolchain\"," >> WORKSPACE
-          echo ")" >> WORKSPACE
-          echo "" >> WORKSPACE
-          echo "register_default_python_toolchain()" >> WORKSPACE
-          echo "register_default_codechecker()" >> WORKSPACE
-          echo "" >> WORKSPACE
-          echo "#----------------------------------------------------" >> WORKSPACE
-          cat WORKSPACE
+        run:  |
+          sh ./patch-test-proj.sh ${{ github.event.pull_request.head.repo.full_name }} ${{ github.event.pull_request.head.ref }}
+          cat yaml-cpp/BUILD.bazel
+          cat yaml-cpp/WORKSPACE
 
       - name: Run Bazel CodeChecker
         run: |
