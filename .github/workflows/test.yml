@@ -28,6 +28,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+      - name: List local action directory
+        run: ls -R .github/actions/env_setup
       - uses: ./.github/actions/env_setup
       - name: Print versions
         run: |
