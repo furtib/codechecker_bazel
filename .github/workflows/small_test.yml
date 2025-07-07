@@ -42,7 +42,7 @@ jobs:
 
       - name: Patch yaml-cpp
         run:  |
-          sh .github/workflows/patch-test-proj.sh ${{ github.event.pull_request.head.repo.full_name }} ${{ github.event.pull_request.head.ref }}
+          sh .github/workflows/patch-test-proj.sh ${{ github.repository }} ${{ github.ref }}
           cat yaml-cpp/BUILD.bazel
           cat yaml-cpp/WORKSPACE
 
