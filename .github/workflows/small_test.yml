@@ -22,9 +22,6 @@ jobs:
       - name: Set bazel version to 6.5.0
         run: echo "6.5.0" > .bazelversion
 
-      - name: Setup Bazel
-        uses: bazel-contrib/setup-bazel@0.15.0
-
       - name: Patch yaml-cpp
         run:  |
           sh .github/workflows/patch-test-proj.sh ${{ github.event.pull_request.head.repo.full_name }} ${{ github.event.pull_request.head.ref }}
