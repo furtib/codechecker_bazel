@@ -36,6 +36,7 @@ jobs:
           python3 test.py -vvv
 
   small_test:
+    # Test if code runs successfully against a small project
     name: Small Project Test
     runs-on: ubuntu-24.04
 
@@ -46,13 +47,16 @@ jobs:
       - name: Setup environment
         uses: ./.github/actions/env_setup
 
-      - name: Patch yaml-cpp
+      - name: Patching codechecker_bazel targets onto yaml-cpp
         run:  |
           sh .github/workflows/patch-test-proj.sh ${{ github.repository }} ${{ github.ref }}
 
-      - name: Run Bazel CodeChecker
+      - name: Run Monolithic Bazel CodeChecker
         run: |
           cd yaml-cpp
           bazel build :codechecker_test_yaml-cpp
 
-
+      - name: Run Distributed Bazel CodeChecker
+        run: |
+          cd yaml-cpp
+          bazel build :code_checker_test_yaml-cpp
