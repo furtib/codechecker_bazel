@@ -10,10 +10,10 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  setup_env:
-    name: Setup
+  rules_test:
+    name: Analysis
     runs-on: ubuntu-24.04
-
+    
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -21,15 +21,6 @@ jobs:
       - name: Setup environment
         uses: ./.github/actions/env_setup
 
-  rules_test:
-    name: Analysis
-    runs-on: ubuntu-24.04
-
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - uses: ./.github/actions/env_setup
       - name: Print versions
         run: |
           bazel version
