@@ -7,8 +7,8 @@ git clone --recurse https://github.com/jbeder/yaml-cpp.git test_project
 cd test_project
 git checkout yaml-cpp-0.7.0
 
-# Specify bazel version for bazelisk
-echo "6.5.0" > .bazelversion
+# This file must be in the root of the project to be analyzed for bazelisk to work
+cp ../.bazelversion ./.bazelversion
 
 # Add codechecker to the project
 cat <<EOF >> BUILD.bazel
