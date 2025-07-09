@@ -3,8 +3,8 @@
 FORK_REPO="$1"
 FORK_BRANCH="$2"
 
-git clone --recurse https://github.com/jbeder/yaml-cpp.git
-cd yaml-cpp
+git clone --recurse https://github.com/jbeder/yaml-cpp.git test_project
+cd test_project
 git checkout yaml-cpp-0.7.0
 
 # Specify bazel version for bazelisk
@@ -26,14 +26,14 @@ load(
 
 
 codechecker_test(
-    name = "codechecker_test_yaml-cpp",
+    name = "codechecker_test",
     targets = [
         ":yaml-cpp",
     ],
 )
 
 code_checker_test(
-    name = "code_checker_test_yaml-cpp",
+    name = "code_checker_test",
     targets = [
         ":yaml-cpp",
     ],
