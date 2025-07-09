@@ -3,6 +3,7 @@ description: 'Sets up analyzers, CodeChecker and Bazel'
 runs:
   using: "composite"
   steps:
+
     - name: Setup Bazel
       uses: bazel-contrib/setup-bazel@0.15.0
     
