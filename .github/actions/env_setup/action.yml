@@ -3,12 +3,15 @@ description: 'Sets up analyzers, CodeChecker and Bazel'
 runs:
   using: "composite"
   steps:
-    - name: Set bazel version to 6.5.0
-      run: echo "6.5.0" > .bazelversion
-      shell: bash
-
     - name: Setup Bazel
       uses: bazel-contrib/setup-bazel@0.15.0
+    
+    # Writing out bazel version forces bazelisk to install bazel here
+    - name: Set bazel version to 6.5.0
+      run: |
+        echo "6.5.0" > .bazelversion
+        bazel version
+      shell: bash
 
     - name: Install python
       uses: actions/setup-python@v5
