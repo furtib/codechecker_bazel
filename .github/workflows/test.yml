@@ -31,8 +31,8 @@ jobs:
           CodeChecker analyzers
 
   small_test:
-    # Test if code runs successfully against a small project
-    name: Small Project Test
+    # Test the bazel rules introduced by repository on an independent open-source project.
+    name: Test On Small Project
     runs-on: ubuntu-24.04
 
     steps:
@@ -46,12 +46,14 @@ jobs:
         run:  |
           sh .github/workflows/patch-test-proj.sh ${{ github.repository }} ${{ github.ref }}
 
+      # Running bazel with test will signal failure because CodeChecker found problems
       - name: Run Monolithic Bazel CodeChecker
         run: |
           cd test_project
-          bazel build :codechecker_test
+          bazel test :codechecker_test || [ $? -eq 3 ] && exit 0 || exit $?
 
-      - name: Run Distributed Bazel CodeChecker
+      # Running bazel with test will signal failure because CodeChecker found problems
+      - name: Run Per File Bazel CodeChecker
         run: |
           cd test_project
-          bazel build :code_checker_test
+          bazel test :code_checker_test || [ $? -eq 3 ] && exit 0 || exit $?
