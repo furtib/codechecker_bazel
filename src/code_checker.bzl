@@ -33,8 +33,22 @@ if [ $ret_code -eq 1 ] || [ $ret_code -ge 128 ]; then
     cat $LOG_FILE
     exit 1
 fi
-cp $DATA_DIR/*_clang-tidy_*.plist $CLANG_TIDY_PLIST
-cp $DATA_DIR/*_clangsa_*.plist    $CLANGSA_PLIST
+shopt -s nullglob
+TIDY_FILES=("$DATA_DIR"/*_clang-tidy_*.plist)
+CLANGSA_FILES=("$DATA_DIR"/*_clangsa_*.plist)
+shopt -u nullglob
+if [[ $TIDY_FILES[@] -ge 0 ]]; then
+    cp $DATA_DIR/*_clang-tidy_*.plist $CLANG_TIDY_PLIST
+else
+    # Must create output file which can't be empty / malformed!
+    echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<!DOCTYPE plist PUBLIC \"-//Apple Computer//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">\n<plist version=\"1.0\">\n<array>\n</array>\n</plist>" > $CLANG_TIDY_PLIST
+fi
+if [[ $CLANGSA_FILES[@] -ge 0 ]]; then
+    cp $DATA_DIR/*_clangsa_*.plist    $CLANGSA_PLIST
+else
+    # Must create output file which can't be empty / malformed!
+    echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<!DOCTYPE plist PUBLIC \"-//Apple Computer//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">\n<plist version=\"1.0\">\n<array>\n</array>\n</plist>" > $CLANGSA_PLIST
+fi
 
 # sed -i -e "s|<string>.*execroot/bazel_codechecker/|<string>|g" $CLANG_TIDY_PLIST
 # sed -i -e "s|<string>.*execroot/bazel_codechecker/|<string>|g" $CLANGSA_PLIST
