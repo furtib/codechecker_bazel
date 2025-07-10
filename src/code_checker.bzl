@@ -37,13 +37,13 @@ shopt -s nullglob
 TIDY_FILES=("$DATA_DIR"/*_clang-tidy_*.plist)
 CLANGSA_FILES=("$DATA_DIR"/*_clangsa_*.plist)
 shopt -u nullglob
-if [[ $TIDY_FILES[@] -ge 0 ]]; then
+if [[ -f $TIDY_FILES ]]; then
     cp $DATA_DIR/*_clang-tidy_*.plist $CLANG_TIDY_PLIST
 else
     # Must create output file which can't be empty / malformed!
     echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<!DOCTYPE plist PUBLIC \"-//Apple Computer//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">\n<plist version=\"1.0\">\n<array>\n</array>\n</plist>" > $CLANG_TIDY_PLIST
 fi
-if [[ $CLANGSA_FILES[@] -ge 0 ]]; then
+if [[ -f $CLANGSA_FILES ]]; then
     cp $DATA_DIR/*_clangsa_*.plist    $CLANGSA_PLIST
 else
     # Must create output file which can't be empty / malformed!
