@@ -49,16 +49,16 @@ jobs:
 
       - name: Patching codechecker_bazel targets onto test_project
         run:  |
-          sh .github/workflows/patch-test-proj.sh ${{ github.repository }} ${{ github.ref }}
+          sh .github/workflows/patch-yaml-cpp.sh ${{ github.repository }} ${{ github.ref }}
 
       # Running bazel with test will signal failure because CodeChecker found problems
       - name: Run Monolithic Bazel CodeChecker
         run: |
-          cd test_project
+          cd yaml-cpp
           bazel test :codechecker_test || [ $? -eq 3 ] && exit 0 || exit $?
 
       # Running bazel with test will signal failure because CodeChecker found problems
       - name: Run Per File Bazel CodeChecker
         run: |
-          cd test_project
+          cd yaml-cpp
           bazel test :code_checker_test || [ $? -eq 3 ] && exit 0 || exit $?
