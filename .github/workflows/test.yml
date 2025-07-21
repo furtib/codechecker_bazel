@@ -30,9 +30,9 @@ jobs:
                "bazel's sandbox environment!"
           CodeChecker analyzers
 
-  small_test:
+  yaml_cpp_test:
     # Test the bazel rules introduced by repository on an independent open-source project.
-    name: Test On Small Project
+    name: "Test On Small Project: yaml-cpp"
     runs-on: ubuntu-24.04
 
     steps:
