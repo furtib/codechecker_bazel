@@ -43,25 +43,18 @@ jobs:
         id: generate_matrix
         run: |
           PATCH_DIR="./.github/workflows/patches/"
-          PROJECT_CONFIGS="[]"
+          echo "[" > project_config.json
           find "$PATCH_DIR" -type f -name "*.sh" -print0 | while IFS= read -r -d $'\0' PATCH_SCRIPT_PATH; do
             # Extract project name from script path (e.g., "patch-yaml-cpp.sh" -> "yaml-cpp")
             PROJECT_NAME=$(basename "$PATCH_SCRIPT_PATH" | sed -E 's/^patch-(.*)\.sh$/\1/')
-
-            # Construct the JSON object for this project
-            PROJECT_JSON="{
-              \"name\": \"$PROJECT_NAME\",
-              \"patch_script\": \"$PATCH_SCRIPT_PATH\",
-            }"
-
-            if [ "$PROJECT_CONFIGS" == "[]" ]; then
-              PROJECT_CONFIGS="[$PROJECT_JSON]"
-            else
-              PROJECT_CONFIGS=$(echo "$PROJECT_CONFIGS" | sed -E "s/\]$/,$PROJECT_JSON]/")
-            fi
+            echo "{" >> project_config.json
+            echo "\"name\": \"$PROJECT_NAME\","
+            echo "\"patch_script\": \"$PATCH_SCRIPT_PATH\","
+            echo "}," >> project_config.json
             echo "Added $PROJECT_NAME to matrix."
           done
-
+          echo "]" >> project_config.json
+          PROJECT_CONFIGS=${cat project_config.json}
           echo "Generated matrix: $PROJECT_CONFIGS"
           echo "matrix_json=$PROJECT_CONFIGS" >> "$GITHUB_OUTPUT"
         shell: bash
