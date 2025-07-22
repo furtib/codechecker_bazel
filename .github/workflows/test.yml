@@ -44,6 +44,7 @@ jobs:
         run: |
           PATCH_DIR="./.github/workflows/patches/"
           PROJECT_CONFIGS="[]"
+          echo "" > temp.json
           find "$PATCH_DIR" -type f -name "*.sh" -print0 | while IFS= read -r -d $'\0' PATCH_SCRIPT_PATH; do
             
             PROJECT_CONFIGS=`cat temp.json`
