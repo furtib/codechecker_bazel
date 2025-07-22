@@ -43,32 +43,28 @@ jobs:
         id: generate_matrix
         run: |
           PATCH_DIR="./.github/workflows/patches/"
-          PROJECT_CONFIGS="[]"
-          echo "" > temp.json
           find "$PATCH_DIR" -type f -name "*.sh" -print0 | while IFS= read -r -d $'\0' PATCH_SCRIPT_PATH; do
-            
-            PROJECT_CONFIGS=`cat temp.json`
             # Extract project name from script path (e.g., "patch-yaml-cpp.sh" -> "yaml-cpp")
             PROJECT_NAME=$(basename "$PATCH_SCRIPT_PATH" | sed -E 's/^patch-(.*)\.sh$/\1/')
 
-            # Construct the JSON object for this project
-            PROJECT_JSON="{
-              \"name\": \"$PROJECT_NAME\",
-              \"patch_script\": \"$PATCH_SCRIPT_PATH\",
-            }"
+            jq -n \
+              --arg name "$PROJECT_NAME" \
+              --arg patch_script "$PATCH_SCRIPT_PATH" \
+              '{
+                name: $name,
+                patch_script: $patch_script,
+            }' >> "$TEMP_JSON_FILE" # Append to temp file
 
-            if [ "$PROJECT_CONFIGS" == "[]" ]; then
-              PROJECT_CONFIGS="[$PROJECT_JSON]"
-            else
-              PROJECT_CONFIGS=$(echo "$PROJECT_CONFIGS" | sed -E "s/\]$/,$PROJECT_JSON]/")
-            fi
             echo "Added $PROJECT_NAME to matrix."
-
-            echo $PROJECT_CONFIGS > temp.json
           done
-          PROJECT_CONFIGS=`cat temp.json`
-          echo "Generated matrix: $PROJECT_CONFIGS"
-          echo "matrix_json=$PROJECT_CONFIGS" >> "$GITHUB_OUTPUT"
+          if [ -s "$TEMP_JSON_FILE" ]; then
+            FINAL_MATRIX_JSON="[$(paste -s -d ',' "$TEMP_JSON_FILE")]"
+          else
+            FINAL_MATRIX_JSON="[]"
+          fi
+
+          echo "Generated matrix: $FINAL_MATRIX_JSON"
+          echo "matrix_json=$FINAL_MATRIX_JSON" >> "$GITHUB_OUTPUT"
         shell: bash
 
   project_test_runner:
