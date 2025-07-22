@@ -41,15 +41,15 @@ jobs:
         project:
           - name: "yaml-cpp"
             directory: "yaml-cpp"
-            patch_script: ".github/workflows/patch-yaml-cpp.sh"
+            patch_script: ".github/workflows/patches/patch-yaml-cpp.sh"
             monolithic_bazel_target: ":codechecker_test"
             per_file_bazel_target: ":code_checker_test"
           # Add another project example:
-            # - name: "another-project"
-            #   directory: "another-project-repo"
-            #   patch_script: ".github/workflows/patch-another-project.sh"
-            #   monolithic_bazel_target: ":my_monolithic_test"
-            #   per_file_bazel_target: ":my_per_file_test"
+          - name: "zlib"
+            directory: "zlib"
+            patch_script: ".github/workflows/patches/patch-zlib.sh"
+            monolithic_bazel_target: ":my_monolithic_test"
+            per_file_bazel_target: ":my_per_file_test"
             
     name: "Test On Project: ${{ matrix.project.name }}" # Dynamic job name in UI
     steps:
