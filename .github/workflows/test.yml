@@ -30,20 +30,52 @@ jobs:
                "bazel's sandbox environment!"
           CodeChecker analyzers
 
-  yaml_cpp_test:
-    # Test the bazel rules introduced by repository on an independent open-source project.
+  # Prepares matrix used to generate jobs in project_test_runner
+  prepare_project_matrix:
     runs-on: ubuntu-24.04
+    outputs:
+      project_configurations: ${{ steps.generate_matrix.outputs.matrix_json }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Generate dynamic project matrix
+        id: generate_matrix
+        run: |
+          PATCH_DIR=".github/workflows/patches/"
+          PROJECT_CONFIGS="[]"
+          find "$PATCH_DIR" -type f -name "*.sh" -print0 | while IFS= read -r -d $'\0' PATCH_SCRIPT_PATH; do
+            # Extract project name from script path (e.g., "patch-yaml-cpp.sh" -> "yaml-cpp")
+            PROJECT_NAME=$(basename "$PATCH_SCRIPT_PATH" | sed -E 's/^patch-(.*)\.sh$/\1/')
+
+            # Construct the JSON object for this project
+            PROJECT_JSON="{
+              \"name\": \"$PROJECT_NAME\",
+              \"patch_script\": \"$PATCH_SCRIPT_PATH\",
+            }"
+
+            if [ "$PROJECT_CONFIGS" == "[]" ]; then
+              PROJECT_CONFIGS="[$PROJECT_JSON]"
+            else
+              PROJECT_CONFIGS=$(echo "$PROJECT_CONFIGS" | sed -E "s/\]$/,$PROJECT_JSON]/")
+            fi
+            echo "Added $PROJECT_NAME to matrix."
+          done
+
+          echo "Generated matrix: $PROJECT_CONFIGS"
+          echo "matrix_json=$PROJECT_CONFIGS" >> "$GITHUB_OUTPUT"
+        shell: bash
+
+  project_test_runner:
+    # Test the bazel rules introduced by repository on an independent open-source projects.
+    runs-on: ubuntu-24.04
+    needs: prepare_project_matrix
     strategy:
-      fail-fast: false # Set to true if you want the workflow to fail immediately if any project test fails
+      fail-fast: false
+      max-parallel: 2 # limit number of concurrent jobs
       matrix:
-        # Define your projects/configurations here.
-        # Add more objects to this array for additional projects.
-        project:
-          - name: "yaml-cpp"
-            patch_script: ".github/workflows/patches/patch-yaml-cpp.sh"
-          # Add another project example:
-          - name: "zlib"
-            patch_script: ".github/workflows/patches/patch-zlib.sh"
+        # Easily extensible project list
+        project: ${{ fromJson(needs.prepare_project_matrix.outputs.project_configurations) }}
             
     name: "Test On Project: ${{ matrix.project.name }}" # Dynamic job name in UI
     steps:
