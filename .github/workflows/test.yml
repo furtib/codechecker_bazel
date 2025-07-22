@@ -35,19 +35,61 @@ jobs:
           cd test
           python3 test.py -vvv
 
+  # Prepares matrix used to generate jobs in project_test_runner
+  # This job assumes that every project patch file is in the .github/workflows/patches directory
+  # and the name of these scripts follows this rule: patch-project_name.sh
+  # patches must clone their repository into folder: test-proj
+  prepare_project_matrix:
+    runs-on: ubuntu-24.04
+    name: Collecting Projects
+    outputs:
+      project_configurations: ${{ steps.generate_matrix.outputs.matrix_json }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Generate dynamic project matrix
+        id: generate_matrix
+        run: |
+          PATCH_DIR="./.github/workflows/patches/"
+          TEMP_JSON_FILE=$(mktemp)
+          find "$PATCH_DIR" -type f -name "*.sh" -print0 | while IFS= read -r -d $'\0' PATCH_SCRIPT_PATH; do
+            # Extract project name from script path (e.g., "patch-yaml-cpp.sh" -> "yaml-cpp")
+            PROJECT_NAME=$(basename "$PATCH_SCRIPT_PATH" | sed -E 's/^patch-(.*)\.sh$/\1/')
+
+            if [ -z $PROJECT_NAME ]; then
+              PROJECT_NAME="UNKNOWN"
+            fi
+
+            jq -n -c \
+              --arg name "$PROJECT_NAME" \
+              --arg patch_script "$PATCH_SCRIPT_PATH" \
+              '{ name: $name, patch_script: $patch_script }' >> "$TEMP_JSON_FILE"
+
+            echo "Added $PROJECT_NAME to matrix."
+          done
+
+          if [ -s "$TEMP_JSON_FILE" ]; then
+            FINAL_MATRIX_JSON="[$(paste -s -d ',' "$TEMP_JSON_FILE")]"
+          else
+            FINAL_MATRIX_JSON="[]"
+          fi
+
+          echo "Generated matrix: $FINAL_MATRIX_JSON"
+          echo "matrix_json=$FINAL_MATRIX_JSON" >> "$GITHUB_OUTPUT"
+        shell: bash
+
   project_test_runner:
     # Test the bazel rules introduced by repository on an independent open-source projects.
     runs-on: ubuntu-24.04
+    needs: prepare_project_matrix
     strategy:
       fail-fast: false
       max-parallel: 2 # limit number of concurrent jobs
       matrix:
-        # Easily extensible project list
-        project:
-          - name: "yaml-cpp"
-            patch_script: ".github/workflows/patches/patch-yaml-cpp.sh"
+        project: ${{ fromJson(needs.prepare_project_matrix.outputs.project_configurations) }}
             
-    name: "Test On Project: ${{ matrix.project.name }}" # Dynamic job name in UI
+    name: "Test On Project: ${{ matrix.project.name }}"
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
