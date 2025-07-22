@@ -43,6 +43,7 @@ jobs:
         id: generate_matrix
         run: |
           PATCH_DIR="./.github/workflows/patches/"
+          TEMP_JSON_FILE=$(mktemp)
           find "$PATCH_DIR" -type f -name "*.sh" -print0 | while IFS= read -r -d $'\0' PATCH_SCRIPT_PATH; do
             # Extract project name from script path (e.g., "patch-yaml-cpp.sh" -> "yaml-cpp")
             PROJECT_NAME=$(basename "$PATCH_SCRIPT_PATH" | sed -E 's/^patch-(.*)\.sh$/\1/')
