@@ -3,8 +3,8 @@
 FORK_REPO="$1"
 FORK_BRANCH="$2"
 
-git clone --recurse https://github.com/jbeder/yaml-cpp.git yaml-cpp
-cd yaml-cpp
+git clone --recurse https://github.com/jbeder/yaml-cpp.git test-proj
+cd test-proj
 git checkout yaml-cpp-0.7.0
 
 # This file must be in the root of the project to be analyzed for bazelisk to work

@@ -32,9 +32,26 @@ jobs:
 
   yaml_cpp_test:
     # Test the bazel rules introduced by repository on an independent open-source project.
-    name: "Test On Small Project: yaml-cpp"
     runs-on: ubuntu-24.04
-
+    strategy:
+      fail-fast: false # Set to true if you want the workflow to fail immediately if any project test fails
+      matrix:
+        # Define your projects/configurations here.
+        # Add more objects to this array for additional projects.
+        project:
+          - name: "yaml-cpp"
+            directory: "yaml-cpp"
+            patch_script: ".github/workflows/patch-yaml-cpp.sh"
+            monolithic_bazel_target: ":codechecker_test"
+            per_file_bazel_target: ":code_checker_test"
+          # Add another project example:
+            # - name: "another-project"
+            #   directory: "another-project-repo"
+            #   patch_script: ".github/workflows/patch-another-project.sh"
+            #   monolithic_bazel_target: ":my_monolithic_test"
+            #   per_file_bazel_target: ":my_per_file_test"
+            
+    name: "Test On Project: ${{ matrix.project.name }}" # Dynamic job name in UI
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -44,16 +61,16 @@ jobs:
 
       - name: Patching codechecker_bazel targets onto test_project
         run:  |
-          sh .github/workflows/patch-yaml-cpp.sh ${{ github.repository }} ${{ github.ref }}
+          sh ${{ matrix.project.patch_script }} ${{ github.repository }} ${{ github.ref }}
 
       # Running bazel with test will signal failure because CodeChecker found problems
       - name: Run Monolithic Bazel CodeChecker
         run: |
-          cd yaml-cpp
+          cd test-proj
           bazel test :codechecker_test || [ $? -eq 3 ] && exit 0 || exit $?
 
       # Running bazel with test will signal failure because CodeChecker found problems
       - name: Run Per File Bazel CodeChecker
         run: |
-          cd yaml-cpp
+          cd test-proj
           bazel test :code_checker_test || [ $? -eq 3 ] && exit 0 || exit $?
