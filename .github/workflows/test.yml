@@ -48,13 +48,13 @@ jobs:
             # Extract project name from script path (e.g., "patch-yaml-cpp.sh" -> "yaml-cpp")
             PROJECT_NAME=$(basename "$PATCH_SCRIPT_PATH" | sed -E 's/^patch-(.*)\.sh$/\1/')
             echo "{" >> project_config.json
-            echo "\"name\": \"$PROJECT_NAME\"," >> project_config.json
-            echo "\"patch_script\": \"$PATCH_SCRIPT_PATH\"," >> project_config.json
+            echo "\"name\": \"$PROJECT_NAME\","
+            echo "\"patch_script\": \"$PATCH_SCRIPT_PATH\","
             echo "}," >> project_config.json
             echo "Added $PROJECT_NAME to matrix."
           done
           echo "]" >> project_config.json
-          PROJECT_CONFIGS=`cat project_config.json`
+          PROJECT_CONFIGS=${cat project_config.json}
           echo "Generated matrix: $PROJECT_CONFIGS"
           echo "matrix_json=$PROJECT_CONFIGS" >> "$GITHUB_OUTPUT"
         shell: bash
