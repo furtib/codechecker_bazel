@@ -30,11 +30,19 @@ jobs:
                "bazel's sandbox environment!"
           CodeChecker analyzers
 
-  yaml_cpp_test:
-    # Test the bazel rules introduced by repository on an independent open-source project.
-    name: "Test On Small Project: yaml-cpp"
+  project_test_runner:
+    # Test the bazel rules introduced by repository on an independent open-source projects.
     runs-on: ubuntu-24.04
-
+    strategy:
+      fail-fast: false
+      max-parallel: 2 # limit number of concurrent jobs
+      matrix:
+        # Easily extensible project list
+        project:
+          - name: "yaml-cpp"
+            patch_script: ".github/workflows/patches/patch-yaml-cpp.sh"
+            
+    name: "Test On Project: ${{ matrix.project.name }}" # Dynamic job name in UI
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -44,16 +52,16 @@ jobs:
 
       - name: Patching codechecker_bazel targets onto test_project
         run:  |
-          sh .github/workflows/patch-yaml-cpp.sh ${{ github.repository }} ${{ github.ref }}
+          sh ${{ matrix.project.patch_script }} ${{ github.repository }} ${{ github.ref }}
 
       # Running bazel with test will signal failure because CodeChecker found problems
       - name: Run Monolithic Bazel CodeChecker
         run: |
-          cd yaml-cpp
+          cd test-proj
           bazel test :codechecker_test || [ $? -eq 3 ] && exit 0 || exit $?
 
       # Running bazel with test will signal failure because CodeChecker found problems
       - name: Run Per File Bazel CodeChecker
         run: |
-          cd yaml-cpp
+          cd test-proj
           bazel test :code_checker_test || [ $? -eq 3 ] && exit 0 || exit $?
