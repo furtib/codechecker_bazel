@@ -47,18 +47,13 @@ jobs:
           find "$PATCH_DIR" -type f -name "*.sh" -print0 | while IFS= read -r -d $'\0' PATCH_SCRIPT_PATH; do
             # Extract project name from script path (e.g., "patch-yaml-cpp.sh" -> "yaml-cpp")
             PROJECT_NAME=$(basename "$PATCH_SCRIPT_PATH" | sed -E 's/^patch-(.*)\.sh$/\1/')
-
             echo "{" >> project_config.json
             echo "\"name\": \"$PROJECT_NAME\"," >> project_config.json
             echo "\"patch_script\": \"$PATCH_SCRIPT_PATH\"," >> project_config.json
             echo "}," >> project_config.json
-
             echo "Added $PROJECT_NAME to matrix."
           done
           echo "]" >> project_config.json
-
-          cat project_config.json | jq "." > project_config.json
-
           PROJECT_CONFIGS=`cat project_config.json`
           echo "Generated matrix: $PROJECT_CONFIGS"
           echo "matrix_json=$PROJECT_CONFIGS" >> "$GITHUB_OUTPUT"
