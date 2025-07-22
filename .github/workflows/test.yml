@@ -45,6 +45,8 @@ jobs:
           PATCH_DIR="./.github/workflows/patches/"
           PROJECT_CONFIGS="[]"
           find "$PATCH_DIR" -type f -name "*.sh" -print0 | while IFS= read -r -d $'\0' PATCH_SCRIPT_PATH; do
+            
+            PROJECT_CONFIGS=`cat temp.json`
             # Extract project name from script path (e.g., "patch-yaml-cpp.sh" -> "yaml-cpp")
             PROJECT_NAME=$(basename "$PATCH_SCRIPT_PATH" | sed -E 's/^patch-(.*)\.sh$/\1/')
 
@@ -60,8 +62,10 @@ jobs:
               PROJECT_CONFIGS=$(echo "$PROJECT_CONFIGS" | sed -E "s/\]$/,$PROJECT_JSON]/")
             fi
             echo "Added $PROJECT_NAME to matrix."
-          done
 
+            echo $PROJECT_CONFIGS > temp.json
+          done
+          PROJECT_CONFIGS=`cat temp.json`
           echo "Generated matrix: $PROJECT_CONFIGS"
           echo "matrix_json=$PROJECT_CONFIGS" >> "$GITHUB_OUTPUT"
         shell: bash
