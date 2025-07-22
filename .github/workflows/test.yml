@@ -42,7 +42,7 @@ jobs:
       - name: Generate dynamic project matrix
         id: generate_matrix
         run: |
-          PATCH_DIR=".github/workflows/patches/"
+          PATCH_DIR="./.github/workflows/patches/"
           PROJECT_CONFIGS="[]"
           find "$PATCH_DIR" -type f -name "*.sh" -print0 | while IFS= read -r -d $'\0' PATCH_SCRIPT_PATH; do
             # Extract project name from script path (e.g., "patch-yaml-cpp.sh" -> "yaml-cpp")
