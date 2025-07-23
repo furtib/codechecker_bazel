@@ -16,6 +16,17 @@ LOG_FILE=$1
 shift
 COMPILE_COMMANDS_JSON=$1
 shift
+IGNORE_FILE=$1
+shift
+DONT_IGNORE=$1
+shift
+touch $IGNORE_FILE
+while [ "$1" != "CodeChecker" ]; do
+    if [ "$1" != "$DONT_IGNORE" ]; then
+        echo $1 >> $IGNORE_FILE
+    fi
+    shift
+done
 COMPILE_COMMANDS_ABS=$COMPILE_COMMANDS_JSON.abs
 sed 's|"directory":"."|"directory":"'$(pwd)'"|g' $COMPILE_COMMANDS_JSON > $COMPILE_COMMANDS_ABS
 echo "CodeChecker command: $@" $COMPILE_COMMANDS_ABS > $LOG_FILE
@@ -56,14 +67,16 @@ def _run_code_checker(
     clang_tidy_plist_file_name = "{}/{}_clang-tidy.plist".format(*file_name_params)
     clangsa_plist_file_name = "{}/{}_clangsa.plist".format(*file_name_params)
     codechecker_log_file_name = "{}/{}_codechecker.log".format(*file_name_params)
+    ignore_list_file_name = "{}/{}_ignore".format(*file_name_params)
 
     # Declare output files
     clang_tidy_plist = ctx.actions.declare_file(clang_tidy_plist_file_name)
     clangsa_plist = ctx.actions.declare_file(clangsa_plist_file_name)
     codechecker_log = ctx.actions.declare_file(codechecker_log_file_name)
+    ignore_list = ctx.actions.declare_file(ignore_list_file_name)
 
     inputs = [compile_commands_json] + sources_and_headers
-    outputs = [clang_tidy_plist, clangsa_plist, codechecker_log]
+    outputs = [clang_tidy_plist, clangsa_plist, codechecker_log, ignore_list]
 
     # Create CodeChecker wrapper script
     wrapper = ctx.actions.declare_file(ctx.attr.name + "/code_checker.sh")
@@ -82,16 +95,30 @@ def _run_code_checker(
     args.add(clangsa_plist.path)
     args.add(codechecker_log.path)
     args.add(compile_commands_json.path)
+    args.add(ignore_list.path)
+    args.add(src.path)
+    args.add_all([inp.path for inp in inputs])
     args.add("CodeChecker")
     args.add("analyze")
     args.add_all(options)
     args.add("--output=" + data_dir)
     args.add("--file=*/" + src.path)
 
+
+    #unused_content = [f.path for f in inputs if f != src]
+    #unused_content_string = "\n".join(unused_content) + "\n" if unused_content else ""
+    ## Add all files, except the one testing on to the ignore list
+    #ctx.actions.write(
+    #    output = ignore_list,
+    #    content = unused_content_string,
+    #    is_executable = True,
+    #)
+
     # Action to run CodeChecker for a file
     ctx.actions.run(
         inputs = inputs,
         outputs = outputs,
+        unused_inputs_list = ignore_list,
         executable = wrapper,
         arguments = [args],
         mnemonic = "CodeChecker",
