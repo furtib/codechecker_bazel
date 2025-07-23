@@ -48,7 +48,7 @@ jobs:
             # Extract project name from script path (e.g., "patch-yaml-cpp.sh" -> "yaml-cpp")
             PROJECT_NAME=$(basename "$PATCH_SCRIPT_PATH" | sed -E 's/^patch-(.*)\.sh$/\1/')
 
-            jq -n -c \
+            jq -n \
               --arg name "$PROJECT_NAME" \
               --arg patch_script "$PATCH_SCRIPT_PATH" \
               '{ name: $name, patch_script: $patch_script }' >> "$TEMP_JSON_FILE"
