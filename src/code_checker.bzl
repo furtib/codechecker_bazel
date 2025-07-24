@@ -16,15 +16,15 @@ LOG_FILE=$1
 shift
 COMPILE_COMMANDS_JSON=$1
 shift
+STRACE="strace.tmp"
 IGNORE_FILE=$1
 shift
 DONT_IGNORE=$1
 shift
 touch $IGNORE_FILE
+touch temp
 while [ "$1" != "CodeChecker" ]; do
-    if [ "$1" != "$DONT_IGNORE" ]; then
-        echo $1 >> $IGNORE_FILE
-    fi
+        echo $1 >> temp
     shift
 done
 COMPILE_COMMANDS_ABS=$COMPILE_COMMANDS_JSON.abs
@@ -33,7 +33,7 @@ echo "CodeChecker command: $@" $COMPILE_COMMANDS_ABS > $LOG_FILE
 echo "===-----------------------------------------------------===" >> $LOG_FILE
 echo "                   CodeChecker error log                   " >> $LOG_FILE
 echo "===-----------------------------------------------------===" >> $LOG_FILE
-eval "$@" $COMPILE_COMMANDS_ABS >> $LOG_FILE 2>&1
+strace -f -e trace=file -o "$STRACE" sh -c 'eval "$@" ' _ $@ "$COMPILE_COMMANDS_ABS" >> "$LOG_FILE" 2>&1
 # ls -la $DATA_DIR
 # NOTE: the following we do to get rid of md5 hash in plist file names
 ret_code=$?
@@ -46,6 +46,17 @@ if [ $ret_code -eq 1 ] || [ $ret_code -ge 128 ]; then
 fi
 cp $DATA_DIR/*_clang-tidy_*.plist $CLANG_TIDY_PLIST
 cp $DATA_DIR/*_clangsa_*.plist    $CLANGSA_PLIST
+
+while read -r line
+do
+    base=$(basename "$line")
+    echo $base >> $LOG_FILE
+    if ! grep -Eq ".*(open|openat)\\(.*$base" $STRACE; then
+        echo $line >> $IGNORE_FILE
+    fi
+done < temp
+rm temp
+rm strace.tmp
 
 # sed -i -e "s|<string>.*execroot/bazel_codechecker/|<string>|g" $CLANG_TIDY_PLIST
 # sed -i -e "s|<string>.*execroot/bazel_codechecker/|<string>|g" $CLANGSA_PLIST
