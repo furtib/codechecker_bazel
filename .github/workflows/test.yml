@@ -36,6 +36,11 @@ jobs:
             clang \
             clang-tools \
             clang-tidy
+          sudo update-alternatives --install \
+            /usr/bin/clang-extdef-mapping \
+            clang-extdef-mapping \
+            /usr/bin/clang-extdef-mapping-$(clang --version | head -n 1 | sed -E 's/.*version ([0-9]+)\..*/\1/') \
+            100
 
       - name: Install CodeChecker
         run: pip3 install codechecker
@@ -75,6 +80,11 @@ jobs:
             clang \
             clang-tools \
             clang-tidy
+          sudo update-alternatives --install \
+            /usr/bin/clang-extdef-mapping \
+            clang-extdef-mapping \
+            /usr/bin/clang-extdef-mapping-$(clang --version | head -n 1 | sed -E 's/.*version ([0-9]+)\..*/\1/') \
+            100
 
       - name: Install CodeChecker
         run: pip3 install codechecker
