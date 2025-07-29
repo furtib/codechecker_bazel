@@ -11,7 +11,7 @@ concurrency:
 
 jobs:
   rules_test:
-    name: Analysis
+    name: Unit tests
     runs-on: ubuntu-24.04
 
     steps:
@@ -47,6 +47,7 @@ jobs:
             /usr/bin/clang-extdef-mapping-$(clang --version | head -n 1 |
             sed -E 's/.*version ([0-9]+)\..*/\1/') \
             100
+          
 
       - name: Install CodeChecker
         run: pip3 install codechecker
