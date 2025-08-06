@@ -16,6 +16,8 @@ LOG_FILE=$1
 shift
 COMPILE_COMMANDS_JSON=$1
 shift
+CodeChecker analyzers >> $1
+shift
 COMPILE_COMMANDS_ABS=$COMPILE_COMMANDS_JSON.abs
 sed 's|"directory":"."|"directory":"'$(pwd)'"|g' $COMPILE_COMMANDS_JSON > $COMPILE_COMMANDS_ABS
 echo "CodeChecker command: $@" $COMPILE_COMMANDS_ABS > $LOG_FILE
@@ -56,14 +58,16 @@ def _run_code_checker(
     clang_tidy_plist_file_name = "{}/{}_clang-tidy.plist".format(*file_name_params)
     clangsa_plist_file_name = "{}/{}_clangsa.plist".format(*file_name_params)
     codechecker_log_file_name = "{}/{}_codechecker.log".format(*file_name_params)
+    my_log_file_name = "{}/{}_my.log".format(*file_name_params)
 
     # Declare output files
     clang_tidy_plist = ctx.actions.declare_file(clang_tidy_plist_file_name)
     clangsa_plist = ctx.actions.declare_file(clangsa_plist_file_name)
     codechecker_log = ctx.actions.declare_file(codechecker_log_file_name)
+    my_log = ctx.actions.declare_file(my_log_file_name)
 
     inputs = [compile_commands_json] + sources_and_headers
-    outputs = [clang_tidy_plist, clangsa_plist, codechecker_log]
+    outputs = [clang_tidy_plist, clangsa_plist, codechecker_log, my_log]
 
     # Create CodeChecker wrapper script
     wrapper = ctx.actions.declare_file(ctx.attr.name + "/code_checker.sh")
@@ -82,6 +86,7 @@ def _run_code_checker(
     args.add(clangsa_plist.path)
     args.add(codechecker_log.path)
     args.add(compile_commands_json.path)
+    args.add(my_log.path)
     args.add("CodeChecker")
     args.add("analyze")
     args.add_all(options)
