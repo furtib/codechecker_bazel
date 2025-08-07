@@ -84,7 +84,6 @@ code_checker_test(
     name = "code_checker_ctu",
     options = [
         "--ctu",
-        "--stats",
     ],
     tags = [
         "manual",
