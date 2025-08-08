@@ -4,16 +4,12 @@ RUN dnf update -y && \
     dnf install -y \
         llvm-toolset \
         clang-tools-extra \
-        wget \
         git \
         python3 \
         python3-pip \
-        unzip \
-        gnupg \
-        ca-certificates \
         gcc \
         g++ \
-        scl-utils \
+        wget \
         && \
     dnf clean all
 

@@ -4,21 +4,15 @@ ENV DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get update && \
     apt-get install -y \
-    curl \
-    wget \
     git \
     python3 \
     python3-pip \
     python3-venv \
-    software-properties-common \
-    unzip \
-    lsb-release \
-    gnupg \
-    ca-certificates \
     g++-14 \
     clang-18 \
     clang-tools-18 \
     clang-tidy-18 \
+    wget \
     ccache && \
     rm -rf /var/lib/apt/lists/*
 
