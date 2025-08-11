@@ -91,7 +91,7 @@ update-alternatives --install /usr/bin/clang clang /usr/bin/clang-18 100
 
 Install CodeChecker:
 > [!Note]
-> Currently the pip installed CodeChecker works best with these rules, which is our recommendation (as opposed to using acustom-built CodeChecker).
+> Currently the pip installed CodeChecker works best with these rules, which is our recommendation (as opposed to using a custom-built CodeChecker).
 
 ```bash
 python3 -m venv ./codechecker_venv && \
