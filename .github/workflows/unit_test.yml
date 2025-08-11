@@ -118,7 +118,8 @@ jobs:
 
   rhel9_test:
     name: Unit tests on RHEL9
-    runs-on: redhat/ubi9
+    runs-on: ubuntu-24.04
+    container: redhat/ubi9:latest
 
     steps:
       - name: Checkout repository
@@ -126,14 +127,6 @@ jobs:
 
       - name: Set bazel version to 6.5.0
         run: echo "6.5.0" > .bazelversion
-
-      - name: Setup Bazel
-        uses: bazel-contrib/setup-bazel@0.15.0
-
-      - name: Install python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.12'
 
       - name: Install CodeChecker analyzers
         run: |
@@ -151,6 +144,14 @@ jobs:
 
       - name: Install CodeChecker
         run: pip3 install codechecker
+
+      - name: Setup Bazel
+        run: |
+          VERSION=1.26.0; \
+          wget "https://github.com/bazelbuild/bazelisk/releases/download/v$VERSION/bazelisk-linux-amd64" && \
+          chmod +x bazelisk-linux-amd64 && \
+          mv bazelisk-linux-amd64 /usr/local/bin/bazel && \
+          USE_BAZEL_VERSION=6.5.0 bazel version
 
       - name: Print versions
         run: |
