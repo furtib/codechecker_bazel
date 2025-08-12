@@ -1,4 +1,4 @@
-FROM ubuntu:24.04
+FROM ubuntu:22.04
 
 ENV DEBIAN_FRONTEND=noninteractive
 
@@ -9,28 +9,30 @@ RUN apt-get update && \
     python3-pip \
     python3-venv \
     g++-14 \
-    clang-18 \
-    clang-tools-18 \
-    clang-tidy-18 \
+    clang \
+    clang-tools \
+    clang-tidy \
     wget \
     ccache && \
     rm -rf /var/lib/apt/lists/*
 
 # Rename clang-18 to clang, etc.
 
-RUN update-alternatives --install /usr/bin/clang++ clang++ /usr/bin/clang++-18 100
-RUN update-alternatives --install /usr/bin/clang-extdef-mapping \
-    clang-extdef-mapping /usr/bin/clang-extdef-mapping-18 100
-RUN update-alternatives --install /usr/bin/clang clang /usr/bin/clang-18 100
-RUN update-alternatives --install /usr/bin/clang-tidy \
-    clang-tidy /usr/bin/clang-tidy-18 100
-RUN update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-14 100
+#RUN update-alternatives --install /usr/bin/clang++ clang++ /usr/bin/clang++-18 100
+#RUN update-alternatives --install /usr/bin/clang-extdef-mapping \
+#    clang-extdef-mapping /usr/bin/clang-extdef-mapping-18 100
+#RUN update-alternatives --install /usr/bin/clang clang /usr/bin/clang-18 100
+#RUN update-alternatives --install /usr/bin/clang-tidy \
+#    clang-tidy /usr/bin/clang-tidy-18 100
+#RUN update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-14 100
 
 # ccache shadow the compilers
 RUN /usr/sbin/update-ccache-symlinks
+RUN ln -s /usr/bin/ccache /usr/local/bin/clang-tidy
 
 # Add ccache symlinks to path
-ENV PATH=/usr/lib/ccache:$PATH
+ENV PATH=/usr/lib/ccache:/usr/local/bin:$PATH
+
 
 # Source: https://fbinfer.com/docs/getting-started
 #RUN VERSION=1.1.0; \
