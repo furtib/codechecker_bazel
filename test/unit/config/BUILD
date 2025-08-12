@@ -77,6 +77,7 @@ codechecker_test(
     name = "codechecker_pass",
     analyze = [
         "--ctu",
+        "--stats",
     ],
     config = "codechecker_config_json",
     targets = [

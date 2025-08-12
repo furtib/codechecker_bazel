@@ -74,6 +74,7 @@ code_checker_test(
     name = "code_checker_pass",
     options = [
         "--ctu",
+        "--stats",
     ],
     targets = [
         "test_pass",
