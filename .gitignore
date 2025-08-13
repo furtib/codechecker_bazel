@@ -8,3 +8,10 @@
 # Ignore Vim swap files.
 .*.swp
 /.vscode/
+
+# Ignore common Python artifacts:
+__pycache__
+.pytest_cache
+
+# Ignore Python virtual environment
+venv
