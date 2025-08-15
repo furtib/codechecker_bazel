@@ -7,12 +7,18 @@ import re
 import shlex
 import subprocess
 import unittest
+import sys
 
 class TestBase(unittest.TestCase):
     """Unittest base abstract class"""
     @classmethod
     def setUpClass(cls):
         """Load module, save environment"""
+        # Enable debug logs for tests if "super verbose" flag is provided
+        if "-vvv" in sys.argv:
+            logging.basicConfig(
+                level=logging.DEBUG,
+                format="[TEST] %(levelname)5s: %(message)s")
         # Save environment and location
         cls.save_env = os.environ
         cls.save_cwd = os.getcwd()
@@ -45,10 +51,8 @@ class TestBase(unittest.TestCase):
                     f"command: {cmd}",
                     f"stdout: {stdout.decode('utf-8')}",
                     f"stderr: {stderr.decode('utf-8')}"]))
-            return "\n".join([
-                    f"command: {cmd}",
-                    f"stdout: {stdout.decode('utf-8')}",
-                    f"stderr: {stderr.decode('utf-8')}"])
+            return f"stdout: {stdout.decode('utf-8')}", \
+                   f"stderr: {stderr.decode('utf-8')}"
 
     def grep_file(self, filename, regex):
         """Grep given filename"""
