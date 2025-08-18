@@ -29,6 +29,8 @@ BAZEL_TESTLOGS_DIR = os.path.join("../../..", "bazel-testlogs", "test",
 
 class TestVirtualInclude(TestBase):
     """Tests checking virtual include path resolution"""
+        # This line is mandatory
+    __test_path__ = os.path.dirname(os.path.abspath(__file__))
 
     def setUp(self):
         """Before every test: clean Bazel cache"""
