@@ -13,7 +13,7 @@ BAZEL_TESTLOGS_DIR = os.path.join("../../..", "bazel-testlogs", "test",
 
 class TestTemplate(TestBase):
     """TODO: Add a description"""
-    # This line is mandatory
+    # Set working directory
     __test_path__ = os.path.dirname(os.path.abspath(__file__))
 
     def setUp(self):
