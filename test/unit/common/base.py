@@ -11,20 +11,23 @@ import sys
 
 class TestBase(unittest.TestCase):
     """Unittest base abstract class"""
+    # This variable must be overwritten in each subclass! 
+    __test_path__ : str = os.path.abspath(__file__)
+
     @classmethod
-    def setUpClass(cls, path : str = None):
+    def setUpClass(cls):
         """Load module, save environment"""
         # Enable debug logs for tests if "super verbose" flag is provided
         if "-vvv" in sys.argv:
             logging.basicConfig(
                 level=logging.DEBUG,
                 format="[TEST] %(levelname)5s: %(message)s")
+        # Move to test dir
+        cls.test_dir = cls.__test_path__
+        os.chdir(cls.test_dir)
         # Save environment and location
         cls.save_env = os.environ
         cls.save_cwd = os.getcwd()
-        # Move to test dir
-        cls.test_dir = path
-        os.chdir(cls.test_dir)
 
     @classmethod
     def tearDownClass(cls):

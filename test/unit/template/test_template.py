@@ -6,7 +6,6 @@ import unittest
 from common.base import TestBase
 
 # TODO: fix folder name
-WORKING_DIRECTORY = os.path.dirname(os.path.abspath(__file__))
 BAZEL_BIN_DIR = os.path.join("../../..", "bazel-bin", "test", 
                                     "unit", "my_test_folder")
 BAZEL_TESTLOGS_DIR = os.path.join("../../..", "bazel-testlogs", "test", 
@@ -14,6 +13,8 @@ BAZEL_TESTLOGS_DIR = os.path.join("../../..", "bazel-testlogs", "test",
 
 class TestTemplate(TestBase):
     """TODO: Add a description"""
+    # This line is mandatory
+    __test_path__ = os.path.dirname(os.path.abspath(__file__))
 
     def setUp(self):
         """TODO: Define clean up before every test"""
