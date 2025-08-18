@@ -19,5 +19,6 @@ Setup module paths and environment variables for the functional tests.
 import os
 import sys
 
-# Setup the required environment variables for the tests.
+# Allow relative imports within the test project to work as expected
+# Without it no module (test) would be able to import the common library
 sys.path.append(os.path.join(os.path.dirname(os.path.abspath(__file__))))
