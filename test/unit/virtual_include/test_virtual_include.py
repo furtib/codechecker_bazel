@@ -22,14 +22,16 @@ import unittest
 import glob
 from common.base import TestBase
 
-BAZEL_BIN_DIR = os.path.join("../../..", "bazel-bin", "test", 
-                                    "unit", "virtual_include")
-BAZEL_TESTLOGS_DIR = os.path.join("../../..", "bazel-testlogs", "test", 
-                                    "unit", "virtual_include")
+BAZEL_BIN_DIR = os.path.join("../../..", "bazel-bin", "test", "unit", "virtual_include")
+BAZEL_TESTLOGS_DIR = os.path.join(
+    "../../..", "bazel-testlogs", "test", "unit", "virtual_include"
+)
+
 
 class TestVirtualInclude(TestBase):
     """Tests checking virtual include path resolution"""
-        # This line is mandatory
+
+    # This line is mandatory
     __test_path__ = os.path.dirname(os.path.abspath(__file__))
 
     def setUp(self):
@@ -39,16 +41,27 @@ class TestVirtualInclude(TestBase):
 
     def test_bazel_plist_path_resolved(self):
         """Test: bazel build :codechecker_virtual_include"""
-        self.check_command("bazel build //test/unit/virtual_include:codechecker_virtual_include", exit_code=0)
-        self.check_command("bazel build //test/unit/virtual_include:code_checker_virtual_include", exit_code=0)
-        plist_files = glob.glob(os.path.join(BAZEL_BIN_DIR, "**", "*.plist"), recursive=True)
+        self.check_command(
+            "bazel build //test/unit/virtual_include:codechecker_virtual_include",
+            exit_code=0,
+        )
+        self.check_command(
+            "bazel build //test/unit/virtual_include:code_checker_virtual_include",
+            exit_code=0,
+        )
+        plist_files = glob.glob(
+            os.path.join(BAZEL_BIN_DIR, "**", "*.plist"), recursive=True
+        )
         self.assertTrue(os.path.isdir(f"{BAZEL_BIN_DIR}/_virtual_includes"))
         for plist_file in plist_files:
             logging.debug(f"Checking file: {plist_file}")
-            with open(plist_file, "r") as f: 
+            with open(plist_file, "r") as f:
                 content = f.read()
                 if re.search(r"/_virtual_includes/", content):
-                    self.fail(f"Found unresolved symlink within CodeChecker report: {plist_file}")
+                    self.fail(
+                        f"Found unresolved symlink within CodeChecker report: {plist_file}"
+                    )
+
 
 if __name__ == "__main__":
-    unittest.main(buffer=True) 
+    unittest.main(buffer=True)
