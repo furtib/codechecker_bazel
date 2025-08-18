@@ -38,6 +38,7 @@ python3 -m unittest discover unit/my_test_dir -vvv
 2. **Creating the BUILD File**
     - Make sure that all failing test targets get the `"manual"` tag. For example:
     ```
+    # This is a test I expect to fail
     codechecker_test(
         name = "codechecker_fail",
         tags = [
@@ -61,6 +62,8 @@ python3 -m unittest discover unit/my_test_dir -vvv
     - Create your test class by extending `TestBase` and implement your test methods.
 > [!WARNING]
 > You should include this line in your test class, this sets the current working directory:
-> `__test_path__ = os.path.dirname(os.path.abspath(__file__))`
+> ```python
+> __test_path__ = os.path.dirname(os.path.abspath(__file__))
+> ```
 
 **For a test template look into unit/template**
