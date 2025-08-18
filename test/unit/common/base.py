@@ -12,7 +12,7 @@ import sys
 class TestBase(unittest.TestCase):
     """Unittest base abstract class"""
     @classmethod
-    def setUpClass(cls):
+    def setUpClass(cls, path : str = None):
         """Load module, save environment"""
         # Enable debug logs for tests if "super verbose" flag is provided
         if "-vvv" in sys.argv:
@@ -23,7 +23,7 @@ class TestBase(unittest.TestCase):
         cls.save_env = os.environ
         cls.save_cwd = os.getcwd()
         # Move to test dir
-        cls.test_dir = os.path.abspath(os.path.dirname(__file__))
+        cls.test_dir = path
         os.chdir(cls.test_dir)
 
     @classmethod
