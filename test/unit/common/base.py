@@ -29,11 +29,31 @@ class TestBase(unittest.TestCase):
     """Unittest base abstract class"""
 
     # This variable must be overwritten in each subclass!
-    __test_path__: str = os.path.abspath(__file__)
+    __test_path__: str = None
+    BAZEL_BIN_DIR: str = None
+    BAZEL_TESTLOGS_DIR: str = None
 
     @classmethod
     def setUpClass(cls):
         """Load module, save environment"""
+        ErrorCollector: list[str] = []
+        if cls.__test_path__ == None:
+            ErrorCollector.append(
+                "Test path must be overwritten! Use:"
+                "\n__test_path__ = os.path.dirname(os.path.abspath(__file__))"
+            )
+        if cls.BAZEL_BIN_DIR == None:
+            ErrorCollector.append(
+                "Bazel bin directory must be overwritten! Use:"
+                "../../../bazel-bin/test/unit/my_test_folder"
+            )
+        if cls.BAZEL_TESTLOGS_DIR == None:
+            ErrorCollector.append(
+                "Bazel test logs directory must be overwritten! Use:"
+                "../../../bazel-testlogs/test/unit/my_test_folder"
+            )
+        if ErrorCollector:
+            raise NotImplementedError("\n".join(ErrorCollector))
         # Enable debug logs for tests if "super verbose" flag is provided
         if "-vvv" in sys.argv:
             logging.basicConfig(
