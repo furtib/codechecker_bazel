@@ -76,8 +76,14 @@ class TestBase(unittest.TestCase):
         """Before every test"""
         logging.debug("\n%s", "-" * 70)
 
-    def check_command(self, cmd, exit_code=0, working_dir=None):
-        """Run shell command and check status."""
+    def run_command(self, cmd, working_dir=None):
+        """
+        Run shell command and check status.
+        returns:
+        - exit code : int
+        - stdout : str
+        - stderr : str
+        """
         logging.debug("Running: %s", cmd)
         commands = shlex.split(cmd)
         with subprocess.Popen(
@@ -88,19 +94,8 @@ class TestBase(unittest.TestCase):
             cwd=working_dir,
         ) as process:
             stdout, stderr = process.communicate()
-            self.assertEqual(
-                process.returncode,
-                exit_code,
-                "\n"
-                + "\n".join(
-                    [
-                        f"command: {cmd}",
-                        f"stdout: {stdout.decode('utf-8')}",
-                        f"stderr: {stderr.decode('utf-8')}",
-                    ]
-                ),
-            )
             return (
+                process.returncode,
                 f"stdout: {stdout.decode('utf-8')}",
                 f"stderr: {stderr.decode('utf-8')}",
             )
