@@ -22,39 +22,40 @@ import unittest
 import glob
 from common.base import TestBase
 
-BAZEL_BIN_DIR = os.path.join(
-    "../../..", "bazel-bin", "test", "unit", "virtual_include"
-)
-BAZEL_TESTLOGS_DIR = os.path.join(
-    "../../..", "bazel-testlogs", "test", "unit", "virtual_include"
-)
-
 
 class TestVirtualInclude(TestBase):
     """Tests checking virtual include path resolution"""
 
     # Set working directory
     __test_path__ = os.path.dirname(os.path.abspath(__file__))
+    BAZEL_BIN_DIR = os.path.join(
+        "../../..", "bazel-bin", "test", "unit", "virtual_include"
+    )
+    BAZEL_TESTLOGS_DIR = os.path.join(
+        "../../..", "bazel-testlogs", "test", "unit", "virtual_include"
+    )
 
     def setUp(self):
         """Before every test: clean Bazel cache"""
         super().setUp()
-        self.check_command("bazel clean")
+        self.run_command("bazel clean")
 
     def test_bazel_plist_path_resolved(self):
         """Test: bazel build :codechecker_virtual_include"""
-        self.check_command(
-            "bazel build //test/unit/virtual_include:codechecker_virtual_include",
-            exit_code=0,
+        ret, _, _ = self.run_command(
+            "bazel build //test/unit/virtual_include:codechecker_virtual_include"
         )
-        self.check_command(
+        self.assertEqual(ret, 0)
+        self.run_command(
             "bazel build //test/unit/virtual_include:code_checker_virtual_include",
-            exit_code=0,
         )
+        self.assertEqual(ret, 0)
         plist_files = glob.glob(
-            os.path.join(BAZEL_BIN_DIR, "**", "*.plist"), recursive=True
+            os.path.join(self.BAZEL_BIN_DIR, "**", "*.plist"), recursive=True
         )
-        self.assertTrue(os.path.isdir(f"{BAZEL_BIN_DIR}/_virtual_includes"))
+        self.assertTrue(
+            os.path.isdir(f"{self.BAZEL_BIN_DIR}/_virtual_includes")
+        )
         for plist_file in plist_files:
             logging.debug(f"Checking file: {plist_file}")
             with open(plist_file, "r") as f:
