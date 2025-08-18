@@ -78,7 +78,7 @@ class TestBase(unittest.TestCase):
 
     def run_command(self, cmd, working_dir=None):
         """
-        Run shell command and check status.
+        Run shell command.
         returns:
         - exit code : int
         - stdout : str
