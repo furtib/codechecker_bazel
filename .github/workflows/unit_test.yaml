@@ -24,7 +24,7 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  rules_test:
+  ubuntu_test:
     name: Unit tests on ubuntu
     runs-on: ubuntu-24.04
 
