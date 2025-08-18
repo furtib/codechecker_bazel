@@ -22,7 +22,9 @@ import unittest
 import glob
 from common.base import TestBase
 
-BAZEL_BIN_DIR = os.path.join("../../..", "bazel-bin", "test", "unit", "virtual_include")
+BAZEL_BIN_DIR = os.path.join(
+    "../../..", "bazel-bin", "test", "unit", "virtual_include"
+)
 BAZEL_TESTLOGS_DIR = os.path.join(
     "../../..", "bazel-testlogs", "test", "unit", "virtual_include"
 )
@@ -31,7 +33,7 @@ BAZEL_TESTLOGS_DIR = os.path.join(
 class TestVirtualInclude(TestBase):
     """Tests checking virtual include path resolution"""
 
-    # This line is mandatory
+    # Set working directory
     __test_path__ = os.path.dirname(os.path.abspath(__file__))
 
     def setUp(self):
