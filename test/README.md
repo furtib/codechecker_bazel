@@ -59,7 +59,8 @@ python3 -m unittest discover unit/my_test_dir -vvv
         from common.base import TestBase
         ```  
     - Create your test class by extending `TestBase` and implement your test methods.
-    > [!WARNING]
-    > You should include this line in your test class, this sets the current working directory: `__test_path__ = os.path.dirname(os.path.abspath(__file__))`
+> [!WARNING]
+> You should include this line in your test class, this sets the current working directory:
+> `__test_path__ = os.path.dirname(os.path.abspath(__file__))`
 
 **For a test template look into unit/template**
