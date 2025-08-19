@@ -306,15 +306,19 @@ def _code_checker_impl(ctx):
         CCACHE_FOUND=$(echo "$CHECKERS" | while read -r line; do
             VERSION=$(echo "$line" | awk '{print $NF}')
             COMPILER_PATH=$(echo "$line" | awk '{print $(NF-1)}')
-            if [[ "$COMPILER_PATH" != "NOT" ]] && [[ -e "$COMPILER_PATH" ]] && \
-            [[ -L "$COMPILER_PATH" ]]; then
-                TARGET=$(readlink "$COMPILER_PATH")
-                if [[ "$(basename "$TARGET")" == "ccache" ]]; then
+            if [[ "$COMPILER_PATH" != "NOT" ]] && [[ -e "$COMPILER_PATH" ]]; then
+            compiler_basename=$(basename "$COMPILER_PATH")
+            if [[ "$compiler_basename" == "clang" ]] || [[ "$compiler_basename" == "gcc" ]]; then
+                # Fails if ccache is not on the system
+                "$COMPILER_PATH" -xc -c - --ccache-skip </dev/null 2>&1
+                if [[ $? -eq 0 ]]; then
                     echo "1"
+                    exit
                 fi
             fi
+            fi
         done)
-        if [[ CCACHE_FOUND -eq 1 ]]; then
+        if [[ $CCACHE_FOUND -eq 1 ]]; then
             echo -e "${RED}${BOLD}ERROR CCACHE FOUND${CLEAR}" >&2
         else
             echo "No ccache found" > $1
