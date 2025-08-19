@@ -27,12 +27,15 @@ import unittest
 class TestBase(unittest.TestCase):
     """Unittest base abstract class"""
 
-    BAZEL_BIN_DIR = os.path.join("..", "bazel-bin", "test")
-    BAZEL_TESTLOGS_DIR = os.path.join("..", "bazel-testlogs", "test")
+    BAZEL_BIN_DIR = os.path.join("..", "..", "..", "bazel-bin", "test", "unit",
+                                 "legacy")
+    BAZEL_TESTLOGS_DIR = os.path.join("..", "..", "..", "bazel-testlogs",
+                                      "test", "unit", "legacy")
 
     @classmethod
     def setUpClass(cls):
         """Load module, save environment"""
+        setup_logging()
         # Save environment and location
         cls.save_env = os.environ
         cls.save_cwd = os.getcwd()
