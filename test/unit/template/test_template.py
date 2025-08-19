@@ -36,6 +36,7 @@ class TestTemplate(TestBase):
     def setUpClass(cls):
         """TODO: Define set up before the test suite"""
         super().setUpClass()
+        cls.run_command("bazel clean")
 
     @final
     @classmethod
@@ -46,7 +47,6 @@ class TestTemplate(TestBase):
     def setUp(self):
         """TODO: Define clean up before every test"""
         super().setUp()
-        self.run_command("bazel clean")
 
     def tearDown(self):
         """TODO: Define clean up after every test"""
