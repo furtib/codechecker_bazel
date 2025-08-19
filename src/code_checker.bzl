@@ -49,8 +49,7 @@ def _run_code_checker(
         options,
         compile_commands_json,
         compilation_context,
-        sources_and_headers,
-        ccache):
+        sources_and_headers):
     # Define Plist and log file names
     data_dir = ctx.attr.name + "/data"
     file_name_params = (data_dir, src.path.replace("/", "-"))
@@ -64,7 +63,6 @@ def _run_code_checker(
     codechecker_log = ctx.actions.declare_file(codechecker_log_file_name)
 
     inputs = [compile_commands_json] + sources_and_headers
-    inputs += [ccache]
     outputs = [clang_tidy_plist, clangsa_plist, codechecker_log]
 
     # Create CodeChecker wrapper script
@@ -299,14 +297,15 @@ def _code_checker_impl(ctx):
         inputs = [],
         outputs = [ccache],
         mnemonic = "CCACHE",
-        command = "if ccache --version; then echo ERROR CCACHE FOUND; else echo no-ccache > ccache.txt; fi",
+        command = "if ccache --version > /dev/null; then echo ERROR CCACHE FOUND; else echo no-ccache > ccache.txt; fi",
         use_default_shell_env = True,
         progress_message = "Check for ccache",
     )
+    all_files = [ccache]
     compile_commands_json = _compile_commands_impl(ctx)
     sources_and_headers = _collect_all_sources_and_headers(ctx)
     options = ctx.attr.default_options + ctx.attr.options
-    all_files = [compile_commands_json]
+    all_files += [compile_commands_json]
     for target in ctx.attr.targets:
         if not CcInfo in target:
             continue
@@ -326,7 +325,6 @@ def _code_checker_impl(ctx):
                         compile_commands_json,
                         compilation_context,
                         sources_and_headers,
-                        ccache
                     )
                     all_files += outputs
     ctx.actions.write(
