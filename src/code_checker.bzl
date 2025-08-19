@@ -297,7 +297,29 @@ def _code_checker_impl(ctx):
         inputs = [],
         outputs = [ccache],
         mnemonic = "CCACHE",
-        command = "if ccache --version > /dev/null; then echo ERROR CCACHE FOUND; else echo no-ccache > ccache.txt; fi",
+        arguments = [ccache.path],
+        command = """
+        RED="\\033[0;31m"
+        BOLD="\\033[1m"
+        CLEAR="\\033[0m"
+        CHECKERS=$(CodeChecker analyzers 2>/dev/null)
+        CCACHE_FOUND=$(echo "$CHECKERS" | while read -r line; do
+            VERSION=$(echo "$line" | awk '{print $NF}')
+            COMPILER_PATH=$(echo "$line" | awk '{print $(NF-1)}')
+            if [[ "$COMPILER_PATH" != "NOT" ]] && [[ -e "$COMPILER_PATH" ]] && \
+            [[ -L "$COMPILER_PATH" ]]; then
+                TARGET=$(readlink "$COMPILER_PATH")
+                if [[ "$(basename "$TARGET")" == "ccache" ]]; then
+                    echo "1"
+                fi
+            fi
+        done)
+        if [[ CCACHE_FOUND -eq 1 ]]; then
+            echo -e "${RED}${BOLD}ERROR CCACHE FOUND${CLEAR}" >&2
+        else
+            echo "No ccache found" > $1
+        fi
+        """,
         use_default_shell_env = True,
         progress_message = "Check for ccache",
     )
