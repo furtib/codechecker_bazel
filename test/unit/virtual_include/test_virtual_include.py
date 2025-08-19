@@ -20,6 +20,7 @@ import os
 import re
 import unittest
 import glob
+from typing import final
 from common.base import TestBase
 
 
@@ -35,10 +36,26 @@ class TestVirtualInclude(TestBase):
         "../../..", "bazel-testlogs", "test", "unit", "virtual_include"
     )
 
+    @final
+    @classmethod
+    def setUpClass(cls):
+        """TODO: Define set up before the test suite"""
+        super().setUpClass()
+        cls.run_command("bazel clean")
+
+    @final
+    @classmethod
+    def tearDownClass(cls):
+        """TODO: Define clean up after the test suite"""
+        super().tearDownClass()
+
     def setUp(self):
-        """Before every test: clean Bazel cache"""
+        """TODO: Define clean up before every test"""
         super().setUp()
-        self.run_command("bazel clean")
+
+    def tearDown(self):
+        """TODO: Define clean up after every test"""
+        return super().tearDown()
 
     def test_bazel_plist_path_resolved(self):
         """Test: bazel build :codechecker_virtual_include"""
@@ -46,7 +63,7 @@ class TestVirtualInclude(TestBase):
             "bazel build //test/unit/virtual_include:codechecker_virtual_include"
         )
         self.assertEqual(ret, 0)
-        self.run_command(
+        ret, _, _ = self.run_command(
             "bazel build //test/unit/virtual_include:code_checker_virtual_include",
         )
         self.assertEqual(ret, 0)
