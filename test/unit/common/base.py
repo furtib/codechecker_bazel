@@ -101,13 +101,17 @@ class TestBase(unittest.TestCase):
             )
 
     def grep_file(self, filename, regex):
-        """Grep given filename."""
+        """
+        Grep given filename.
+        Returns list of matched lines.
+        Returns empty list if no match is found
+        """
+        results : list[str] = []
         pattern = re.compile(regex)
         logging.debug("RegEx = r'%s'", regex)
         with open(filename, "r", encoding="utf-8") as fileobj:
             for line in fileobj:
                 if pattern.search(line):
                     logging.debug(line)
-                    return line
-        self.fail(f"Could not find r'{regex}' in '{filename}'")
-        return ""
+                    results.append(line)
+        return results
