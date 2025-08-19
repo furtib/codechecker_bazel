@@ -35,6 +35,7 @@ class TestBase(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         """Load module, save environment"""
+        setup_logging()
         # Save environment and location
         cls.save_env = os.environ
         cls.save_cwd = os.getcwd()
