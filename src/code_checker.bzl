@@ -310,13 +310,16 @@ def _code_checker_impl(ctx):
             COMPILER_PATH=$(echo "$line" | awk '{print $(NF-1)}')
             if [[ "$COMPILER_PATH" != "NOT" ]] && [[ -e "$COMPILER_PATH" ]]; then
             compiler_basename=$(basename "$COMPILER_PATH")
-            if [[ "$compiler_basename" == "clang" ]] || [[ "$compiler_basename" == "gcc" ]]; then
+            if [[ "$compiler_basename" == *clang* ]] || [[ "$compiler_basename" == *gcc* ]] \
+            || [[ "$compiler_basename" == *g++* ]]; then
+            if [[ "$compiler_basename" != *clang-tidy* ]]; then
                 # Fails if ccache is not on the system
                 "$COMPILER_PATH" -xc -c - --ccache-skip </dev/null 2>&1
                 if [[ $? -eq 0 ]]; then
                     echo "1"
                     exit
                 fi
+            fi
             fi
             fi
         done)
