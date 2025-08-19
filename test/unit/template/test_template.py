@@ -17,6 +17,7 @@ TODO: Describe what this file does
 """
 import os
 import unittest
+from typing import final
 from common.base import TestBase
 
 
@@ -30,10 +31,20 @@ class TestTemplate(TestBase):
     BAZEL_TESTLOGS_DIR = os.path.join("../../..", "bazel-testlogs", "test", 
                                         "unit", "my_test_folder")
 
+    @final
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+
+    @final
+    @classmethod
+    def tearDownClass(cls):
+        super().tearDownClass()
+
     def setUp(self):
         """TODO: Define clean up before every test"""
         super().setUp()
-        self.check_command("bazel clean")
+        self.run_command("bazel clean")
 
     def test_template(self):
         """Test: TODO: describe your test"""
