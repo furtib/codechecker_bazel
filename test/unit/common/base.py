@@ -76,6 +76,7 @@ class TestBase(unittest.TestCase):
         """Before every test"""
         logging.debug("\n%s", "-" * 70)
 
+    @classmethod
     def run_command(self, cmd, working_dir=None):
         """
         Run shell command.
@@ -100,6 +101,7 @@ class TestBase(unittest.TestCase):
                 f"stderr: {stderr.decode('utf-8')}",
             )
 
+    @classmethod
     def grep_file(self, filename, regex):
         """
         Grep given filename.
