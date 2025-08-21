@@ -15,7 +15,6 @@
 # cc_binary for simple C++ tests
 load(
     "@rules_cc//cc:defs.bzl",
-    "cc_binary",
     "cc_library",
 )
 
@@ -42,7 +41,7 @@ cc_library(
 )
 
 # Simplest C++ test which should FAIL
-cc_binary(
+cc_library(
     name = "virtual_include",
     srcs = ["source.cc"],
     deps = ["test_inc"],
