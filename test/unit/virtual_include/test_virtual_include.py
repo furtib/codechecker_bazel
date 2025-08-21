@@ -43,19 +43,6 @@ class TestVirtualInclude(TestBase):
         super().setUpClass()
         cls.run_command("bazel clean")
 
-    @final
-    @classmethod
-    def tearDownClass(cls):
-        """TODO: Define clean up after the test suite"""
-        super().tearDownClass()
-
-    def setUp(self):
-        """TODO: Define clean up before every test"""
-        super().setUp()
-
-    def tearDown(self):
-        """TODO: Define clean up after every test"""
-        return super().tearDown()
 
     def test_bazel_plist_path_resolved(self):
         """Test: bazel build :codechecker_virtual_include"""
