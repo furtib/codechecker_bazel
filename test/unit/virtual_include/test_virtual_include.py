@@ -51,18 +51,43 @@ class TestVirtualInclude(TestBase):
                 result.append(file)
         return result
 
-    def test_bazel_plist_path_resolved(self):
-        """Test: bazel build :codechecker_virtual_include"""
-        ret, _, _ = self.run_command(
-            "bazel build //test/unit/virtual_include:codechecker_virtual_include"
-        )
-        self.assertEqual(ret, 0)
+    def test_bazel_code_checker_plist_path_resolved(self):
+        """Test: bazel build :code_checker_virtual_include"""
         ret, _, _ = self.run_command(
             "bazel build //test/unit/virtual_include:code_checker_virtual_include",
         )
         self.assertEqual(ret, 0)
         plist_files = glob.glob(
-            os.path.join(self.BAZEL_BIN_DIR, "**", "*.plist"), recursive=True
+            os.path.join(
+                self.BAZEL_BIN_DIR,
+                "code_checker_virtual_include",
+                "**",
+                "*.plist",
+            ),
+            recursive=True,
+        )
+        self.assertTrue(
+            os.path.isdir(f"{self.BAZEL_BIN_DIR}/_virtual_includes")
+        )
+        # FIXME: This should be equal
+        self.assertNotEqual(
+            self.contains_in_files(r"/_virtual_includes/", plist_files), []
+        )
+
+    def test_bazel_codechecker_plist_path_resolved(self):
+        """Test: bazel build :codechecker_virtual_include"""
+        ret, _, _ = self.run_command(
+            "bazel build //test/unit/virtual_include:codechecker_virtual_include"
+        )
+        self.assertEqual(ret, 0)
+        plist_files = glob.glob(
+            os.path.join(
+                self.BAZEL_BIN_DIR,
+                "codechecker_virtual_include",
+                "**",
+                "*.plist",
+            ),
+            recursive=True,
         )
         self.assertTrue(
             os.path.isdir(f"{self.BAZEL_BIN_DIR}/_virtual_includes")
