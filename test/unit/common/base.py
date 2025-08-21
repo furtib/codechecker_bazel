@@ -119,13 +119,8 @@ class TestBase(unittest.TestCase):
         return results
     
     @classmethod
-    def contains_regex_in_files(self, regex: str, folder_path: str) -> list[str]:
+    def contains_regex_in_file(self, file_path: str, regex: str) -> bool:
         """
-        Returns a list of files it found your regex in
+        Returns a boolean, whether the specified file contains the regex or not.
         """
-        result = []
-        for file in folder_path:
-            logging.debug(f"Checking file: {file}")
-            if self.grep_file(file, regex):
-                result.append(file)
-        return result
+        return self.grep_file(file_path, regex) != []
