@@ -117,3 +117,15 @@ class TestBase(unittest.TestCase):
                     logging.debug(line)
                     results.append(line)
         return results
+    
+    @classmethod
+    def contains_regex_in_files(self, regex: str, folder_path: str) -> list[str]:
+        """
+        Returns a list of files it found your regex in
+        """
+        result = []
+        for file in folder_path:
+            logging.debug(f"Checking file: {file}")
+            if self.grep_file(file, regex):
+                result.append(file)
+        return result
