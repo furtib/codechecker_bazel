@@ -43,6 +43,13 @@ class TestVirtualInclude(TestBase):
         super().setUpClass()
         cls.run_command("bazel clean")
 
+    def contains_in_files(self, regex, folder_path):
+        result = []
+        for file in folder_path:
+            logging.debug(f"Checking file: {file}")
+            if self.grep_file(file, regex):
+                result.append(file)
+        return result
 
     def test_bazel_plist_path_resolved(self):
         """Test: bazel build :codechecker_virtual_include"""
@@ -60,13 +67,10 @@ class TestVirtualInclude(TestBase):
         self.assertTrue(
             os.path.isdir(f"{self.BAZEL_BIN_DIR}/_virtual_includes")
         )
-        for plist_file in plist_files:
-            logging.debug(f"Checking file: {plist_file}")
-            # FIXME: This shouldn't find anything
-            if len(self.grep_file(plist_file, r"/_virtual_includes/")) < 0:
-                self.fail(
-                    f"Found unresolved symlink within CodeChecker report: {plist_file}"
-                )
+        # FIXME: This should be equal
+        self.assertNotEqual(
+            self.contains_in_files(r"/_virtual_includes/", plist_files), []
+        )
 
 
 if __name__ == "__main__":
