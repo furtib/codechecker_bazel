@@ -39,7 +39,7 @@ class TestVirtualInclude(TestBase):
     @final
     @classmethod
     def setUpClass(cls):
-        """TODO: Define set up before the test suite"""
+        """Set up before the test suite"""
         super().setUpClass()
         cls.run_command("bazel clean")
 
