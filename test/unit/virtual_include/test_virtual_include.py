@@ -20,7 +20,7 @@ rule with the include_prefix or strip_include_prefix. When warnings are found
 in these headers, their paths in the plist files should get resolved to the
 original file path.
 This unittest test whether these paths containing `_virtual_include` have been
-resolved 
+resolved
 """
 import logging
 import os
@@ -77,8 +77,8 @@ class TestVirtualInclude(TestBase):
         self.assertTrue(
             os.path.isdir(f"{self.BAZEL_BIN_DIR}/_virtual_includes")
         )
-        # FIXME: In the postprocessed plists, all _virtual_include paths should've been
-        # removed. Possible fix is in the github PR #14.
+        # FIXME: In the postprocessed plists, all _virtual_include paths 
+        # should've been removed. Possible fix is in the github PR #14.
         self.assertNotEqual(
             self.contains_in_files(r"/_virtual_includes/", plist_files), []
         )
@@ -102,8 +102,8 @@ class TestVirtualInclude(TestBase):
         self.assertTrue(
             os.path.isdir(f"{self.BAZEL_BIN_DIR}/_virtual_includes")
         )
-        # FIXME: In the postprocessed plists, all _virtual_include paths should've been
-        # removed. Possible fix is in the github PR #14.
+        # FIXME: In the postprocessed plists, all _virtual_include paths
+        # should've been removed. Possible fix is in the github PR #14.
         self.assertNotEqual(
             self.contains_in_files(r"/_virtual_includes/", plist_files), []
         )
