@@ -36,7 +36,6 @@ cc_library(
     strip_include_prefix = "inc",
 )
 
-# Simplest C++ test which should FAIL
 cc_library(
     name = "virtual_include",
     srcs = ["source.cc"],
