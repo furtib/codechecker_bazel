@@ -14,8 +14,9 @@
 
 #ifndef ZERODIV_H
 #define ZERODIV_H
-int warnMe(){
-    return 1/0;
+int warnMe(int i){
+    if (i == 0)
+        return 1/i;
 }
 #endif //ZERODIV_H
 

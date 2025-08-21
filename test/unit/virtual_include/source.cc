@@ -15,5 +15,6 @@
 #include "zeroDiv.h"
 
 int main(){
+    warnMe(0);
     return 0;
 }
