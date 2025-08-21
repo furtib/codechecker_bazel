@@ -54,7 +54,7 @@ class TestVirtualInclude(TestBase):
         result = []
         for file in folder_path:
             logging.debug(f"Checking file: {file}")
-            if self.grep_file(file, regex):
+            if self.contains_regex_in_file:
                 result.append(file)
         return result
 
