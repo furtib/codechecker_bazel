@@ -33,8 +33,6 @@ load(
 cc_library(
     name = "test_inc",
     hdrs = glob(["inc/*.h"]),
-    # NOTE: the following is for test purpose only
-    # NOTE: use includes instead of strip_include_prefix
     strip_include_prefix = "inc",
 )
 
