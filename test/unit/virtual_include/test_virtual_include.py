@@ -75,12 +75,10 @@ class TestVirtualInclude(TestBase):
         )
         for plist_file in plist_files:
             logging.debug(f"Checking file: {plist_file}")
-            with open(plist_file, "r") as f:
-                content = f.read()
-                if re.search(r"/_virtual_includes/", content):
-                    self.fail(
-                        f"Found unresolved symlink within CodeChecker report: {plist_file}"
-                    )
+            if self.grep_file(plist_file, r"/_virtual_includes/"):
+                self.fail(
+                    f"Found unresolved symlink within CodeChecker report: {plist_file}"
+                )
 
 
 if __name__ == "__main__":
