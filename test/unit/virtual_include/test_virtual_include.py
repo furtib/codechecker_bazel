@@ -13,7 +13,14 @@
 # limitations under the License.
 
 """
-Unit test for resolving path in all plist files
+We want CodeChecker to point to the original files in its results, this needs
+post processing.
+Bazel creates _virtual_includes folder for headers, declared in a cc_library
+rule with the include_prefix or strip_include_prefix. When warnings are found
+in these headers, their paths in the plist files should get resolved to the
+original file path.
+This unittest test whether these paths containing `_virtual_include` have been
+resolved 
 """
 import logging
 import os
