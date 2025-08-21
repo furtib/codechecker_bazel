@@ -77,13 +77,13 @@ class TestBase(unittest.TestCase):
         logging.debug("\n%s", "-" * 70)
 
     @classmethod
-    def run_command(self, cmd, working_dir=None):
+    def run_command(self, cmd: str, working_dir:str=None) -> tuple[int, str, str]:
         """
         Run shell command.
         returns:
-        - exit code : int
-        - stdout : str
-        - stderr : str
+        - exit code
+        - stdout
+        - stderr
         """
         logging.debug("Running: %s", cmd)
         commands = shlex.split(cmd)
