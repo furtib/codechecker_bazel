@@ -44,7 +44,6 @@ cc_binary(
     ],
 )
 
-# This should find no warnings
 code_checker_test(
     name = "code_checker_caching",
     targets = [
@@ -52,12 +51,10 @@ code_checker_test(
     ],
 )
 
-# This should find an warning 
 code_checker_test(
     name = "code_checker_caching_ctu",
     targets = [
         "primary",
     ],
-    tags = ["manual"],
     options = ["--ctu"],
 )
