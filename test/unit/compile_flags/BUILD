@@ -33,8 +33,6 @@ load(
     "clang_ctu_test",
 )
 
-# Prototype for CodeChecker analyze --file
-# NOTE: CodeChecker analyze --file --ctu does not work
 load(
     "@bazel_codechecker//src:code_checker.bzl",
     "code_checker_test",
