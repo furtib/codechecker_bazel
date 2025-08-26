@@ -50,11 +50,11 @@ class TestVirtualInclude(TestBase):
         super().setUpClass()
         cls.run_command("bazel clean")
 
-    def contains_in_files(self, regex, folder_path):
+    def contains_in_files(self, regex, file_list):
         result = []
-        for file in folder_path:
+        for file in file_list:
             logging.debug(f"Checking file: {file}")
-            if self.contains_regex_in_file:
+            if self.contains_regex_in_file(file, regex):
                 result.append(file)
         return result
 
