@@ -79,7 +79,7 @@ class TestCaching(TestBase):
             stderr.count(f"SUBCOMMAND: # {target} [action 'CodeChecker"), 2
         )
 
-    def test_bazel_test_code_checker_caching(self):
+    def test_bazel_test_code_checker_ctu_caching(self):
         """
         Test whether bazel correctly reanalyses
         the whole project when CTU is enabled
@@ -94,6 +94,8 @@ class TestCaching(TestBase):
             self.fail(f"File not found!")
         ret, _, stderr = self.run_command(f"bazel build {target} --subcommands")
         self.assertEqual(ret, 0)
+        # We expect both files to be reanalyzed, since there is no caching
+        # implemented for CTU analysis
         self.assertEqual(
             stderr.count(f"SUBCOMMAND: # {target} [action 'CodeChecker"), 2
         )
