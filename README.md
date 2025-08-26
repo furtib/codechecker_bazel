@@ -113,6 +113,9 @@ Alternatively follow the official guide at: https://bazel.build/install
 > Don't use ccache! You should disable/remove/uninstall it, as the rules don't support it.
 <!-- TODO When we make a decision on how to handle ccache in #36, expand this section -->
 
+> [!WARNING]
+> When debugging, or reporting a bug, take into consideration which sandbox mode did bazel ran in. Be careful as the default sandbox can change if you ran [Bazel inside Docker](https://bazel.build/versions/6.5.0/docs/sandboxing#:~:text=Both%20the%20linux,run%20%2D%2Dprivileged.).
+
 How to use
 ----------
 
