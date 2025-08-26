@@ -24,6 +24,9 @@ load(
     "code_checker_test",
 )
 
+# We are not interested in finding bugs, we are only interested in whether the
+# analysis re-runs after the files have been modified.
+
 cc_library(
     name = "linking",
     hdrs = ["linking.h"],
