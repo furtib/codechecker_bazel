@@ -50,3 +50,11 @@ code_checker_test(
         "primary",
     ],
 )
+
+code_checker_test(
+    name = "code_checker_caching_ctu",
+    targets = [
+        "primary",
+    ],
+    options = ["--ctu"],
+)

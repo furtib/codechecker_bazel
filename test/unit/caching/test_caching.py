@@ -79,6 +79,25 @@ class TestCaching(TestBase):
             stderr.count(f"SUBCOMMAND: # {target} [action 'CodeChecker"), 2
         )
 
+    def test_bazel_test_code_checker_caching(self):
+        """
+        Test whether bazel correctly reanalyses
+        the whole project when CTU is enabled
+        """
+        target = "//test/unit/caching/tmp:code_checker_caching_ctu"
+        ret, _, _ = self.run_command(f"bazel build {target}")
+        self.assertEqual(ret, 0)
+        try:
+            with open("tmp/secondary.cc", "a", encoding="utf-8") as f:
+                f.write("//test")
+        except FileNotFoundError:
+            self.fail(f"File not found!")
+        ret, _, stderr = self.run_command(f"bazel build {target} --subcommands")
+        self.assertEqual(ret, 0)
+        self.assertEqual(
+            stderr.count(f"SUBCOMMAND: # {target} [action 'CodeChecker"), 2
+        )
+
 
 if __name__ == "__main__":
     unittest.main(buffer=True)
