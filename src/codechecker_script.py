@@ -27,6 +27,19 @@ CODECHECKER_SEVERITIES = "{Severities}"
 CODECHECKER_ENV = "{codechecker_env}"
 COMPILE_COMMANDS = "{compile_commands}"
 
+# Note: unused
+START_PATH = r"\/(?:(?!\.\s+)\S)+"
+BAZEL_PATHS = {
+    r"\/sandbox\/processwrapper-sandbox\/\S*\/execroot\/": "/execroot/",
+    START_PATH + r"\/worker\/build\/[0-9a-fA-F]{16}\/root\/": "",
+    START_PATH + r"\/[0-9a-fA-F]{32}\/execroot\/": "",
+    # Running bazel with --spawn_strategy=processwrapper-sandbox
+    # results in its path being wrongly replaced!
+    # In that case the 1st then 3rd regex will match and leave the path in a
+    # half baked state, this regex just finishes the job
+    r"<string>bazel_codechecker\/": "<string>",
+}
+
 
 def fail(message, exit_code=1):
     """ Print error message and return exit code """
@@ -186,6 +199,26 @@ def analyze():
         fail("Make sure that the target can be built first")
 
 
+def fix_bazel_paths():
+    """ Remove Bazel leading paths in all files """
+    # Note: unused
+    stage("Fix CodeChecker output:")
+    folder = CODECHECKER_FILES
+    logging.info("Fixing Bazel paths in %s", folder)
+    counter = 0
+    for root, _, files in os.walk(folder):
+        for filename in files:
+            fullpath = os.path.join(root, filename)
+            with open(fullpath, "rt") as data_file:
+                data = data_file.read()
+                for pattern, replace in BAZEL_PATHS.items():
+                    data = re.sub(pattern, replace, data)
+            with open(fullpath, "w") as data_file:
+                data_file.write(data)
+            counter += 1
+    logging.info("Fixed Bazel paths in %d files", counter)
+
+
 def realpath(filename):
     """ Return real full absolute path for given filename """
     if os.path.exists(filename):
@@ -263,6 +296,7 @@ def resolve_symlinks():
     logging.info("Processed file paths in %d files", files_processed)
 def update_file_paths():
     """ Fix bazel sandbox paths and resolve symbolic links in generated files to real paths """
+    #fix_bazel_paths() # this is unnecessary
     resolve_symlinks()
 
 
