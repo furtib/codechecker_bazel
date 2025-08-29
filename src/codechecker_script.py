@@ -27,16 +27,17 @@ CODECHECKER_SEVERITIES = "{Severities}"
 CODECHECKER_ENV = "{codechecker_env}"
 COMPILE_COMMANDS = "{compile_commands}"
 
-START_PATH = r"\/(?:(?!\.\s+)\S)+"
 BAZEL_PATHS = {
-    r"\/sandbox\/processwrapper-sandbox\/\S*\/execroot\/": "/execroot/",
-    START_PATH + r"\/worker\/build\/[0-9a-fA-F]{16}\/root\/": "",
-    START_PATH + r"\/[0-9a-fA-F]{32}\/execroot\/": "",
-    # Running bazel with --spawn_strategy=processwrapper-sandbox
-    # results in its path being wrongly replaced!
-    # In that case the 1st then 3rd regex will match and leave the path in a
-    # half baked state, this regex just finishes the job
-    r"<string>bazel_codechecker\/": "<string>",
+    # Running with Build Barn produces path output like:
+    # /worker/build/b301eed7f2bf2fd8/root/local_path.cc
+    # By removing the part until bin we have resolved the path to a local file 
+    r"\/worker\/build\/[a-z0-9]{16}\/root\/": "",
+    # Sometimes the previous part is followed by this, before the local_path:
+    r"bazel-out\/k8-fastbuild\/bin\/": "",
+    # Virtual includes seems to be just a folder between the package and the
+    # folder containing the header files, like this:
+    # /path/to/package/_virtual_include/folder_with_headers/header.h
+    r"\/_virtual_includes\/" : "/",
 }
 
 
