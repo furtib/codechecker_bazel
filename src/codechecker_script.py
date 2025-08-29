@@ -293,9 +293,9 @@ def resolve_symlinks():
             files_processed += 1
     logging.info("Processed file paths in %d files", files_processed)
 def update_file_paths():
-    """ Fix bazel sandbox paths and resolve symbolic links in generated files to real paths """
-    fix_bazel_paths()
+    """ Resolve symlinks from local jobs, then try fixing path from remote executors """
     resolve_symlinks()
+    fix_bazel_paths()
 
 
 def parse():
