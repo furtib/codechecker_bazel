@@ -25,7 +25,8 @@ load(
 )
 
 # We are not interested in finding bugs, we are only interested in whether the
-# analysis re-runs after the files have been modified.
+# analysis re-runs after the files have been modified. As such, these files emit no
+# warnings.
 
 cc_library(
     name = "linking",
