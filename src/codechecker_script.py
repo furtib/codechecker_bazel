@@ -17,7 +17,7 @@ import sys
 
 EXECUTION_MODE = "{Mode}"
 VERBOSITY = "{Verbosity}"
-CODECHECKER_PATH = "{codechecker_bin}"
+CODECHECKER_PATH = "/venv/bin/CodeChecker"
 CODECHECKER_SKIPFILE = "{codechecker_skipfile}"
 CODECHECKER_CONFIG = "{codechecker_config}"
 CODECHECKER_ANALYZE = "{codechecker_analyze}"

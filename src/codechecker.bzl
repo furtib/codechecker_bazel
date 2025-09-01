@@ -170,7 +170,7 @@ def _codechecker_impl(ctx):
         },
     )
 
-    ctx.actions.run(
+    ctx.actions.run_shell(
         inputs = depset(
             [
                 symlink_map,
@@ -179,13 +179,12 @@ def _codechecker_impl(ctx):
         outputs = [
             map_json,
         ],
-        executable = symlink_map,
+        command = "python3 "+ symlink_map.path,
         arguments = [],
         mnemonic = "Mapping",
         progress_message = "Mapping %s" % str(ctx.label),
         execution_requirements = {
-            "no-cache": "1",
-            "local": "1",
+            "no-remote": "1",
         },
         # use_default_shell_env = True,
     )
@@ -229,9 +228,9 @@ def _codechecker_impl(ctx):
         arguments = [],
         mnemonic = "CodeChecker",
         progress_message = "CodeChecker %s" % str(ctx.label),
-        execution_requirements = {
-            "no-remote": "0",
-        }
+        #execution_requirements = {
+        #    "no-remote": "0",
+        #}
         # use_default_shell_env = True,
     )
 
