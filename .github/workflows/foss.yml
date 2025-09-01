@@ -24,11 +24,9 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  # TODO: Move installation of tools to a composite action (or use a docker img)
   # TODO: Generalize to handle multiple projects
   # TODO: Add script to run tests locally
-  # TODO: Document how to add new project to the list.
-  foss_test:
+  foss_ubuntu_test:
     name: "Test rules on FOSS project: yaml-cpp"
     runs-on: ubuntu-24.04
 
@@ -38,6 +36,33 @@ jobs:
 
       - name: Setup environment
         uses: ./.github/platform_environment_setup/ubuntu
+
+      - name: Setup yaml-cpp
+        run:  |
+          cd test/foss/yaml-cpp
+          sh init.sh
+
+      - name: Run Bazel CodeChecker
+        run: |
+          cd test/foss/yaml-cpp/test-proj
+          bazel build :codechecker_test
+
+      - name: Run Per-File Bazel CodeChecker
+        run: |
+          cd test/foss/yaml-cpp/test-proj
+          bazel build :code_checker_test
+
+  foss_rhel_test:
+    name: "Test rules on FOSS project: yaml-cpp"
+    runs-on: ubuntu-24.04
+    container: redhat/ubi9:latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup environment
+        uses: ./.github/platform_environment_setup/rhel9
 
       - name: Setup yaml-cpp
         run:  |
