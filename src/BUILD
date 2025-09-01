@@ -10,6 +10,11 @@ exports_files(
     ["codechecker_script.py"],
 )
 
+# Build & Test script template
+exports_files(
+    ["symlink_map.py"],
+)
+
 # The following are flags and default values for clang_tidy_aspect
 filegroup(
     name = "clang_tidy_config_default",

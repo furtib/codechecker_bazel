@@ -158,6 +158,39 @@ def _codechecker_impl(ctx):
         )
         codechecker_env = ""
 
+    map_json = ctx.actions.declare_file(ctx.label.name + "/symlink_map.json")
+    symlink_map = ctx.actions.declare_file(ctx.label.name + "/symlink_map.py")
+    ctx.actions.expand_template(
+        template = ctx.file._symlink_map_template,
+        output = symlink_map,
+        is_executable = True,
+        substitutions = {
+            "{root}": ".",
+            "{output}": map_json.path,
+        },
+    )
+
+    ctx.actions.run(
+        inputs = depset(
+            [
+                symlink_map,
+            ] + source_files,
+        ),
+        outputs = [
+            map_json,
+        ],
+        executable = symlink_map,
+        arguments = [],
+        mnemonic = "Mapping",
+        progress_message = "Mapping %s" % str(ctx.label),
+        execution_requirements = {
+            "no-cache": "1",
+            "local": "1",
+        },
+        # use_default_shell_env = True,
+    )
+
+
     codechecker_files = ctx.actions.declare_directory(ctx.label.name + "/codechecker-files")
     ctx.actions.expand_template(
         template = ctx.file._codechecker_script_template,
@@ -185,6 +218,7 @@ def _codechecker_impl(ctx):
                 ctx.outputs.codechecker_commands,
                 ctx.outputs.codechecker_skipfile,
                 ctx.outputs.codechecker_config,
+                map_json,
             ] + source_files,
         ),
         outputs = [
@@ -195,6 +229,9 @@ def _codechecker_impl(ctx):
         arguments = [],
         mnemonic = "CodeChecker",
         progress_message = "CodeChecker %s" % str(ctx.label),
+        execution_requirements = {
+            "no-remote": "0",
+        }
         # use_default_shell_env = True,
     )
 
@@ -255,6 +292,10 @@ codechecker = rule(
         ),
         "_codechecker_script_template": attr.label(
             default = ":codechecker_script.py",
+            allow_single_file = True,
+        ),
+        "_symlink_map_template": attr.label(
+            default = ":symlink_map.py",
             allow_single_file = True,
         ),
         "_python_runtime": attr.label(
@@ -342,6 +383,10 @@ _codechecker_test = rule(
         ),
         "_codechecker_script_template": attr.label(
             default = ":codechecker_script.py",
+            allow_single_file = True,
+        ),
+        "_symlink_map_template": attr.label(
+            default = ":symlink_map.py",
             allow_single_file = True,
         ),
         "_python_runtime": attr.label(
