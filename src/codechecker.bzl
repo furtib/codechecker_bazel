@@ -250,7 +250,7 @@ codechecker = rule(
         "_compile_commands_filter": attr.label(
             allow_files = True,
             executable = True,
-            cfg = "host",
+            cfg = "exec",
             default = ":compile_commands_filter",
         ),
         "_codechecker_script_template": attr.label(
@@ -337,7 +337,7 @@ _codechecker_test = rule(
         "_compile_commands_filter": attr.label(
             allow_files = True,
             executable = True,
-            cfg = "host",
+            cfg = "exec",
             default = ":compile_commands_filter",
         ),
         "_codechecker_script_template": attr.label(
