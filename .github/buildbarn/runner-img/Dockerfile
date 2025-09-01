@@ -23,6 +23,13 @@ RUN apt update && apt install -y \
     unzip && \
     rm -rf /var/lib/apt/lists/*
 
+RUN update-alternatives --install \
+    /usr/bin/clang-extdef-mapping \
+    clang-extdef-mapping \
+    /usr/bin/clang-extdef-mapping-$(clang --version | head -n 1 | \
+    sed -E 's/.*version ([0-9]+)\..*/\1/') \
+    100
+
 # Setup python virtual enviroments
 RUN python3 -m venv /venv
 
