@@ -177,6 +177,27 @@ def _codechecker_impl(ctx):
             "{codechecker_env}": codechecker_env,
         },
     )
+    codechecker_files2 = ctx.actions.declare_directory(ctx.label.name + "/codechecker-files2")
+    resolve_script = ctx.actions.declare_file(ctx.label.name + "/resolve_script.py")
+    ctx.actions.expand_template(
+        template = ctx.file._resolve_path_script,
+        output = resolve_script,
+        is_executable = True,
+        substitutions = {
+            "{Mode}": "Run",
+            "{Verbosity}": "DEBUG",
+            "{PythonPath}": python_path,
+            "{codechecker_bin}": CODECHECKER_BIN_PATH,
+            "{compile_commands}": ctx.outputs.codechecker_commands.path,
+            "{codechecker_skipfile}": ctx.outputs.codechecker_skipfile.path,
+            "{codechecker_config}": ctx.outputs.codechecker_config.path,
+            "{codechecker_analyze}": " ".join(ctx.attr.analyze),
+            "{codechecker_files}": codechecker_files2.path,
+            "{codechecker_old_files}": codechecker_files.path,
+            "{codechecker_log}": ctx.outputs.codechecker_log.path,
+            "{codechecker_env}": codechecker_env,
+        },
+    )
 
     ctx.actions.run(
         inputs = depset(
@@ -198,6 +219,32 @@ def _codechecker_impl(ctx):
         # use_default_shell_env = True,
     )
 
+    ctx.actions.run(
+        inputs = depset(
+            [
+                resolve_script,
+                codechecker_files,
+                ctx.outputs.codechecker_commands,
+                ctx.outputs.codechecker_skipfile,
+                ctx.outputs.codechecker_config,
+            ] + source_files,
+        ),
+        outputs = [
+            codechecker_files2
+        ],
+        executable = resolve_script,
+        arguments = [],
+        mnemonic = "CodeCheckerpathfix",
+        progress_message = "CodeChecker %s" % str(ctx.label),
+        # Tags should work for newer bazel versions
+        #tags = ["no-cache", "no-remote-exec"],
+        execution_requirements = {
+            "no-cache": "1",
+            "local": "1",
+        },
+        # use_default_shell_env = True,
+    )
+
     # List all files required at build and run (test) time
     all_files = [
         ctx.outputs.compile_commands,
@@ -212,6 +259,7 @@ def _codechecker_impl(ctx):
     # List files required for test
     run_files = [
         codechecker_files,
+        codechecker_files2,
     ] + source_files
 
     # Return all files
@@ -255,6 +303,10 @@ codechecker = rule(
         ),
         "_codechecker_script_template": attr.label(
             default = ":codechecker_script.py",
+            allow_single_file = True,
+        ),
+        "_resolve_path_script": attr.label(
+            default = ":resolve_script.py",
             allow_single_file = True,
         ),
         "_python_runtime": attr.label(
@@ -342,6 +394,10 @@ _codechecker_test = rule(
         ),
         "_codechecker_script_template": attr.label(
             default = ":codechecker_script.py",
+            allow_single_file = True,
+        ),
+        "_resolve_path_script": attr.label(
+            default = ":resolve_script.py",
             allow_single_file = True,
         ),
         "_python_runtime": attr.label(

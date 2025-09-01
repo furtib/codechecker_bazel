@@ -9,6 +9,9 @@ py_binary(
 exports_files(
     ["codechecker_script.py"],
 )
+exports_files(
+    ["resolve_script.py"],
+)
 
 # The following are flags and default values for clang_tidy_aspect
 filegroup(
