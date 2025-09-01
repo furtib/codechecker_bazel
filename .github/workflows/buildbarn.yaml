@@ -51,8 +51,11 @@ jobs:
         run: |
           cat .github/buildbarn/.bazelrc.template >> .bazelrc
 
+      - name: Run single Bazel tests
+        run: bazel build //test/unit/legacy:codechecker_pass
+      
       - name: Run Bazel tests
-        run: bazel test //... \
+        run: bazel test //...
       
       - name: Run unit tests
         run: |
