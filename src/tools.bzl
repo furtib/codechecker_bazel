@@ -82,6 +82,10 @@ def _codechecker_local_repository_impl(repository_ctx):
     if not codechecker_bin_path:
         fail("ERROR! CodeChecker is not detected")
 
+    ccache_bin_path = repository_ctx.which("ccache")
+    if ccache_bin_path:
+        fail("ERROR! ccache is detected")
+
     defs = "CODECHECKER_BIN_PATH = '{}'\n".format(codechecker_bin_path)
     repository_ctx.file(
         repository_ctx.path("defs.bzl"),
