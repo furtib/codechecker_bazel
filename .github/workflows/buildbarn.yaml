@@ -40,6 +40,16 @@ jobs:
         with:
           version: latest
 
+      - name: Cache Docker layers
+        id: cache-docker-layers
+        uses: actions/cache@v4
+        with:
+          path: /var/lib/docker
+          # Update the hashFiles function with the correct path
+          key: ${{ runner.os }}-docker-compose-${{ hashFiles('.github/buildbarn/docker-compose.yml') }}
+          restore-keys: |
+            ${{ runner.os }}-docker-compose-
+
       - name: Setup BuildBarn
         working-directory: .github/buildbarn
         run: |
