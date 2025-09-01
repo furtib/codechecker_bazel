@@ -77,7 +77,7 @@ def _copy_config_to_default(config_file, ctx):
         outputs = [ctx.outputs.codechecker_config],
         mnemonic = "CopyFile",
         progress_message = "Copying CodeChecker config file",
-        executable = "cp",
+        executable = "/usr/bin/cp",
         arguments = [
             config_file.path,
             ctx.outputs.codechecker_config.path,
@@ -199,7 +199,7 @@ def _codechecker_impl(ctx):
         arguments = [],
         mnemonic = "CodeChecker",
         progress_message = "CodeChecker %s" % str(ctx.label),
-        # use_default_shell_env = True,
+        use_default_shell_env = True,
     )
 
     # List all files required at build and run (test) time
