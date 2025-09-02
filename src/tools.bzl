@@ -84,7 +84,18 @@ def _codechecker_local_repository_impl(repository_ctx):
 
     ccache_bin_path = repository_ctx.which("ccache")
     if ccache_bin_path:
-        fail("ERROR! ccache is detected")
+        gcc_bin_path = repository_ctx.which("gcc")
+        clang_bin_path = repository_ctx.which("clang")
+        readlink_bin_path = repository_ctx.which("readlink")
+        if readlink_bin_path:
+            gcc_bin_real = repository_ctc.execute(
+                [readlink_bin_path, "-f", gcc_bin_path]
+                )
+            clang_bin_real = repository_ctc.execute(
+                [readlink_bin_path, "-f", clang_bin_path]
+                )
+            if gcc_bin_real == ccache_bin_path or clang_bin_real == ccache_bin_path:
+                fail("ERROR! ccache is detected!")
 
     defs = "CODECHECKER_BIN_PATH = '{}'\n".format(codechecker_bin_path)
     repository_ctx.file(
