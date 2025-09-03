@@ -82,6 +82,9 @@ def _codechecker_local_repository_impl(repository_ctx):
     if not codechecker_bin_path:
         fail("ERROR! CodeChecker is not detected")
 
+    # In future versions use repository_ctx.getenv()
+    ccache_disable = repository_ctx.os.environ.get("CCACHE_DISABLE", 0)
+
     analyzers = repository_ctx.execute([codechecker_bin_path, "analyzers"])
 
     parsed_analyzers = []
@@ -107,10 +110,11 @@ def _codechecker_local_repository_impl(repository_ctx):
         realpath = repository_ctx.execute(
             [readlink_bin, "-f", item["path"]]
             ).stdout
-        if realpath.strip() == str(ccache_bin_path):
+        if realpath.strip() == str(ccache_bin_path) and ccache_disable != "1":
             fail("ERROR! ccache detected")
 
-    defs = "CODECHECKER_BIN_PATH = '{}'\n".format(codechecker_bin_path)
+    defs = "CODECHECKER_BIN_PATH = '{}'\n".format(codechecker_bin_path) + \
+        "CCACHE_DISABLE = '{}'\n".format(ccache_disable)
     repository_ctx.file(
         repository_ctx.path("defs.bzl"),
         content = defs,
