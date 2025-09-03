@@ -71,36 +71,6 @@ def register_default_python_toolchain():
     default_python_tools(name = "default_python_tools")
     native.register_toolchains("@default_python_tools//:python_toolchain")
 
-def parse_tool_output(output):
-    """
-    Parses a string of tool output and returns a dictionary.
-
-    Args:
-        output (str): The string output to parse. Each line should contain
-                      a tool name, its path (if found), and its version.
-
-    Returns:
-        dict: A dictionary where keys are tool names and values are dictionaries
-              containing 'path' and 'version'. If a tool is 'NOT FOUND', the
-              value is a dictionary with 'path' and 'version' both set to None.
-    """
-    parsed_data = []
-    lines = output.strip().split('\n')
-    for line in lines:
-        parts_dirty = line.split(" ")
-        parts = []
-        for fragment in parts_dirty:
-            if fragment != "":
-                parts.append(fragment)
-        tool_name = parts[0]
-        if 'NOT' not in parts:
-            path = parts[1]
-            version = parts[2]
-            parsed_data.append(
-                {'tool_name': tool_name, 'path': path, 'version': version}
-                )
-    return parsed_data
-
 def _codechecker_local_repository_impl(repository_ctx):
     repository_ctx.file(
         repository_ctx.path("BUILD"),
@@ -114,7 +84,22 @@ def _codechecker_local_repository_impl(repository_ctx):
 
     analyzers = repository_ctx.execute([codechecker_bin_path, "analyzers"])
 
-    parsed_analyzers = parse_tool_output(analyzers.stdout)
+    parsed_analyzers = []
+
+    lines = analyzers.stdout.strip().split('\n')
+    for line in lines:
+        parts_dirty = line.split(" ")
+        parts = []
+        for fragment in parts_dirty:
+            if fragment != "":
+                parts.append(fragment)
+        tool_name = parts[0]
+        if 'NOT' not in parts:
+            path = parts[1]
+            version = parts[2]
+            parsed_analyzers.append(
+                {'tool_name': tool_name, 'path': path, 'version': version}
+                )
 
     ccache_bin_path = repository_ctx.which("ccache")
     readlink_bin = repository_ctx.which("readlink")
