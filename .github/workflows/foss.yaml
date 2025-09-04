@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-name: codechecker-bazel-unit-tests
+name: codechecker-bazel-foss-tests
 
 # Triggers the workflow on push or pull request events.
 on: [push, pull_request]
@@ -24,8 +24,10 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  ubuntu_test:
-    name: Unit tests on ubuntu
+  # TODO: Generalize to handle multiple projects
+  # TODO: Add script to run tests locally
+  foss_ubuntu_test:
+    name: "Test rules on FOSS project: yaml-cpp"
     runs-on: ubuntu-24.04
 
     steps:
@@ -35,22 +37,23 @@ jobs:
       - name: Setup environment
         uses: ./.github/platform_environment_setup/ubuntu
 
-      - name: Print versions
-        run: |
-          bazel version
-          CodeChecker version
-          echo "[NOTE]: CodeChecker may find different analyzer binaries" \
-               "when invoking directly, or in bazel's sandbox environment!" \
-               "Be sure to double check during debugging."
-          CodeChecker analyzers
+      - name: Setup yaml-cpp
+        run:  |
+          cd test/foss/yaml-cpp
+          sh init.sh
 
-      - name: Run tests
+      - name: Run Bazel CodeChecker
         run: |
-          cd test
-          python3 -m unittest discover unit -vvv
+          cd test/foss/yaml-cpp/test-proj
+          bazel build :codechecker_test
 
-  rhel9_test:
-    name: Unit tests on RHEL9
+      - name: Run Per-File Bazel CodeChecker
+        run: |
+          cd test/foss/yaml-cpp/test-proj
+          bazel build :code_checker_test
+
+  foss_rhel_test:
+    name: "Test rules on FOSS project: yaml-cpp"
     runs-on: ubuntu-24.04
     container: redhat/ubi9:latest
 
@@ -61,16 +64,17 @@ jobs:
       - name: Setup environment
         uses: ./.github/platform_environment_setup/rhel9
 
-      - name: Print versions
-        run: |
-          bazel version
-          CodeChecker version
-          echo "[NOTE]: CodeChecker may find different analyzer binaries" \
-               "when invoking directly, or in bazel's sandbox environment!" \
-               "Be sure to double check during debugging."
-          CodeChecker analyzers
+      - name: Setup yaml-cpp
+        run:  |
+          cd test/foss/yaml-cpp
+          sh init.sh
 
-      - name: Run tests
+      - name: Run Bazel CodeChecker
         run: |
-          cd test
-          python3 -m unittest discover unit -vvv
+          cd test/foss/yaml-cpp/test-proj
+          bazel build :codechecker_test
+
+      - name: Run Per-File Bazel CodeChecker
+        run: |
+          cd test/foss/yaml-cpp/test-proj
+          bazel build :code_checker_test
