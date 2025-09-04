@@ -48,7 +48,7 @@ jobs:
           # Update the hashFiles function with the correct path
           key: ${{ runner.os }}-docker-compose-${{ hashFiles('.github/buildbarn/docker-compose.yml') }}
           restore-keys: |
-            ${{ runner.os }}-docker-compose-
+            ${{ runner.os }}-docker-compose-${{ hashFiles('.github/buildbarn/docker-compose.yml') }}
 
       - name: Pre-pull images
         working-directory: .github/buildbarn
