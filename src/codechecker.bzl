@@ -115,7 +115,7 @@ def _codechecker_impl(ctx):
         ],
         mnemonic = "CodeCheckerConvertFlaccToClang",
         progress_message = "Filtering %s" % str(ctx.label),
-        use_default_shell_env = True,
+        #use_default_shell_env = True,
     )
 
     # Create CodeChecker skip (ignore) file
