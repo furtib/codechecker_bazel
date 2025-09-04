@@ -40,6 +40,10 @@ jobs:
         with:
           version: latest
 
+      - name: Pre-pull images
+        working-directory: .github/buildbarn
+        run: docker compose pull
+
       - name: Setup BuildBarn
         working-directory: .github/buildbarn
         run: |
