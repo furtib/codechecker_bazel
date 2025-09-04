@@ -103,12 +103,12 @@ def _codechecker_impl(ctx):
     ctx.actions.run(
         inputs = [ctx.outputs.compile_commands],
         outputs = [ctx.outputs.codechecker_commands],
-        executable = ctx.executable._compile_commands_filter,
-        arguments = [
-            # "-v",  # -vv for debug
-            "--input=" + ctx.outputs.compile_commands.path,
-            "--output=" + ctx.outputs.codechecker_commands.path,
-        ],
+        command = "/usr/bin/python3 {} --input={} --output={}".format(
+            #ctx.file._compile_commands_filter.dirname,
+            ctx.file._compile_commands_filter.path,
+            ctx.outputs.compile_commands.path,
+            ctx.outputs.codechecker_commands.path,
+        ),
         mnemonic = "CodeCheckerConvertFlaccToClang",
         progress_message = "Filtering %s" % str(ctx.label),
         use_default_shell_env = True,
@@ -247,11 +247,15 @@ codechecker = rule(
             default = [],
             doc = "List of analyze command arguments, e.g.; --ctu.",
         ),
+        #"_compile_commands_filter": attr.label(
+        #    allow_files = True,
+        #    executable = True,
+        #    cfg = "exec",
+        #    default = ":compile_commands_filter",
+        #),
         "_compile_commands_filter": attr.label(
-            allow_files = True,
-            executable = True,
-            cfg = "exec",
-            default = ":compile_commands_filter",
+            default = ":compile_commands_filter.py",
+            allow_single_file = True,
         ),
         "_codechecker_script_template": attr.label(
             default = ":codechecker_script.py",
@@ -334,11 +338,15 @@ _codechecker_test = rule(
             default = "@bazel_tools//tools/whitelists/function_transition_whitelist",
             doc = "needed for transitions",
         ),
+        #"_compile_commands_filter": attr.label(
+        #    allow_files = True,
+        #    executable = True,
+        #    cfg = "exec",
+        #    default = ":compile_commands_filter",
+        #),
         "_compile_commands_filter": attr.label(
-            allow_files = True,
-            executable = True,
-            cfg = "exec",
-            default = ":compile_commands_filter",
+            default = ":compile_commands_filter.py",
+            allow_single_file = True,
         ),
         "_codechecker_script_template": attr.label(
             default = ":codechecker_script.py",
