@@ -50,6 +50,10 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-docker-compose-
 
+      - name: Pre-pull images
+        working-directory: .github/buildbarn
+        run: docker compose pull
+
       - name: Setup BuildBarn
         working-directory: .github/buildbarn
         run: |
