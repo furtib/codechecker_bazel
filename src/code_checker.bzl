@@ -41,6 +41,21 @@ cp $DATA_DIR/*_clangsa_*.plist    $CLANGSA_PLIST
 
 """
 
+def _get_analyzers(options):
+    pattern = r"--analyzers"
+    analyzers_raw_string = ""
+    for s in options:
+        if s.startswith(pattern):
+            analyzers_raw_string = s
+            break
+    if analyzers_raw_string == "":
+        return []
+    analyzers = []
+    analyzers_raw_string = analyzers_raw_string.removeprefix("--analyzers")
+    analyzers = analyzers_raw_string.strip("= ").split(" ")
+    return analyzers
+    
+
 def _run_code_checker(
         ctx,
         src,
@@ -53,17 +68,27 @@ def _run_code_checker(
     # Define Plist and log file names
     data_dir = ctx.attr.name + "/data"
     file_name_params = (data_dir, src.path.replace("/", "-"))
+    analyzers = _get_analyzers(options)
     clang_tidy_plist_file_name = "{}/{}_clang-tidy.plist".format(*file_name_params)
     clangsa_plist_file_name = "{}/{}_clangsa.plist".format(*file_name_params)
+    cppcheck_plist_file_name = "{}/{}_cppcheck.plist".format(*file_name_params)
     codechecker_log_file_name = "{}/{}_codechecker.log".format(*file_name_params)
 
     # Declare output files
-    clang_tidy_plist = ctx.actions.declare_file(clang_tidy_plist_file_name)
-    clangsa_plist = ctx.actions.declare_file(clangsa_plist_file_name)
     codechecker_log = ctx.actions.declare_file(codechecker_log_file_name)
 
     inputs = [compile_commands_json] + sources_and_headers
-    outputs = [clang_tidy_plist, clangsa_plist, codechecker_log]
+    outputs = [codechecker_log]
+
+    if "clangsa" in analyzers:
+        clangsa_plist = ctx.actions.declare_file(clangsa_plist_file_name)
+        outputs.append(clangsa_plist)
+    if "clang-tidy" in analyzers:
+        clang_tidy_plist = ctx.actions.declare_file(clang_tidy_plist_file_name)
+        outputs.append(clang_tidy_plist)
+    if "cppcheck" in analyzers:
+        cppcheck_plist = ctx.actions.declare_file(cppcheck_plist_file_name)
+        outputs.append(cppcheck_plist)
 
     # Create CodeChecker wrapper script
     wrapper = ctx.actions.declare_file(ctx.attr.name + "/code_checker.sh")
