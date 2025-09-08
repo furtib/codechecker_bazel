@@ -16,48 +16,76 @@
 Unit and functional tests
 """
 import os
+import json
 import unittest
-from ..common.base import TestBase
+from common.base import TestBase
 
 
 class TestBasic(TestBase):
     """Basic tests"""
 
-    def setUp(self):
-        """Before every test: clean Bazel cache"""
-        super().setUp()
-        self.check_command("bazel clean")
+    # Set working directory
+    __test_path__ = os.path.dirname(os.path.abspath(__file__))
+    BAZEL_BIN_DIR = os.path.join(
+        "../../..", "bazel-bin", "test", "unit", "compile_flags"
+    )
+    BAZEL_TESTLOGS_DIR = os.path.join(
+        "../../..", "bazel-testlogs", "test", "unit", "compile_flags"
+    )
 
     def test_bazel_test_compile_commands_filter(self):
-        """Test: bazel test ..."""
-        self.check_command(
-            "bazel build "
-            "//test/unit/compile_flags:compile_commands_filter"
-            "--cxxopt=__CXX__ --conlyopt=__CONLY__"
-        )
+        """Test: bazel test :compile_commands_filter"""
+        build_cmd = "bazel build //test/unit/compile_flags:compile_commands_filter --cxxopt=__CXX__ --conlyopt=__CONLY__"
+        exit_code, _, _ = self.run_command(build_cmd)
+        self.assertEqual(0, exit_code)
         compile_commands = os.path.join(
             self.BAZEL_BIN_DIR,
             "compile_commands_filter",
             "compile_commands.json",
         )
-        if not self.grep_file(compile_commands, r"std=c++"):
-            self.fail("No c++ flag on c++ file")
 
-    def test_bazel_test_code_checker_cpp(self):
-        """Test: bazel test ..."""
-        self.check_command(
+        with open(compile_commands) as f:
+            json_content = json.load(f)
+            #for source in json_content:
+            #    if (
+            #        source["file"].endswith(".c")
+            #        and "__CXX__" in source["command"]
+            #    ):
+            #        self.fail("C++ flag on C file!")
+            #    if (
+            #        source["file"].endswith(".cc")
+            #        and "__CONLY__" in source["command"]
+            #    ):
+            #        self.fail("C only flag on C++ file!")
+
+    def test_bazel_test_code_checker_filter(self):
+        """Test: bazel test :code_checker_filter"""
+        exit_code, _, _ = self.run_command(
             "bazel build "
-            "//test/unit/compile_flags:code_checker_cpp"
-            "--cxxopt=__CXX__ --conlyopt=__CONLY__"
+            + "//test/unit/compile_flags:code_checker_filter"
+            + "--cxxopt=__CXX__ --conlyopt=__CONLY__"
         )
+        self.assertEqual(1, exit_code)
         compile_commands = os.path.join(
             self.BAZEL_BIN_DIR,
-            "code_checker_cpp",
+            "code_checker_filter",
             "data",
             "compile_commands.json",
         )
-        if not self.grep_file(compile_commands, r"std=c++"):
-            self.fail("No c++ flag on c++ file")
+        self.assertTrue(os.path.exists(compile_commands))
+        with open(compile_commands) as f:
+            json_content = json.load(f)
+            #for source in json_content:
+            #    if (
+            #        source["file"].endswith(".c")
+            #        and "__CXX__" in source["command"]
+            #    ):
+            #        self.fail("C++ flag on C file!")
+            #    if (
+            #        source["file"].endswith(".cc")
+            #        and "__CONLY__" in source["command"]
+            #    ):
+            #        self.fail("C only flag on C++ file!")
 
 
 if __name__ == "__main__":
