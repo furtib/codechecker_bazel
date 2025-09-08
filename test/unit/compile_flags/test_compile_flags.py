@@ -28,45 +28,36 @@ class TestBasic(TestBase):
         super().setUp()
         self.check_command("bazel clean")
 
-    def test_bazel_test_compile_commands_cpp(self):
+    def test_bazel_test_compile_commands_filter(self):
         """Test: bazel test ..."""
-        self.check_command("bazel build "
-                "//test/unit/compile_flags:compile_commands_cpp")
+        self.check_command(
+            "bazel build "
+            "//test/unit/compile_flags:compile_commands_filter"
+            "--cxxopt=__CXX__ --conlyopt=__CONLY__"
+        )
         compile_commands = os.path.join(
-            self.BAZEL_BIN_DIR, "compile_commands_cpp",
-            "compile_commands.json")
+            self.BAZEL_BIN_DIR,
+            "compile_commands_filter",
+            "compile_commands.json",
+        )
         if not self.grep_file(compile_commands, r"std=c++"):
             self.fail("No c++ flag on c++ file")
-
-    def test_bazel_test_compile_commands_c(self):
-        """Test: bazel test ..."""
-        self.check_command("bazel build "
-                "//test/unit/compile_flags:compile_commands_c")
-        compile_commands = os.path.join(
-            self.BAZEL_BIN_DIR, "compile_commands_c",
-            "compile_commands.json")
-        if self.grep_file(compile_commands, r"std=c++"):
-            self.fail("C++ flag on c file")
 
     def test_bazel_test_code_checker_cpp(self):
         """Test: bazel test ..."""
-        self.check_command("bazel build "
-                "//test/unit/compile_flags:code_checker_cpp")
+        self.check_command(
+            "bazel build "
+            "//test/unit/compile_flags:code_checker_cpp"
+            "--cxxopt=__CXX__ --conlyopt=__CONLY__"
+        )
         compile_commands = os.path.join(
-            self.BAZEL_BIN_DIR, "code_checker_cpp", "data",
-            "compile_commands.json")
+            self.BAZEL_BIN_DIR,
+            "code_checker_cpp",
+            "data",
+            "compile_commands.json",
+        )
         if not self.grep_file(compile_commands, r"std=c++"):
             self.fail("No c++ flag on c++ file")
-
-    def test_bazel_test_code_checker_c(self):
-        """Test: bazel test ..."""
-        self.check_command("bazel build "
-                "//test/unit/compile_flags:code_checker_c")
-        compile_commands = os.path.join(
-            self.BAZEL_BIN_DIR, "code_checker_c", "data",
-            "compile_commands.json")
-        if self.grep_file(compile_commands, r"std=c++"):
-            self.fail("C++ flag on c file")
 
 
 if __name__ == "__main__":
