@@ -35,7 +35,9 @@ class TestBasic(TestBase):
 
     def test_bazel_test_compile_commands_filter(self):
         """Test: bazel test :compile_commands_filter"""
-        build_cmd = "bazel build //test/unit/compile_flags:compile_commands_filter --cxxopt=__CXX__ --conlyopt=__CONLY__"
+        build_cmd = "bazel build " + \
+            "//test/unit/compile_flags:compile_commands_filter " + \
+            "--cxxopt=__CXX__ --conlyopt=__CONLY__"
         exit_code, _, _ = self.run_command(build_cmd)
         self.assertEqual(0, exit_code)
         compile_commands = os.path.join(
@@ -60,10 +62,11 @@ class TestBasic(TestBase):
 
     def test_bazel_test_code_checker_filter(self):
         """Test: bazel test :code_checker_filter"""
+        build_cmd = "bazel build " + \
+            "//test/unit/compile_flags:code_checker_filter " + \
+            "--cxxopt=__CXX__ --conlyopt=__CONLY__"
         exit_code, _, _ = self.run_command(
-            "bazel build "
-            + "//test/unit/compile_flags:code_checker_filter"
-            + "--cxxopt=__CXX__ --conlyopt=__CONLY__"
+            build_cmd
         )
         self.assertEqual(1, exit_code)
         compile_commands = os.path.join(
