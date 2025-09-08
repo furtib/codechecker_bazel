@@ -20,6 +20,8 @@ import json
 import unittest
 from common.base import TestBase
 
+# The documentation for the build command can be found here:
+# https://bazel.build/docs/user-manual#cconlyopt
 
 class TestBasic(TestBase):
     """Basic tests"""
