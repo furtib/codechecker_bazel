@@ -38,47 +38,22 @@ load(
     "code_checker_test",
 )
 
-# TODO: Apply custom cxx and conly flags to targets!
-# may need to use toolchain or possibly:
-# https://bazel.build/versions/7.6.0/rules/lib/toplevel/cc_common#compile)
-# Note: The site changes a lot in version 6.5.0 (no flags I need)
-
 cc_library(
-    name = "c_target_with_cpp_flags",
-    srcs = ["cpp_flags.c"],
-    tags = ["manual"],
-)
-
-cc_library(
-    name = "cpp_target_with_c_flags",
-    srcs = ["c_flags.cc"],
+    name = "target_with_both_extension",
+    srcs = ["simple.c", "simple.cc"],
     tags = ["manual"],
 )
 
 compile_commands(
-    name = "compile_commands_c",
+    name = "compile_commands_filter",
     targets = [
-        ":c_target_with_cpp_flags",
-    ],
-)
-
-compile_commands(
-    name = "compile_commands_cpp",
-    targets = [
-        ":cpp_target_with_c_flags",
+        ":target_with_both_extension",
     ],
 )
 
 code_checker_test(
-    name = "code_checker_cpp",
+    name = "code_checker_filter",
     targets = [
-        "cpp_target_with_c_flags",
-    ],
-)
-
-code_checker_test(
-    name = "code_checker_c",
-    targets = [
-        "c_target_with_cpp_flags",
+        "target_with_both_extension",
     ],
 )
