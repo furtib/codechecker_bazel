@@ -26,7 +26,7 @@ concurrency:
 jobs:
   # TODO: Parallelize the running of projects
   foss_ubuntu_test:
-    name: "Test rules on FOSS project: yaml-cpp"
+    name: "Test rules on FOSS projects (ubuntu)"
     runs-on: ubuntu-24.04
 
     steps:
@@ -44,7 +44,7 @@ jobs:
         run: pytest . -v
 
   foss_rhel_test:
-    name: "Test rules on FOSS project: yaml-cpp"
+    name: "Test rules on FOSS projects (RHEL)"
     runs-on: ubuntu-24.04
     container: redhat/ubi9:latest
 
