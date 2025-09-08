@@ -20,7 +20,6 @@ import unittest
 import os
 
 ROOT_DIR = "./"
-
 NOT_PROJECT_FOLDERS = ["templates", "__pycache__", ".pytest_cache"]
 
 
@@ -37,6 +36,9 @@ PROJECT_DIRS = get_dynamic_test_dirs()
 
 
 # This will contain the generated tests.
+# I have not used the common lib from unit test, because it would
+# greatly increase the difficulty of the implementation, and this way the
+# two test aren't bound to each other
 class DynamicFOSSTest(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
@@ -76,6 +78,7 @@ class DynamicFOSSTest(unittest.TestCase):
 
 
 # Dynamically add a test method for each project
+# For each project directory it adds a new test function to the class
 for dir_name in PROJECT_DIRS:
 
     def create_test_method(directory_name):
