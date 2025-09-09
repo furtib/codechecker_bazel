@@ -18,6 +18,7 @@ import subprocess
 import sys
 import unittest
 import os
+from types import FunctionType
 
 ROOT_DIR = f"{os.path.dirname(os.path.abspath(__file__))}/"
 NOT_PROJECT_FOLDERS = ["templates", "__pycache__", ".pytest_cache"]
@@ -80,36 +81,38 @@ class FOSSTestCollector(unittest.TestCase):
                 f"stderr: {stderr.decode('utf-8')}",
             )
 
+# Creates test functions with the parameter: directory_name. Based on:
+# https://eli.thegreenplace.net/2014/04/02/dynamically-generating-python-test-cases
+def create_test_method(directory_name: str) -> FunctionType:
+    """
+    Returns a function pointer that points to a function for the given directory
+    """
+    def test_runner(self) -> None:
+        project_root = os.path.join(ROOT_DIR, directory_name)
 
-# Dynamically add a test method for each project
-# For each project directory it adds a new test function to the class
-for dir_name in PROJECT_DIRS:
+        self.assertTrue(
+            os.path.exists(os.path.join(project_root, "init.sh")),
+            f"Missing 'init.sh' in {directory_name}",
+        )
+        project_working_dir = os.path.join(project_root, "test-proj")
+        if not os.path.exists(project_working_dir):
+            ret, _, _ = self.run_command("sh init.sh", project_root)
+        self.assertTrue(os.path.exists(project_working_dir))
+        ret, _, _ = self.run_command(
+            "bazel build :codechecker_test", project_working_dir
+        )
+        self.assertEqual(ret, 0)
+        ret, _, _ = self.run_command(
+            "bazel build :code_checker_test", project_working_dir
+        )
+        self.assertEqual(ret, 0)
 
-    def create_test_method(directory_name):
-        def test_runner(self):
-            project_root = os.path.join(ROOT_DIR, directory_name)
-
-            self.assertTrue(
-                os.path.exists(os.path.join(project_root, "init.sh")),
-                f"Missing 'init.sh' in {directory_name}",
-            )
-            project_working_dir = os.path.join(project_root, "test-proj")
-            if not os.path.exists(project_working_dir):
-                ret, _, _ = self.run_command("sh init.sh", project_root)
-            self.assertTrue(os.path.exists(project_working_dir))
-            ret, _, _ = self.run_command(
-                "bazel build :codechecker_test", project_working_dir
-            )
-            self.assertEqual(ret, 0)
-            ret, _, _ = self.run_command(
-                "bazel build :code_checker_test", project_working_dir
-            )
-            self.assertEqual(ret, 0)
-
-        return test_runner
-
-    test_name = f"test_{dir_name}"
-    setattr(FOSSTestCollector, test_name, create_test_method(dir_name))
+    return test_runner
 
 if __name__ == "__main__":
+    # Dynamically add a test method for each project
+    # For each project directory it adds a new test function to the class
+    for dir_name in PROJECT_DIRS:
+        test_name = f"test_{dir_name}"
+        setattr(FOSSTestCollector, test_name, create_test_method(dir_name))
     unittest.main()
