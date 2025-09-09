@@ -56,7 +56,7 @@ class FOSSTestCollector(unittest.TestCase):
     # From the unit tests common lib
     @classmethod
     def run_command(
-        self, cmd: str, working_dir: str|None = None
+        self, cmd: str, working_dir: str = None
     ) -> tuple[int, str, str]:
         """
         Run shell command.
