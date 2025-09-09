@@ -19,11 +19,11 @@ import sys
 import unittest
 import os
 
-ROOT_DIR = "./"
+ROOT_DIR = f"{os.path.dirname(os.path.abspath(__file__))}/"
 NOT_PROJECT_FOLDERS = ["templates", "__pycache__", ".pytest_cache"]
 
 
-def get_dynamic_test_dirs():
+def get_test_dirs() -> list[str]:
     dirs = []
     for entry in os.listdir(ROOT_DIR):
         full_path = os.path.join(ROOT_DIR, entry)
@@ -32,26 +32,30 @@ def get_dynamic_test_dirs():
     return dirs
 
 
-PROJECT_DIRS = get_dynamic_test_dirs()
+PROJECT_DIRS = get_test_dirs()
 
 
 # This will contain the generated tests.
 # I have not used the common lib from unit test, because it would
 # greatly increase the difficulty of the implementation, and this way the
 # two test aren't bound to each other
-class DynamicFOSSTest(unittest.TestCase):
+class FOSSTestCollector(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         """Configure logging before running tests"""
+        # Change working directory to test/foss
+        os.chdir(os.path.dirname(os.path.abspath(__file__)))
         # Enable debug logs for tests if "super verbose" flag is provided
         if "-vvv" in sys.argv:
             logging.basicConfig(
                 level=logging.DEBUG, format="[TEST] %(levelname)5s: %(message)s"
             )
 
+    # I added this here because its much easier than including the base class
+    # From the unit tests common lib
     @classmethod
     def run_command(
-        self, cmd: str, working_dir: str = None
+        self, cmd: str, working_dir: str|None = None
     ) -> tuple[int, str, str]:
         """
         Run shell command.
@@ -105,7 +109,7 @@ for dir_name in PROJECT_DIRS:
         return test_runner
 
     test_name = f"test_{dir_name}"
-    setattr(DynamicFOSSTest, test_name, create_test_method(dir_name))
+    setattr(FOSSTestCollector, test_name, create_test_method(dir_name))
 
 if __name__ == "__main__":
     unittest.main()
