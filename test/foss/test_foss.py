@@ -109,10 +109,12 @@ def create_test_method(directory_name: str) -> FunctionType:
 
     return test_runner
 
+# Dynamically add a test method for each project
+# For each project directory it adds a new test function to the class
+# This must be outside of the __main__ if, pytest doesn't run it that way
+for dir_name in PROJECT_DIRS:
+    test_name = f"test_{dir_name}"
+    setattr(FOSSTestCollector, test_name, create_test_method(dir_name))
+
 if __name__ == "__main__":
-    # Dynamically add a test method for each project
-    # For each project directory it adds a new test function to the class
-    for dir_name in PROJECT_DIRS:
-        test_name = f"test_{dir_name}"
-        setattr(FOSSTestCollector, test_name, create_test_method(dir_name))
     unittest.main()
