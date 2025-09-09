@@ -32,8 +32,7 @@ runs:
       - name: Install CodeChecker analyzers
         run: |
           # Disable updating man-db, which is a long process 
-          sudo debconf-set man-db/auto-update false
-          sudo rm /var/lib/man-db/auto-update
+          sudo echo "set man-db/auto-update false" | debconf-communicate; dpkg-reconfigure man-db
           sudo apt-get update --quiet
           sudo apt-get install --no-install-recommends \
             clang \
