@@ -21,6 +21,13 @@ runs:
         run: echo "6.5.0" > .bazelversion
         shell: bash
 
+      - name: Cache pip
+        id: cache-pip
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-codechecker
+
       - name: Install CodeChecker analyzers
         run: |
           dnf update -y && \
