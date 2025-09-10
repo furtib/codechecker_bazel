@@ -36,12 +36,9 @@ jobs:
       - name: Setup environment
         uses: ./.github/platform_environment_setup/ubuntu
 
-      - name: Install pytest
-        run: pip3 install pytest
-
       - name: Run Test On Opensource Projects
-        working-directory: test/foss
-        run: pytest . -v
+        working-directory: test
+        run: python3 -m unittest foss/test_foss.py -vvv
 
   foss_rhel_test:
     name: "Test rules on FOSS projects (RHEL)"
@@ -55,9 +52,6 @@ jobs:
       - name: Setup environment
         uses: ./.github/platform_environment_setup/rhel9
 
-      - name: Install pytest
-        run: pip3 install pytest
-
       - name: Run Test On Opensource Projects
-        working-directory: test/foss
-        run: pytest . -v
+        working-directory: test
+        run: python3 -m unittest foss/test_foss.py -vvv
