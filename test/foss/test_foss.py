@@ -13,12 +13,11 @@
 # limitations under the License.
 
 import logging
-import shlex
-import subprocess
 import sys
 import unittest
 import os
 from types import FunctionType
+from common.base import TestBase
 
 ROOT_DIR = f"{os.path.dirname(os.path.abspath(__file__))}/"
 NOT_PROJECT_FOLDERS = ["templates", "__pycache__", ".pytest_cache"]
@@ -37,49 +36,13 @@ PROJECT_DIRS = get_test_dirs()
 
 
 # This will contain the generated tests.
-# I have not used the common lib from unit test, because it would
-# greatly increase the difficulty of the implementation, and this way the
-# two test aren't bound to each other
-class FOSSTestCollector(unittest.TestCase):
-    @classmethod
-    def setUpClass(cls):
-        """Configure logging before running tests"""
-        # Change working directory to test/foss
-        os.chdir(os.path.dirname(os.path.abspath(__file__)))
-        # Enable debug logs for tests if "super verbose" flag is provided
-        if "-vvv" in sys.argv:
-            logging.basicConfig(
-                level=logging.DEBUG, format="[TEST] %(levelname)5s: %(message)s"
-            )
+class FOSSTestCollector(TestBase):
+    # Set working directory
+    __test_path__ = os.path.dirname(os.path.abspath(__file__))
+    # These are irrelevant for these kind of tests
+    BAZEL_BIN_DIR = os.path.join("")
+    BAZEL_TESTLOGS_DIR = os.path.join("")
 
-    # I added this here because its much easier than including the base class
-    # From the unit tests common lib
-    @classmethod
-    def run_command(
-        self, cmd: str, working_dir: str = None
-    ) -> tuple[int, str, str]:
-        """
-        Run shell command.
-        returns:
-        - exit code
-        - stdout
-        - stderr
-        """
-        logging.debug("Running: %s", cmd)
-        commands = shlex.split(cmd)
-        with subprocess.Popen(
-            commands,
-            stdin=subprocess.PIPE,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-            cwd=working_dir,
-        ) as process:
-            stdout, stderr = process.communicate()
-            return (
-                process.returncode,
-                f"stdout: {stdout.decode('utf-8')}",
-                f"stderr: {stderr.decode('utf-8')}",
-            )
 
 # Creates test functions with the parameter: directory_name. Based on:
 # https://eli.thegreenplace.net/2014/04/02/dynamically-generating-python-test-cases
