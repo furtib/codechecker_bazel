@@ -40,9 +40,7 @@ runs:
         uses: actions/cache@v4
         with:
           path: /var/cache/apt/archives
-          key: apt-${{ runner.os }}-${{ hashFiles('apt-packages.lock') }}
-          restore-keys: |
-            apt-${{ runner.os }}-
+          key: ${{ runner.os }}-apt
 
       - name: Install CodeChecker analyzers
         run: |
