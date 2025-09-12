@@ -55,6 +55,16 @@ def _run_code_checker(
         cppcheck_plist = ctx.actions.declare_file(cppcheck_plist_file_name)
         analyzer_output_paths += "cppcheck," + cppcheck_plist.path + ";"
         outputs.append(cppcheck_plist)
+    if "gcc" in analyzers:
+        gcc_plist_file_name = "{}/{}_gcc.plist".format(*file_name_params)
+        gcc_plist = ctx.actions.declare_file(gcc_plist_file_name)
+        analyzer_output_paths += "gcc," + gcc_plist.path + ";"
+        outputs.append(gcc_plist)
+    if "infer" in analyzers:
+        infer_plist_file_name = "{}/{}_infer.plist".format(*file_name_params)
+        infer_plist = ctx.actions.declare_file(infer_plist_file_name)
+        analyzer_output_paths += "infer," + infer_plist.path + ";"
+        outputs.append(infer_plist)
 
     # Action to run CodeChecker for a file
     ctx.actions.run(
