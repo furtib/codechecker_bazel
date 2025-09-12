@@ -105,7 +105,8 @@ def _codechecker_impl(ctx):
     # Convert flacc calls to clang in compile_commands.json
     # and save to codechecker_commands.json
     ctx.actions.run(
-        inputs = [ctx.outputs.compile_commands],
+        inputs = [ctx.outputs.compile_commands,
+        ctx.executable._compile_commands_filter],
         outputs = [ctx.outputs.codechecker_commands],
         executable = ctx.executable._compile_commands_filter,
         arguments = [
