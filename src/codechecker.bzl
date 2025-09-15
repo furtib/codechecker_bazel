@@ -402,6 +402,7 @@ def codechecker_test(
             name = name,
             targets = targets,
             options = analyze,
+            tags = tags,
         )
     else:
         _codechecker_test(
