@@ -391,13 +391,13 @@ def codechecker_test(
         config = None,
         analyze = [],
         tags = [],
-        run = "Monolithic",
+        per_file = False,
         **kwargs):
     """ Bazel test to run CodeChecker """
     codechecker_tags = [] + tags
     if "codechecker" not in tags:
         codechecker_tags.append("codechecker")
-    if run == "Distributed":
+    if per_file:
         code_checker_test(
             name = name,
             targets = targets,
