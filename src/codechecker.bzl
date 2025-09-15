@@ -12,7 +12,7 @@ load(
 )
 load(
     "code_checker.bzl",
-    "code_checker_test",
+    "per_file_test",
 )
 
 def get_platform_alias(platform):
@@ -398,7 +398,7 @@ def codechecker_test(
     if "codechecker" not in tags:
         codechecker_tags.append("codechecker")
     if per_file:
-        code_checker_test(
+        per_file_test(
             name = name,
             targets = targets,
             options = analyze,
