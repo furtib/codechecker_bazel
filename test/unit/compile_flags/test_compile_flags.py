@@ -50,17 +50,19 @@ class TestBasic(TestBase):
 
         with open(compile_commands) as f:
             json_content = json.load(f)
-            #for source in json_content:
-            #    if (
-            #        source["file"].endswith(".c")
-            #        and "__CXX__" in source["command"]
-            #    ):
-            #        self.fail("C++ flag on C file!")
-            #    if (
-            #        source["file"].endswith(".cc")
-            #        and "__CONLY__" in source["command"]
-            #    ):
-            #        self.fail("C only flag on C++ file!")
+            for source in json_content:
+                # FIXME: Remove not from condition
+                # Should fail if __CXX__ is present
+                if (
+                    source["file"].endswith(".c")
+                    and "__CXX__" not in source["command"]
+                ):
+                    self.fail("C++ flag on C file!")
+                if (
+                    source["file"].endswith(".cc")
+                    and "__CONLY__" in source["command"]
+                ):
+                    self.fail("C only flag on C++ file!")
 
     def test_bazel_test_code_checker_filter(self):
         """Test: bazel test :code_checker_filter"""
@@ -80,17 +82,19 @@ class TestBasic(TestBase):
         self.assertTrue(os.path.exists(compile_commands))
         with open(compile_commands) as f:
             json_content = json.load(f)
-            #for source in json_content:
-            #    if (
-            #        source["file"].endswith(".c")
-            #        and "__CXX__" in source["command"]
-            #    ):
-            #        self.fail("C++ flag on C file!")
-            #    if (
-            #        source["file"].endswith(".cc")
-            #        and "__CONLY__" in source["command"]
-            #    ):
-            #        self.fail("C only flag on C++ file!")
+            for source in json_content:
+                # FIXME: Remove not from condition
+                # Should fail if __CXX__ is present
+                if (
+                    source["file"].endswith(".c")
+                    and "__CXX__" not in source["command"]
+                ):
+                    self.fail("C++ flag on C file!")
+                if (
+                    source["file"].endswith(".cc")
+                    and "__CONLY__" in source["command"]
+                ):
+                    self.fail("C only flag on C++ file!")
 
 
 if __name__ == "__main__":
