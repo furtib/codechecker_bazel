@@ -24,9 +24,9 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  # TODO: Generalize to handle multiple projects
+  # TODO: Parallelize the running of projects
   foss_ubuntu_test:
-    name: "Test rules on FOSS project: yaml-cpp"
+    name: "Test rules on FOSS projects (ubuntu)"
     runs-on: ubuntu-24.04
 
     steps:
@@ -36,23 +36,12 @@ jobs:
       - name: Setup environment
         uses: ./.github/platform_environment_setup/ubuntu
 
-      - name: Setup yaml-cpp
-        run:  |
-          cd test/foss/yaml-cpp
-          sh init.sh
-
-      - name: Run Bazel CodeChecker
-        run: |
-          cd test/foss/yaml-cpp/test-proj
-          bazel build :codechecker_test
-
-      - name: Run Per-File Bazel CodeChecker
-        run: |
-          cd test/foss/yaml-cpp/test-proj
-          bazel build :code_checker_test
+      - name: Run Test On Opensource Projects
+        working-directory: test
+        run: python3 -m unittest foss/test_foss.py -vvv
 
   foss_rhel_test:
-    name: "Test rules on FOSS project: yaml-cpp"
+    name: "Test rules on FOSS projects (RHEL)"
     runs-on: ubuntu-24.04
     container: redhat/ubi9:latest
 
@@ -63,17 +52,6 @@ jobs:
       - name: Setup environment
         uses: ./.github/platform_environment_setup/rhel9
 
-      - name: Setup yaml-cpp
-        run:  |
-          cd test/foss/yaml-cpp
-          sh init.sh
-
-      - name: Run Bazel CodeChecker
-        run: |
-          cd test/foss/yaml-cpp/test-proj
-          bazel build :codechecker_test
-
-      - name: Run Per-File Bazel CodeChecker
-        run: |
-          cd test/foss/yaml-cpp/test-proj
-          bazel build :code_checker_test
+      - name: Run Test On Opensource Projects
+        working-directory: test
+        run: python3 -m unittest foss/test_foss.py -vvv
