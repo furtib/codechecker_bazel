@@ -55,7 +55,8 @@ def create_test_method(directory_name: str) -> FunctionType:
 
         self.assertTrue(
             os.path.exists(os.path.join(project_root, "init.sh")),
-            f"Missing 'init.sh' in {directory_name}",
+            f"Missing 'init.sh' in {directory_name}\n" + \
+            "Please consult with the README on how to add a new FOSS project",
         )
         project_working_dir = os.path.join(project_root, "test-proj")
         if not os.path.exists(project_working_dir):
