@@ -302,6 +302,17 @@ def _code_checker_impl(ctx):
     sources_and_headers = _collect_all_sources_and_headers(ctx)
     options = ctx.attr.default_options + ctx.attr.options
     all_files = [compile_commands_json]
+    for file in sources_and_headers:
+        output = ctx.actions.declare_file(ctx.attr.name + "/" + file.short_path)
+        all_files.append(output)
+        cmd = "cp {} {}".format(file.path, output.path)
+        ctx.actions.run_shell(
+            inputs = [file],
+            outputs = [output],
+            command = cmd,
+            mnemonic = "Copyfiles",
+            progress_message = "Copying source file: {}".format(file.short_path)
+        )
     for target in ctx.attr.targets:
         if not CcInfo in target:
             continue
