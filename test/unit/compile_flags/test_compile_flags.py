@@ -51,7 +51,7 @@ class TestBasic(TestBase):
         with open(compile_commands) as f:
             json_content = json.load(f)
             for source in json_content:
-                # FIXME: Remove not from condition
+                # FIXME: Remove 'not' from condition
                 # Should fail if __CXX__ is present
                 if (
                     source["file"].endswith(".c")
@@ -83,7 +83,7 @@ class TestBasic(TestBase):
         with open(compile_commands) as f:
             json_content = json.load(f)
             for source in json_content:
-                # FIXME: Remove not from condition
+                # FIXME: Remove 'not' from condition
                 # Should fail if __CXX__ is present
                 if (
                     source["file"].endswith(".c")
