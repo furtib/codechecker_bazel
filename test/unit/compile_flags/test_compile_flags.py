@@ -54,30 +54,28 @@ class TestBasic(TestBase):
         with open(compile_commands) as f:
             json_content = json.load(f)
             for source in json_content:
-                # FIXME: Remove 'not' from condition
-                # Should fail if __CXX__ is present
-                if (
-                    source["file"].endswith(".c")
-                    and "__CXX__" not in source["command"]
-                ):
-                    self.fail("C++ flag on C file!")
-                # FIXME: Add 'not' to condition
-                # Should fail if __CONLY__ is not present
-                if (
-                    source["file"].endswith(".c")
-                    and "__CONLY__" in source["command"]
-                ):
-                    self.fail("C only flag not on C file")
-                if (
-                    source["file"].endswith(".cc")
-                    and "__CONLY__" in source["command"]
-                ):
-                    self.fail("C only flag on C++ file!")
-                if  (
-                    source["file"].endswith(".cc")
-                    and "__CXX__" not in source["command"]
-                ):
-                    self.fail("C++ flag not on C++ file")
+                if source["file"].endswith(".c"):
+                    # FIXME: Change to assertNotIn
+                    # Should fail if __CXX__ is present
+                    self.assertIn(
+                        "__CXX__", source["command"], "C++ flag on C file!"
+                    )
+                    # FIXME: Change to assertIn
+                    # Should fail if __CONLY__ is not present
+                    self.assertNotIn(
+                        "__CONLY__",
+                        source["command"],
+                        "C only flag not on C file!",
+                    )
+                if source["file"].endswith(".cc"):
+                    self.assertIn(
+                        "__CXX__", source["command"], "C++ flag on C file!"
+                    )
+                    self.assertNotIn(
+                        "__CONLY__",
+                        source["command"],
+                        "C only flag not on C file!",
+                    )
 
     def test_bazel_test_code_checker_filter(self):
         """Test: bazel test :code_checker_filter"""
@@ -98,30 +96,28 @@ class TestBasic(TestBase):
         with open(compile_commands) as f:
             json_content = json.load(f)
             for source in json_content:
-                # FIXME: Remove 'not' from condition
-                # Should fail if __CXX__ is present
-                if (
-                    source["file"].endswith(".c")
-                    and "__CXX__" not in source["command"]
-                ):
-                    self.fail("C++ flag on C file!")
-                # FIXME: Add 'not' to condition
-                # Should fail if __CONLY__ is not present
-                if (
-                    source["file"].endswith(".c")
-                    and "__CONLY__" in source["command"]
-                ):
-                    self.fail("C only flag not on C file")
-                if (
-                    source["file"].endswith(".cc")
-                    and "__CONLY__" in source["command"]
-                ):
-                    self.fail("C only flag on C++ file!")
-                if  (
-                    source["file"].endswith(".cc")
-                    and "__CXX__" not in source["command"]
-                ):
-                    self.fail("C++ flag not on C++ file")
+                if source["file"].endswith(".c"):
+                    # FIXME: Change to assertNotIn
+                    # Should fail if __CXX__ is present
+                    self.assertIn(
+                        "__CXX__", source["command"], "C++ flag on C file!"
+                    )
+                    # FIXME: Change to assertIn
+                    # Should fail if __CONLY__ is not present
+                    self.assertNotIn(
+                        "__CONLY__",
+                        source["command"],
+                        "C only flag not on C file!",
+                    )
+                if source["file"].endswith(".cc"):
+                    self.assertIn(
+                        "__CXX__", source["command"], "C++ flag on C file!"
+                    )
+                    self.assertNotIn(
+                        "__CONLY__",
+                        source["command"],
+                        "C only flag not on C file!",
+                    )
 
 
 if __name__ == "__main__":
