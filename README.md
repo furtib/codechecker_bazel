@@ -341,34 +341,35 @@ You can find the generated `compile_commands.json` under `bazel-bin/`.
 
 ## Experimental rules
 
-### Per-file CodeChecker analysis: `code_checker_test()`
+### Per-file CodeChecker analysis:
 > [!IMPORTANT]
 > The rule is still in prototype status and is subject to changes or removal without notice. See [#31](https://github.com/Ericsson/codechecker_bazel/issues/31).
 > You are free to experiment and report issues however!
 
-Instead of a single CodeChecker call, the bazel rule `code_checker_test()` invokes
+Instead of a single CodeChecker call, the adding `per_file = True,` parameter to codechecker_test bazel rule invokes
 [`CodeChecker analyze`](https://github.com/Ericsson/codechecker/blob/master/docs/analyzer/user_guide.md#analyze)
 _for each_ translation unit in the targets to analyze. The rule is intended to be
 able to enable incremental analyses and dispatching  analysis jobs to remote build
 agents.
 
-To use `code_checker_test()` include it to your BUILD file:
+To use per file analysis include `codechecker_test` in your BUILD file:
 
 ```python
 load(
-    "@bazel_codechecker//src:code_checker.bzl",
-    "code_checker_test",
+    "@bazel_codechecker//src:codechecker.bzl",
+    "codechecker_test",
 )
 ```
 
-Create a `code_checker_test()` target by passing targets you'd like CodeChecker to analyze, similarly to `codechecker_test()`:
+Create a `codechecker_test()` target by passing targets you'd like CodeChecker to analyze:
 
 ```python
-code_checker_test(
-    name = "your_code_checker_rule_name",
+codechecker_test(
+    name = "your_codechecker_rule_name",
     targets = [
         "your_target",
     ],
+    per_file = True,
 )
 ```
 
