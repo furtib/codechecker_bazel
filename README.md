@@ -174,6 +174,30 @@ codechecker_test(
 )
 ```
 
+#### Per-file CodeChecker analysis:
+> [!IMPORTANT]
+> The option is still in prototype status and is subject to changes or removal without notice. See [#31](https://github.com/Ericsson/codechecker_bazel/issues/31).
+> You are free to experiment and report issues however!
+
+Instead of a single CodeChecker call, adding `per_file = True,` parameter to codechecker_test bazel rule invokes
+[`CodeChecker analyze`](https://github.com/Ericsson/codechecker/blob/master/docs/analyzer/user_guide.md#analyze)
+_for each_ translation unit in the targets to analyze. This method is intended to be
+able to enable incremental analyses and dispatching analysis jobs to remote build
+agents.
+
+
+Create a `codechecker_test()` target and add the `per_file = True,` parameter:
+
+```python
+codechecker_test(
+    name = "your_codechecker_rule_name",
+    targets = [
+        "your_target",
+    ],
+    per_file = True,
+)
+```
+
 Then invoke bazel:
 
 ```bash
@@ -340,46 +364,6 @@ compile_commands(
 You can find the generated `compile_commands.json` under `bazel-bin/`.
 
 ## Experimental rules
-
-### Per-file CodeChecker analysis:
-> [!IMPORTANT]
-> The rule is still in prototype status and is subject to changes or removal without notice. See [#31](https://github.com/Ericsson/codechecker_bazel/issues/31).
-> You are free to experiment and report issues however!
-
-Instead of a single CodeChecker call, the adding `per_file = True,` parameter to codechecker_test bazel rule invokes
-[`CodeChecker analyze`](https://github.com/Ericsson/codechecker/blob/master/docs/analyzer/user_guide.md#analyze)
-_for each_ translation unit in the targets to analyze. The rule is intended to be
-able to enable incremental analyses and dispatching  analysis jobs to remote build
-agents.
-
-To use per file analysis include `codechecker_test` in your BUILD file:
-
-```python
-load(
-    "@bazel_codechecker//src:codechecker.bzl",
-    "codechecker_test",
-)
-```
-
-Create a `codechecker_test()` target by passing targets you'd like CodeChecker to analyze:
-
-```python
-codechecker_test(
-    name = "your_codechecker_rule_name",
-    targets = [
-        "your_target",
-    ],
-    per_file = True,
-)
-```
-
-You can find the analysis results in the `bazel-bin/` folder similarly to [`codechecker_test()`](README.md#standard-codechecker-invocation-codechecker_test),
-only without the `codechecker-files` directory. In simple cases, the results directory can be found and parsed as follows:
-
-```bash
-CodeChecker parse bazel-bin/your_code_checker_rule_name/data
-CodeChecker store bazel-bin/your_code_checker_rule_name/data -n "Run name"
-```
 
 ### Cross-translation unit analysis via the Clang Static Analyzer: `clang_ctu_test()`
 > [!IMPORTANT]
