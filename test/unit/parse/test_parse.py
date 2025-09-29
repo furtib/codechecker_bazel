@@ -17,43 +17,9 @@ Test wether CodeChecker parse and CodeChecker store
 runs correctly on the produced report files
 """
 import os
-import shutil
-import signal
-import socket
-import subprocess
-import tempfile
-import time
 import unittest
 from typing import Optional, final
 from common.base import TestBase
-
-
-# Based on:
-# https://dev.to/farcellier/wait-for-a-server-to-respond-in-python-488e
-def wait_port(
-    port: int,
-    host: str = "localhost",
-    timeout: Optional[int] = 3000,
-    attempt_every: int = 100,
-) -> bool:
-    """
-    Wait until a port would be open,
-    for example the port 8001 for CodeChecker server
-    """
-    start = time.monotonic()
-    while True:
-        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-            try:
-                s.connect((host, port))
-                s.close()
-                return True
-            except ConnectionRefusedError:
-                if timeout is not None and time.monotonic() - start > (
-                    timeout / 1000
-                ):
-                    return False
-
-        time.sleep(attempt_every / 1000)
 
 
 class TestTemplate(TestBase):
@@ -73,30 +39,14 @@ class TestTemplate(TestBase):
     def setUpClass(cls):
         """Start CodeChecker server"""
         super().setUpClass()
-        cls.temp_workspace = tempfile.mkdtemp()
-        server_command = [
-            "CodeChecker",
-            "server",
-            "--workspace",
-            cls.temp_workspace,
-            "--port",
-            "8001",  # user running unittest must make this port free!
-        ]
-        cls.devnull = open(os.devnull, "w")
-        cls.server_process = subprocess.Popen(
-            server_command, stdout=cls.devnull
-        )
-        assert wait_port(port=8001), "Failed to start CodeChecker server"
+        cls.start_codechecker_server()
 
     @final
     @classmethod
     def tearDownClass(cls):
         """Stop CodeChecker server"""
+        cls.stop_codechecker_server()
         super().tearDownClass()
-        os.kill(cls.server_process.pid, signal.SIGTERM)
-        cls.server_process.wait()
-        cls.devnull.close()
-        shutil.rmtree(cls.temp_workspace)
 
     def test_parse_html(self):
         """Test: Parse results into html"""
@@ -104,10 +54,9 @@ class TestTemplate(TestBase):
             "bazel build //test/unit/parse:codechecker"
         )
         self.assertEqual(ret, 0)
-        ret, _, _ = self.run_command(
-            f"CodeChecker parse {self.BAZEL_BIN_DIR}/codechecker/codechecker-files/data"
+        self.check_parsing(
+            f"{self.BAZEL_BIN_DIR}/codechecker/codechecker-files/data"
         )
-        self.assertEqual(ret, 2)  # Will exit with 2 because of bug being found
 
     def test_store(self):
         """Test: Storing to CodeChecker server"""
