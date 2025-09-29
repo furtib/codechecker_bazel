@@ -138,10 +138,17 @@ def _toolchain_flags(ctx, action_name = ACTION_NAMES.cpp_compile):
         ctx = ctx,
         cc_toolchain = cc_toolchain,
     )
+    user_comp_flag_builder = ctx.fragments.cpp.copts
+    if action_name == ACTION_NAMES.cpp_compile:
+        user_comp_flag_builder += ctx.fragments.cpp.cxxopts
+    elif action_name == ACTION_NAMES.c_compile:
+        user_comp_flag_builder += ctx.fragments.cpp.conlyopts
+    else:
+        fail("Unhandled action name!")
     compile_variables = cc_common.create_compile_variables(
         feature_configuration = feature_configuration,
         cc_toolchain = cc_toolchain,
-        user_compile_flags = ctx.fragments.cpp.cxxopts + ctx.fragments.cpp.copts,
+        user_compile_flags = user_comp_flag_builder,
     )
     flags = cc_common.get_memory_inefficient_command_line(
         feature_configuration = feature_configuration,
@@ -223,7 +230,17 @@ def _compile_info_aspect_impl(target, ctx):
     compile_args = _compile_args(compilation_context)
     arguments = {}
     for src in srcs:
-        flags = c_flags if src.extension in ["c", "C"] else cxx_flags
+        if src.extension.lower() in ["c"]:
+            flags = c_flags
+        elif src.extension.lower() in ["cc", "cpp", "cxx", "c++"]:
+            flags = cxx_flags
+        else:
+            # FIXME: Create verbose mode, show warning only if thats enabled
+            print(
+                "Unknown file extension for {} defaulting to c++ compile flags".
+                format(src.short_path)
+                )
+            flags = cxx_flags
         arguments[src] = flags + compile_args + [src.path]
     return [
         CompileInfo(

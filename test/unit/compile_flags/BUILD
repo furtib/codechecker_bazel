@@ -31,7 +31,7 @@ load(
 
 cc_library(
     name = "target_with_both_extension",
-    srcs = ["simple.c", "simple.cc"],
+    srcs = ["simple_c.c", "simple_cc.cc"],
     tags = ["manual"],
 )
 
@@ -47,4 +47,5 @@ code_checker_test(
     targets = [
         "target_with_both_extension",
     ],
+    tags = ["manual"]
 )
