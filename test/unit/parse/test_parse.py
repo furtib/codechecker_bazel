@@ -86,10 +86,7 @@ class TestTemplate(TestBase):
         cls.server_process = subprocess.Popen(
             server_command, stdout=cls.devnull
         )
-        # https://stackoverflow.com/a/71996706
-        cls.assertTrue(
-            cls, wait_port(port=8001), "Failed to start CodeChecker server"
-        )
+        assert wait_port(port=8001), "Failed to start CodeChecker server"
 
     @final
     @classmethod
