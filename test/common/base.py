@@ -29,9 +29,9 @@ class TestBase(unittest.TestCase):
     """Unittest base abstract class"""
 
     # This variable must be overwritten in each subclass!
-    __test_path__: str = None
-    BAZEL_BIN_DIR: str = None
-    BAZEL_TESTLOGS_DIR: str = None
+    __test_path__: Optional[str] = None
+    BAZEL_BIN_DIR: Optional[str] = None
+    BAZEL_TESTLOGS_DIR: Optional[str] = None
 
     @classmethod
     def setUpClass(cls):
@@ -77,7 +77,9 @@ class TestBase(unittest.TestCase):
         logging.debug("\n%s", "-" * 70)
 
     @classmethod
-    def run_command(self, cmd: str, working_dir:str=None) -> tuple[int, str, str]:
+    def run_command(
+        self, cmd: str, working_dir: Optional[str] = None
+    ) -> tuple[int, str, str]:
         """
         Run shell command.
         returns:
@@ -102,13 +104,13 @@ class TestBase(unittest.TestCase):
             )
 
     @classmethod
-    def grep_file(self, filename, regex):
+    def grep_file(cls, filename: str, regex: str):
         """
         Grep given filename.
         Returns list of matched lines.
         Returns empty list if no match is found
         """
-        results : list[str] = []
+        results: list[str] = []
         pattern = re.compile(regex)
         logging.debug("RegEx = r'%s'", regex)
         with open(filename, "r", encoding="utf-8") as fileobj:
@@ -119,8 +121,8 @@ class TestBase(unittest.TestCase):
         return results
     
     @classmethod
-    def contains_regex_in_file(self, file_path: str, regex: str) -> bool:
+    def contains_regex_in_file(cls, file_path: str, regex: str) -> bool:
         """
         Returns a boolean, whether the specified file contains the regex or not.
         """
-        return self.grep_file(file_path, regex) != []
+        return cls.grep_file(file_path, regex) != []
