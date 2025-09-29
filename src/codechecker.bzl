@@ -403,6 +403,7 @@ def codechecker_test(
             targets = targets,
             options = analyze,
             tags = tags,
+            **kwargs
         )
     else:
         _codechecker_test(
@@ -414,6 +415,7 @@ def codechecker_test(
             config = config,
             analyze = analyze,
             tags = codechecker_tags,
+            **kwargs
         )
 
 def codechecker_suite(
