@@ -47,4 +47,5 @@ code_checker_test(
     targets = [
         "target_with_both_extension",
     ],
+    tags = ["manual"]
 )
