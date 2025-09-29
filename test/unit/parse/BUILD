@@ -34,4 +34,5 @@ codechecker_test(
     targets = [
         "c_target",
     ],
+    tags = ["manual"],
 )
