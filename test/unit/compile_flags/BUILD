@@ -31,7 +31,7 @@ load(
 
 cc_library(
     name = "target_with_both_extension",
-    srcs = ["simpler.c", "simple.cc"],
+    srcs = ["simple_c.c", "simple_cc.cc"],
     tags = ["manual"],
 )
 
