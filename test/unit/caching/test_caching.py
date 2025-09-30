@@ -44,6 +44,8 @@ class TestCaching(TestBase):
     def setUp(self):
         """Before every test: clean Bazel cache"""
         super().setUp()
+        # If the test was unexpectedly stopped, we need to
+        # cleanup from the previous run.
         if os.path.exists("tmp"):
             try:
                 shutil.rmtree("tmp")
