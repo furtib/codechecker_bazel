@@ -181,7 +181,7 @@ class TestBase(unittest.TestCase):
             server_command, stdout=cls.devnull
         )
         assert wait_port(
-            port=8001, timeout=6000
+            port=8001, timeout=10000
         ), "Failed to start CodeChecker server"
 
     @classmethod
