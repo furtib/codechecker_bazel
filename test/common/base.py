@@ -180,7 +180,9 @@ class TestBase(unittest.TestCase):
         cls.server_process: subprocess.Popen = subprocess.Popen(
             server_command, stdout=cls.devnull
         )
-        assert wait_port(port=8001), "Failed to start CodeChecker server"
+        assert wait_port(
+            port=8001, timeout=6000
+        ), "Failed to start CodeChecker server"
 
     @classmethod
     def stop_codechecker_server(cls):
