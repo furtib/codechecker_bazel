@@ -68,8 +68,6 @@ class TestTemplate(TestBase):
             "bazel build //test/unit/parse:codechecker --experimental_writable_outputs"
         )
         self.assertEqual(ret, 0)
-        # Spin up a Codechecker server
-
         ret, _, _ = self.run_command(
             f'CodeChecker store {self.BAZEL_BIN_DIR}/codechecker/codechecker-files/data -n "unit_test_bazel" --url=http://localhost:8001/Default'
         )
