@@ -282,7 +282,7 @@ codechecker_config(
 )
 ```
 
-You can now configure your `codechecker_suite()`, `codechecker_test()` and `code_checker_test()` targets using the above configuration:
+You can now configure your `codechecker_suite()` and `codechecker_test()` targets using the above configuration:
 
 ```python
 codechecker_test(
@@ -379,7 +379,7 @@ load(
 )
 
 clang_ctu_test(
-    name = "your_code_checker_rule_name",
+    name = "your_clang_ctu_rule_name",
     targets = [
         "your_target",
     ],

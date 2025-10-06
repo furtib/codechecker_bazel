@@ -82,4 +82,4 @@ python3 -m unittest discover unit/my_test_dir -vvv
   - Copy the .bazelversion file from the templates directory into the test-proj directory.
   - Append the WORKSPACE.template file to the WORKSPACE file of the project.
   - Append the codechecker rules to the BUILD file of the project.
-    - There can be only two targets, codechecker_test and code_checker_test
+    - There can be only two targets, codechecker_test and per_file_test

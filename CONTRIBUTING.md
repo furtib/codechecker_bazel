@@ -51,7 +51,7 @@ src/                           | Rules for CodeChecker and compile_commands.json
 src/BUILD                      | Declares and exports python scripts
 src/clang.bzl                  | Clang-tidy and clang analyzer aspects and rules
 src/clang_ctu.bzl              | PoC: Clang analyzer with CTU
-src/code_checker.bzl           | PoC: CodeChecker analyze --file
+src/per_file.bzl               | PoC: CodeChecker analyze --file
 src/codechecker.bzl            | Defines codechecker rules
 src/codechecker_script.py      | CodeChecker Bazel build & test script template
 src/compile_commands.bzl       | Compile commands (compilation database) aspect
