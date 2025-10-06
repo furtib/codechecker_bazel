@@ -29,6 +29,8 @@ cc_library(
 )
 
 # Test with overwriting analyzers argument
+# Testing on the regular rule isn't necessary,
+# there are no default options to be merged.
 codechecker_test(
     name = "per_file_argument_merge",
     targets = [
