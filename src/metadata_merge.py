@@ -1,3 +1,5 @@
+#!{PythonPath}
+
 import json
 import os
 import sys

@@ -352,12 +352,20 @@ def _per_file_impl(ctx):
                     all_files += outputs
 
     # merge metadata
+    ctx.actions.expand_template(
+        template = ctx.file._metadata_merge_template,
+        output = ctx.outputs._metadata_merge_script,
+        is_executable = True,
+        substitutions = {
+            "{PythonPath}": ctx.attr._python_runtime[PyRuntimeInfo].interpreter_path,
+        },
+    )
     metadata = [file for file in all_files if file.path.endswith("metadata.json")]
     metadata_json = ctx.actions.declare_file(ctx.attr.name + "/data/metadata.json")
     ctx.actions.run(
         inputs = metadata,
         outputs = [metadata_json],
-        executable = ctx.executable._metadata_merge_script,
+        executable = ctx.outputs._metadata_merge_script,
         arguments = [metadata_json.path] + [file.path for file in metadata],
         mnemonic = "Metadata",
         progress_message = "Merging metadata.json",
@@ -401,10 +409,9 @@ per_file_test = rule(
             ],
             doc = "List of default CodeChecker analyze options",
         ),
-        "_metadata_merge_script": attr.label(
-            default = ":metadata_merge",
-            executable = True,
-            cfg = "exec",
+        "_metadata_merge_template": attr.label(
+            default = ":metadata_merge.py",
+            allow_single_file = True,
         ),
         "_python_runtime": attr.label(
             default = "@default_python_tools//:py3_runtime",
@@ -418,6 +425,7 @@ per_file_test = rule(
     },
     outputs = {
         "test_script": "%{name}/test_script.sh",
+        "_metadata_merge_script": "%{name}/_metadata_merge_script.py"
     },
     test = True,
 )
