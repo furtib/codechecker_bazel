@@ -14,5 +14,5 @@
  * limitations under the License.
  */
 
-// The content of this file, is irrelevant, only its extension matters
+// The content of this file must contain a bug
 int main() { return 0/0; }
