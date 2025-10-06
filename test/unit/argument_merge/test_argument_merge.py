@@ -34,15 +34,15 @@ class TestTemplate(TestBase):
         "../../..", "bazel-testlogs", "test", "unit", "argument_merge"
     )
 
-    def test_code_checker_argument_merge(self):
+    def test_per_file_argument_merge(self):
         """Test: Whether default options gets override"""
         code, _, _ = self.run_command(
-            "bazel build //test/unit/argument_merge:code_checker_argument_merge"
+            "bazel build //test/unit/argument_merge:per_file_argument_merge"
         )
         self.assertEqual(code, 0)
         matched_lines: list[str] = self.grep_file(
             self.BAZEL_BIN_DIR
-            + "/code_checker_argument_merge/data/"
+            + "/per_file_argument_merge/data/"
             + "test-unit-argument_merge-main.cc_codechecker.log",
             r"--analyzers",
         )

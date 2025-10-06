@@ -19,8 +19,8 @@ load(
 )
 
 load(
-    "@bazel_codechecker//src:code_checker.bzl",
-    "code_checker_test",
+    "@bazel_codechecker//src:codechecker.bzl",
+    "codechecker_test",
 )
 
 cc_library(
@@ -29,12 +29,13 @@ cc_library(
 )
 
 # Test with overwriting analyzers argument
-code_checker_test(
-    name = "code_checker_argument_merge",
+codechecker_test(
+    name = "per_file_argument_merge",
     targets = [
         "main",
     ],
-    options = [
+    analyze = [
         "--analyzers clangsa clang-tidy",
     ],
+    per_file = True,
 )
