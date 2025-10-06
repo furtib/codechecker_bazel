@@ -45,7 +45,7 @@ compile_commands(
 # The distributed rule uses a different
 # method for generating compile_commands.json
 codechecker_test(
-    name = "code_checker_filter",
+    name = "per_file_filter",
     targets = [
         "target_with_both_extension",
     ],

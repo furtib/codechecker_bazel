@@ -58,16 +58,16 @@ class TestVirtualInclude(TestBase):
                 result.append(file)
         return result
 
-    def test_bazel_code_checker_plist_path_resolved(self):
-        """Test: bazel build :code_checker_virtual_include"""
+    def test_bazel_per_file_plist_path_resolved(self):
+        """Test: bazel build :per_file_virtual_include"""
         ret, _, _ = self.run_command(
-            "bazel build //test/unit/virtual_include:code_checker_virtual_include",
+            "bazel build //test/unit/virtual_include:per_file_virtual_include",
         )
         self.assertEqual(ret, 0)
         plist_files = glob.glob(
             os.path.join(
                 self.BAZEL_BIN_DIR,
-                "code_checker_virtual_include",
+                "per_file_virtual_include",
                 "**",
                 "*.plist",
             ),

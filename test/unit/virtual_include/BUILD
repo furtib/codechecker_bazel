@@ -49,7 +49,7 @@ codechecker_test(
 )
 
 codechecker_test(
-    name = "code_checker_virtual_include",
+    name = "per_file_virtual_include",
     tags = [
         "manual",
     ],

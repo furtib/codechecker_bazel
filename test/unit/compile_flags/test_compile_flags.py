@@ -73,18 +73,18 @@ class TestBasic(TestBase):
                         "C only flag not on C file!",
                     )
 
-    def test_bazel_test_code_checker_filter(self):
-        """Test: bazel test :code_checker_filter"""
+    def test_bazel_test_per_file_filter(self):
+        """Test: bazel test :per_file_filter"""
         build_cmd = (
             "bazel build "
-            + "//test/unit/compile_flags:code_checker_filter "
+            + "//test/unit/compile_flags:per_file_filter "
             + "--cxxopt=__CXX__ --conlyopt=__CONLY__"
         )
         exit_code, _, _ = self.run_command(build_cmd)
         self.assertEqual(0, exit_code)
         compile_commands = os.path.join(
             self.BAZEL_BIN_DIR,
-            "code_checker_filter",
+            "per_file_filter",
             "data",
             "compile_commands.json",
         )
