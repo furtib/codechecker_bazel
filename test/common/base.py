@@ -36,7 +36,7 @@ from typing import Optional
 def wait_port(
     port: int,
     host: str = "localhost",
-    timeout: Optional[int] = 3000,
+    timeout: int = 3000,
     attempt_every: int = 100,
 ) -> bool:
     """
