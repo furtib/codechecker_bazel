@@ -31,7 +31,10 @@ def merge_two_json(json1, json2):
     # We append info from json2 to json1 from here on out
     json1_root["result_source_files"].update(json2_root["result_source_files"])
     json1_root["skipped"] = json1_root["skipped"] + json2_root["skipped"]
-    # Merge time
+    # Merge time; we assume here both json files describe jobs in
+    # the same analysis invocation, implying that the analysis start  
+    # time is the lowest timestamp, and the end is the highest.
+    # Note: caching will break this assumption
     json1_root["timestamps"]["begin"] = min(
         float(json1_root["timestamps"]["begin"]),
         float(json2_root["timestamps"]["begin"]),
