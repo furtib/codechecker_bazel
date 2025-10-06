@@ -24,6 +24,8 @@ def merge_two_json(json1, json2):
         return json2
     if json2 == {}:
         return json1
+    # Fail if the plist file version is different
+    assert(json1["version"] == json2["version"])
     json1_root = json1["tools"][0]
     json2_root = json2["tools"][0]
     # We append info from json2 to json1 from here on out
