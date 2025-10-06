@@ -28,7 +28,16 @@ def merge_two_json(json1, json2):
     assert(json1["version"] == json2["version"])
     json1_root = json1["tools"][0]
     json2_root = json2["tools"][0]
+    # Command, working directory nad output directory may be different
+    # from metadata to metadata, due to remote workers.
+    # Currently we choose the first of these values.
+    # We expect the following fields to be the same in all metadata files.
+    assert(json1_root["name"] == json2_root["name"])
+    # same CodeChecker version
+    assert(json1_root["version"] == json2_root["version"])
+    # We assume that the list of enabled checkers haven't changed between runs.
     # We append info from json2 to json1 from here on out
+    json1_root["action_num"] += json2_root["action_num"]
     json1_root["result_source_files"].update(json2_root["result_source_files"])
     json1_root["skipped"] = json1_root["skipped"] + json2_root["skipped"]
     # Merge time; we assume here both json files describe jobs in
