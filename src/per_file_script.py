@@ -124,7 +124,7 @@ def _move_plist_files():
             if re.search(
                 rf"_{analyzer_info[0]}_.*\.plist$", file
             ) and os.path.isfile(os.path.join(DATA_DIR, file)):
-                shutil.copy(os.path.join(DATA_DIR, file), analyzer_info[1])
+                shutil.move(os.path.join(DATA_DIR, file), analyzer_info[1])
 
 
 def main():
