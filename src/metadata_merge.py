@@ -90,7 +90,7 @@ def save_json_file(data: Dict[str, Any], output_path: str) -> None:
         print(f"An error occurred while saving the file: {e}", file=sys.stderr)
 
 
-if __name__ == "__main__":
+def main():
     output_file = sys.argv[1]
     input_files = sys.argv[2:]
 
@@ -99,3 +99,6 @@ if __name__ == "__main__":
         save_json_file(merged_data, output_file)
     else:
         print("\nNo data was merged. Output file will not be created.")
+
+if __name__ == "__main__":
+    main()
