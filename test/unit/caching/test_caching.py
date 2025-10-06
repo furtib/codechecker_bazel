@@ -65,12 +65,12 @@ class TestCaching(TestBase):
         except FileNotFoundError:
             self.fail("Temporary working directory does not exists!")
 
-    def test_bazel_test_code_checker_caching(self):
+    def test_bazel_test_per_file_caching(self):
         """
         Test whether bazel correctly uses cached analysis
         results for unchanged input files.
         """
-        target = "//test/unit/caching/tmp:code_checker_caching"
+        target = "//test/unit/caching/tmp:per_file_caching"
         ret, _, _ = self.run_command(f"bazel build {target}")
         self.assertEqual(ret, 0)
         try:
@@ -84,12 +84,12 @@ class TestCaching(TestBase):
             stderr.count(f"SUBCOMMAND: # {target} [action 'CodeChecker"), 1
         )
 
-    def test_bazel_test_code_checker_ctu_caching(self):
+    def test_bazel_test_per_file_ctu_caching(self):
         """
         Test whether bazel correctly reanalyses
         the whole project when CTU is enabled
         """
-        target = "//test/unit/caching/tmp:code_checker_caching_ctu"
+        target = "//test/unit/caching/tmp:per_file_caching_ctu"
         ret, _, _ = self.run_command(f"bazel build {target}")
         self.assertEqual(ret, 0)
         try:
