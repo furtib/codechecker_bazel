@@ -191,6 +191,12 @@ class TestBase(unittest.TestCase):
         cls.devnull.close()
         shutil.rmtree(cls.temp_workspace)
 
-    def check_parsing(self, path, will_find_bug=True):
+    def check_store(self, path : str, name : str):
+        ret, _, _ = self.run_command(
+            f'CodeChecker store {path} -n {name} --url=http://localhost:8001/Default'
+        )
+        self.assertEqual(ret, 0)
+
+    def check_parsing(self, path : str, will_find_bug : bool = True):
         ret, _, _ = self.run_command(f"CodeChecker parse {path}")
         self.assertEqual(ret, 2 if will_find_bug else 0)
