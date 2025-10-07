@@ -74,7 +74,7 @@ jobs:
         
       - name: Run Per-File Bazel CodeChecker
         working-directory: ${{ matrix.project.folder }}/test-proj
-        run: bazel build :code_checker_test
+        run: bazel build :per_file_test
 
   foss_rhel_test:
     name: "Test rules on FOSS project: ${{ matrix.project.name }} (RHEL)"
@@ -104,4 +104,4 @@ jobs:
         
       - name: Run Per-File Bazel CodeChecker
         working-directory: ${{ matrix.project.folder }}/test-proj
-        run: bazel build :code_checker_test
+        run: bazel build :per_file_test
