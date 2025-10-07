@@ -47,7 +47,6 @@ jobs:
           python3 ./.github/foss_project_collector.py >> "$GITHUB_OUTPUT"
         shell: bash
 
-  # TODO: Add script to run tests locally
   foss_ubuntu_test:
     name: "Test rules on FOSS project: ${{ matrix.project.name }} (Ubuntu)"
     runs-on: ubuntu-24.04
