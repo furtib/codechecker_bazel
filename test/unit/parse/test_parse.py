@@ -54,7 +54,7 @@ class TestTemplate(TestBase):
             "bazel build //test/unit/parse:codechecker"
         )
         self.assertEqual(ret, 0)
-        self.check_parsing(
+        self.check_parse(
             f"{self.BAZEL_BIN_DIR}/codechecker/codechecker-files/data"
         )
 

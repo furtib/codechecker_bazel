@@ -197,6 +197,6 @@ class TestBase(unittest.TestCase):
         )
         self.assertEqual(ret, 0)
 
-    def check_parsing(self, path : str, will_find_bug : bool = True):
+    def check_parse(self, path : str, will_find_bug : bool = True):
         ret, _, _ = self.run_command(f"CodeChecker parse {path}")
         self.assertEqual(ret, 2 if will_find_bug else 0)
