@@ -18,7 +18,7 @@ runs correctly on the produced report files
 """
 import os
 import unittest
-from typing import Optional, final
+from typing import final
 from common.base import TestBase
 
 
