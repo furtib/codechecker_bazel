@@ -49,7 +49,7 @@ def _create_compile_commands_json_with_absolute_paths():
         COMPILE_COMMANDS_ABSOLUTE, "w"
     ) as new_file:
         content = original_file.read()
-        # Replace '"directory":"."' with the absolute path
+        # Replace "directory":"." with the absolute path
         # of the current working directory
         new_content = content.replace(
             '"directory":".', f'"directory":"{os.getcwd()}'
