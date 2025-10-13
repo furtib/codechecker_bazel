@@ -314,6 +314,9 @@ def _collect_all_sources_and_headers(ctx):
     sources_and_headers = all_files + headers.to_list()
     return sources_and_headers
 
+def _get_argument_name(argument):
+    return argument.split(" ")[0].split("=")[0]
+
 def _merge_options(default, custom):
     """
     Merge command line arguments so that default options can be overridden
@@ -321,10 +324,10 @@ def _merge_options(default, custom):
     final = []
     args_set = []
     for item in custom:
-        args_set.append(item.split(" ")[0].split("=")[0])
+        args_set.append(_get_argument_name(item))
         final.append(item)
     for option in default:
-        if option.split(" ")[0].split("=")[0] not in args_set:
+        if _get_argument_name(option) not in args_set:
             final.append(option)
     return final
 
