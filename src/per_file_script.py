@@ -20,23 +20,44 @@ import re
 import shutil
 import subprocess
 import sys
+from typing import Optional
 
-DATA_DIR: str = sys.argv[1]
-FILE_PATH: str = sys.argv[2]
-ANALYZER_PLIST_PATHS: list[list[str]] = [
-    item.split(",") for item in sys.argv[4].split(";")
-]
-LOG_FILE: str = sys.argv[3]
+# The output directory for CodeChecker
+DATA_DIR: Optional[str] = None
+# The file to be analyzed
+FILE_PATH: Optional[str] = None
+# List of pairs of analyzers and their plist files
+ANALYZER_PLIST_PATHS: Optional[list[list[str]]] = None
+LOG_FILE: Optional[str] = None
 COMPILE_COMMANDS_JSON: str = "{compile_commands_json}"
 COMPILE_COMMANDS_ABSOLUTE: str = f"{COMPILE_COMMANDS_JSON}.abs"
 CODECHECKER_ARGS: str = "{codechecker_args}"
+
+
+def parse_args():
+    """
+    Parse arguments that may change from file-to-file.
+    """
+    if len(sys.argv) != 5:
+        print("Wrong amount of arguments")
+        sys.exit(1)
+
+    global DATA_DIR
+    global FILE_PATH
+    global LOG_FILE
+    global ANALYZER_PLIST_PATHS
+
+    DATA_DIR = sys.argv[1]
+    FILE_PATH = sys.argv[2]
+    LOG_FILE = sys.argv[3]
+    ANALYZER_PLIST_PATHS = [item.split(",") for item in sys.argv[4].split(";")]
 
 
 def log(msg: str) -> None:
     """
     Append message to the log file
     """
-    with open(LOG_FILE, "a") as log_file:
+    with open(LOG_FILE, "a") as log_file:  # type: ignore
         log_file.write(msg)
 
 
@@ -81,13 +102,13 @@ def _run_codechecker() -> None:
     codechecker_cmd: list[str] = (
         ["CodeChecker", "analyze"]
         + CODECHECKER_ARGS.split()
-        + ["--output=" + DATA_DIR]
-        + ["--file=*/" + FILE_PATH]
+        + ["--output=" + DATA_DIR]  # type: ignore
+        + ["--file=*/" + FILE_PATH]  # type: ignore
         + [COMPILE_COMMANDS_ABSOLUTE]
     )
 
     try:
-        with open(LOG_FILE, "a") as log_file:
+        with open(LOG_FILE, "a") as log_file:  # type: ignore
             subprocess.run(
                 codechecker_cmd,
                 env=os.environ,
@@ -108,7 +129,7 @@ def _display_error(ret_code: int) -> None:
     # Log and exit on error
     print("===-----------------------------------------------------===")
     print(f"[ERROR]: CodeChecker returned with {ret_code}!")
-    with open(LOG_FILE, "r") as log_file:
+    with open(LOG_FILE, "r") as log_file:  # type: ignore
         print(log_file.read())
     sys.exit(1)
 
@@ -120,14 +141,17 @@ def _move_plist_files():
     # NOTE: the following we do to get rid of md5 hash in plist file names
     # Copy the plist files to the specified destinations
     for file in os.listdir(DATA_DIR):
-        for analyzer_info in ANALYZER_PLIST_PATHS:
+        for analyzer_info in ANALYZER_PLIST_PATHS:  # type: ignore
             if re.search(
                 rf"_{analyzer_info[0]}_.*\.plist$", file
-            ) and os.path.isfile(os.path.join(DATA_DIR, file)):
-                shutil.move(os.path.join(DATA_DIR, file), analyzer_info[1])
+            ) and os.path.isfile(
+                os.path.join(DATA_DIR, file)
+            ):  # type: ignore
+                shutil.move(os.path.join(DATA_DIR, file), analyzer_info[1])  # type: ignore
 
 
 def main():
+    parse_args()
     _create_compile_commands_json_with_absolute_paths()
     _run_codechecker()
     _move_plist_files()
