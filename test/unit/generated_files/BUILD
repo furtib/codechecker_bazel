@@ -25,7 +25,7 @@ load(
 
 # First, define the rule that generates our file.
 genrule(
-    name = "create_header",
+    name = "generate_header",
     outs = ["genrule_header.h"],
     cmd = "echo 'void generated_function(){int x = 0/0;}' > $(location genrule_header.h)",
 )
