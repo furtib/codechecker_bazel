@@ -183,8 +183,7 @@ def _compile_info_aspect_impl(target, ctx):
         elif src.extension.lower() in ["cc", "cpp", "cxx", "c++"]:
             flags = cxx_flags
         else:
-            # FIXME: Create verbose mode, show warning only if thats enabled
-            print(
+            warning(
                 "Unknown file extension for {} defaulting to c++ compile flags".
                 format(src.short_path)
                 )
