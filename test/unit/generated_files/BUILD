@@ -27,7 +27,8 @@ load(
 genrule(
     name = "generate_header",
     outs = ["genrule_header.h"],
-    cmd = "echo 'void generated_function(){int x = 0/0;}' > $(location genrule_header.h)",
+    # The code is written as such to avoid compiler warnings
+    cmd = "echo 'void generated_function(){int y = 0; int x = 0/y;}' > $(location genrule_header.h)",
 )
 
 cc_binary(
