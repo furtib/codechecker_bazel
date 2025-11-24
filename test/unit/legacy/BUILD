@@ -15,9 +15,13 @@ load(
 load(
     "@bazel_codechecker//src:codechecker.bzl",
     "codechecker",
-    "codechecker_config",
     "codechecker_suite",
     "codechecker_test",
+)
+
+load(
+    "@bazel_codechecker//src:codechecker_config.bzl",
+    "codechecker_config",
 )
 
 # clang-tidy and clang -analyze rules
