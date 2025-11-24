@@ -4,6 +4,14 @@
 load("@bazel_tools//tools/build_defs/cc:action_names.bzl", "ACTION_NAMES")
 load("@bazel_tools//tools/cpp:toolchain_utils.bzl", "find_cpp_toolchain")
 load("@bazel_codechecker//src:tools.bzl", "warning")
+load(
+    "compile_commands.bzl",
+    "platforms_transition",
+)
+load(
+    "@bazel_codechecker//src:codechecker_config.bzl",
+    "get_config_file"
+)
 
 def _run_code_checker(
         ctx,
@@ -281,6 +289,7 @@ def _per_file_impl(ctx):
     sources_and_headers = _collect_all_sources_and_headers(ctx)
     options = ctx.attr.default_options + ctx.attr.options
     all_files = [compile_commands_json]
+    config_file, env_vars = get_config_file(ctx)
     _create_wrapper_script(ctx, options, compile_commands_json)
     for target in ctx.attr.targets:
         if not CcInfo in target:
@@ -347,6 +356,19 @@ per_file_test = rule(
             ],
             doc = "List of compilable targets which should be checked.",
         ),
+        "_whitelist_function_transition": attr.label(
+            default = "@bazel_tools//tools/whitelists/function_transition_whitelist",
+            doc = "needed for transitions",
+        ),
+        "config": attr.label(
+            default = None,
+            cfg = platforms_transition,
+            doc = "CodeChecker configuration",
+        ),
+        "platform": attr.string(
+            default = "",  #"@platforms//os:linux",
+            doc = "Platform to build for",
+        ),
         "_per_file_script_template": attr.label(
             default = ":per_file_script.py",
             allow_single_file = True,
@@ -366,12 +388,14 @@ per_file_test = rule(
 def code_checker_test(
     name,
     targets,
+    config = None,
     options = [],
     tags = [],
 ):
     per_file_test(
         name = name,
         options = options,
+        config = config,
         targets = targets,
         tags = tags,
     )
