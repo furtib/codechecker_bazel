@@ -83,10 +83,15 @@ def _run_codechecker() -> None:
     """
     Runs CodeChecker analyze
     """
-    log(
-        f"CodeChecker command: CodeChecker analyze {CODECHECKER_ARGS} \
-{COMPILE_COMMANDS_ABSOLUTE} --output={DATA_DIR} --file=*/{FILE_PATH}\n"
+    codechecker_cmd: list[str] = (
+        ["CodeChecker", "analyze"]
+        + CODECHECKER_ARGS.split()
+        + ["--output=" + DATA_DIR]  # type: ignore
+        + ["--file=*/" + FILE_PATH]  # type: ignore
+        + ["--config " + CONFIG_FILE]
+        + [COMPILE_COMMANDS_ABSOLUTE]
     )
+    log(f"CodeChecker command: {codechecker_cmd}\n")
     log("===-----------------------------------------------------===\n")
     log("                   CodeChecker error log                   \n")
     log("===-----------------------------------------------------===\n")
@@ -99,15 +104,6 @@ def _run_codechecker() -> None:
         text=True,
     )
     log(result.stdout)
-
-    codechecker_cmd: list[str] = (
-        ["CodeChecker", "analyze"]
-        + CODECHECKER_ARGS.split()
-        + ["--output=" + DATA_DIR]  # type: ignore
-        + ["--file=*/" + FILE_PATH]  # type: ignore
-        + ["--config " + CONFIG_FILE]
-        + [COMPILE_COMMANDS_ABSOLUTE]
-    )
 
     try:
         with open(LOG_FILE, "a") as log_file:  # type: ignore
