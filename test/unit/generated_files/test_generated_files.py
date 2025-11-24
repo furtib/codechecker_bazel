@@ -91,14 +91,14 @@ class TestGeneratedFiles(TestBase):
         ret, _, _ = self.run_command(
             f"bazel test //test/unit/generated_files:per_file_genrule_source"
         )
-        self.assertEqual(ret, 0) # TODO: change to 3
+        self.assertEqual(ret, 3)
         test_log = os.path.join(
             self.BAZEL_TESTLOGS_DIR, # type: ignore
-            "per_file_genrule_header",
+            "per_file_genrule_source",
             "test.log"
         )
         self.assertTrue(os.path.exists(test_log))
-        self.assertFalse( # TODO: change to assertTrue
+        self.assertTrue(
             self.contains_regex_in_file(
                 test_log, r"defect\(s\) in genrule_source.cc"
             )
