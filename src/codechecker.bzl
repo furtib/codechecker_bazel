@@ -37,19 +37,6 @@ def get_platform_alias(platform):
         platform = shortname
     return platform
 
-def _copy_config_to_default(config_file, ctx_config_file, ctx):
-    ctx.actions.run(
-        inputs = [config_file],
-        outputs = [ctx_config_file],
-        mnemonic = "CopyFile",
-        progress_message = "Copying CodeChecker config file",
-        executable = "cp",
-        arguments = [
-            config_file.path,
-            ctx_config_file.path,
-        ],
-    )
-
 def _codechecker_impl(ctx):
     py_runtime_info = ctx.attr._python_runtime[PyRuntimeInfo]
     python_path = py_runtime_info.interpreter_path
