@@ -2,4 +2,3 @@
 analyze:
   - "--disable=core.DivideZero"
   - "--disable=core.CallAndMessage"
-  - "--disable=cppcheck-zerodiv"
