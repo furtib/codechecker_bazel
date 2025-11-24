@@ -19,6 +19,8 @@ def _run_code_checker(
         arguments,
         label,
         options,
+        config_file,
+        env_vars,
         compile_commands_json,
         compilation_context,
         sources_and_headers):
@@ -35,7 +37,7 @@ def _run_code_checker(
     codechecker_log = ctx.actions.declare_file(codechecker_log_file_name)
 
     if "--ctu" in options:
-        inputs = [compile_commands_json] + sources_and_headers
+        inputs = [compile_commands_json, config_file] + sources_and_headers
     else:
         # NOTE: we collect only headers, so CTU may not work!
         headers = depset([src], transitive = [compilation_context.headers])
@@ -269,7 +271,7 @@ def _collect_all_sources_and_headers(ctx):
     sources_and_headers = all_files + headers.to_list()
     return sources_and_headers
 
-def _create_wrapper_script(ctx, options, compile_commands_json):
+def _create_wrapper_script(ctx, options, compile_commands_json, config_file):
     options_str = ""
     for item in options:
         options_str += item + " "
@@ -281,6 +283,7 @@ def _create_wrapper_script(ctx, options, compile_commands_json):
             "{PythonPath}": ctx.attr._python_runtime[PyRuntimeInfo].interpreter_path,
             "{compile_commands_json}": compile_commands_json.path,
             "{codechecker_args}": options_str,
+            "{config_file}": config_file.path,
         },
     )
 
@@ -290,7 +293,7 @@ def _per_file_impl(ctx):
     options = ctx.attr.default_options + ctx.attr.options
     all_files = [compile_commands_json]
     config_file, env_vars = get_config_file(ctx)
-    _create_wrapper_script(ctx, options, compile_commands_json)
+    _create_wrapper_script(ctx, options, compile_commands_json, config_file)
     for target in ctx.attr.targets:
         if not CcInfo in target:
             continue
@@ -307,6 +310,8 @@ def _per_file_impl(ctx):
                         args,
                         ctx.attr.name,
                         options,
+                        config_file,
+                        env_vars,
                         compile_commands_json,
                         compilation_context,
                         sources_and_headers,

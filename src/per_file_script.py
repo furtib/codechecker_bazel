@@ -32,6 +32,7 @@ LOG_FILE: Optional[str] = None
 COMPILE_COMMANDS_JSON: str = "{compile_commands_json}"
 COMPILE_COMMANDS_ABSOLUTE: str = f"{COMPILE_COMMANDS_JSON}.abs"
 CODECHECKER_ARGS: str = "{codechecker_args}"
+CONFIG_FILE: str = "{config_file}"
 
 
 def parse_args():
@@ -104,6 +105,7 @@ def _run_codechecker() -> None:
         + CODECHECKER_ARGS.split()
         + ["--output=" + DATA_DIR]  # type: ignore
         + ["--file=*/" + FILE_PATH]  # type: ignore
+        + ["--config " + CONFIG_FILE]
         + [COMPILE_COMMANDS_ABSOLUTE]
     )
 
