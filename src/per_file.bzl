@@ -77,7 +77,7 @@ def _rule_sources(ctx):
     srcs = []
     if hasattr(ctx.rule.attr, "srcs"):
         for src in ctx.rule.attr.srcs:
-            srcs += [src for src in src.files.to_list() if src.is_source and check_valid_file_type(src)]
+            srcs += [src for src in src.files.to_list() if check_valid_file_type(src)]
     return srcs
 
 def _toolchain_flags(ctx, action_name = ACTION_NAMES.cpp_compile):
