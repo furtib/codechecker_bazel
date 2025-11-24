@@ -75,16 +75,16 @@ codechecker_config = rule(
     },
 )
 
-def _copy_config_to_default(config_file, ctx):
+def _copy_config_to_default(config_file, ctx_config_file, ctx):
     ctx.actions.run(
         inputs = [config_file],
-        outputs = [ctx.outputs.codechecker_config],
+        outputs = [ctx_config_file],
         mnemonic = "CopyFile",
         progress_message = "Copying CodeChecker config file",
         executable = "cp",
         arguments = [
             config_file.path,
-            ctx.outputs.codechecker_config.path,
+            ctx_config_file.path,
         ],
     )
 
@@ -129,6 +129,20 @@ def _codechecker_impl(ctx):
         is_executable = False,
     )
 
+    # Decide whether to use json or yaml for configuration
+    config_file_name = "config.json"
+    if ctx.attr.config:
+        if type(ctx.attr.config) == "list":
+            config_info = ctx.attr.config[0][CodeCheckerConfigInfo]
+        else:
+            config_info = ctx.attr.config[CodeCheckerConfigInfo]
+        if config_info.config_file:
+            # Create a copy of CodeChecker configuration file
+            # provided via codechecker_config(config_file)
+            config_file = config_info.config_file.files.to_list()[0]
+            config_file_name = "config." + config_file.extension
+    ctx_config_file = ctx.actions.declare_file(config_file_name)
+
     # Create CodeChecker JSON config file and env vars
     if ctx.attr.config:
         if type(ctx.attr.config) == "list":
@@ -139,7 +153,7 @@ def _codechecker_impl(ctx):
             # Create a copy of CodeChecker configuration file
             # provided via codechecker_config(config_file)
             config_file = config_info.config_file.files.to_list()[0]
-            _copy_config_to_default(config_file, ctx)
+            _copy_config_to_default(config_file, ctx_config_file, ctx)
         else:
             # Create CodeChecker configuration file in JSON format
             # from Bazel codechecker_config(analyze, parse)
@@ -150,7 +164,7 @@ def _codechecker_impl(ctx):
                 config_json["parse"] = config_info.parse
             config_content = json.encode_indent(config_json)
             ctx.actions.write(
-                output = ctx.outputs.codechecker_config,
+                output = ctx_config_file,
                 content = config_content,
                 is_executable = False,
             )
@@ -160,7 +174,7 @@ def _codechecker_impl(ctx):
     else:
         # Empty CodeChecker JSON config file
         ctx.actions.write(
-            output = ctx.outputs.codechecker_config,
+            output = ctx_config_file,
             content = "{}",
             is_executable = False,
         )
@@ -178,7 +192,7 @@ def _codechecker_impl(ctx):
             "{codechecker_bin}": CODECHECKER_BIN_PATH,
             "{compile_commands}": ctx.outputs.codechecker_commands.path,
             "{codechecker_skipfile}": ctx.outputs.codechecker_skipfile.path,
-            "{codechecker_config}": ctx.outputs.codechecker_config.path,
+            "{codechecker_config}": ctx_config_file.path,
             "{codechecker_analyze}": " ".join(ctx.attr.analyze),
             "{codechecker_files}": codechecker_files.path,
             "{codechecker_log}": ctx.outputs.codechecker_log.path,
@@ -192,7 +206,7 @@ def _codechecker_impl(ctx):
                 ctx.outputs.codechecker_script,
                 ctx.outputs.codechecker_commands,
                 ctx.outputs.codechecker_skipfile,
-                ctx.outputs.codechecker_config,
+                ctx_config_file,
             ] + source_files,
         ),
         outputs = [
@@ -211,7 +225,7 @@ def _codechecker_impl(ctx):
         ctx.outputs.compile_commands,
         ctx.outputs.codechecker_commands,
         ctx.outputs.codechecker_skipfile,
-        ctx.outputs.codechecker_config,
+        ctx_config_file,
         codechecker_files,
         ctx.outputs.codechecker_script,
         ctx.outputs.codechecker_log,
@@ -273,7 +287,6 @@ codechecker = rule(
         "compile_commands": "%{name}/compile_commands.json",
         "codechecker_commands": "%{name}/codechecker_commands.json",
         "codechecker_skipfile": "%{name}/codechecker_skipfile.cfg",
-        "codechecker_config": "%{name}/codechecker_config.json",
         "codechecker_script": "%{name}/codechecker_script.py",
         "codechecker_log": "%{name}/codechecker.log",
     },
@@ -378,7 +391,6 @@ _codechecker_test = rule(
         "compile_commands": "%{name}/compile_commands.json",
         "codechecker_commands": "%{name}/codechecker_commands.json",
         "codechecker_skipfile": "%{name}/codechecker_skipfile.cfg",
-        "codechecker_config": "%{name}/codechecker_config.json",
         "codechecker_script": "%{name}/codechecker_script.py",
         "codechecker_log": "%{name}/codechecker.log",
         "codechecker_test_script": "%{name}/codechecker_test_script.py",
@@ -406,6 +418,7 @@ def codechecker_test(
             name = name,
             targets = targets,
             options = analyze,
+            config = config,
             tags = tags,
             **kwargs
         )
