@@ -91,7 +91,7 @@ def _run_codechecker() -> None:
         + ["--config=" + CONFIG_FILE]
         + [COMPILE_COMMANDS_ABSOLUTE]
     )
-    log(f"CodeChecker command: {codechecker_cmd}\n")
+    log(f"CodeChecker command: {' '.join(codechecker_cmd)}\n")
     log("===-----------------------------------------------------===\n")
     log("                   CodeChecker error log                   \n")
     log("===-----------------------------------------------------===\n")
