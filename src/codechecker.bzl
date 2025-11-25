@@ -18,6 +18,10 @@ load(
     "tools.bzl",
     "warning"
 )
+load(
+    "@bazel_codechecker//src:codechecker_config.bzl",
+    "get_config_file"
+)
 
 def get_platform_alias(platform):
     """
@@ -32,61 +36,6 @@ def get_platform_alias(platform):
         (_, _, shortname) = platform.partition(":")
         platform = shortname
     return platform
-
-CodeCheckerConfigInfo = provider(
-    doc = "Defines CodeChecker configuration",
-    fields = {
-        "analyze": "List of arguments for CodeChecker analyze command",
-        "parse": "List of arguments for CodeChecker parse command",
-        "config_file": "CodeChecker configuration file in JSON format",
-        "env": "Environment variables for CodeChecker",
-    },
-)
-
-def _codechecker_config_impl(ctx):
-    return [
-        CodeCheckerConfigInfo(
-            analyze = ctx.attr.analyze,
-            parse = ctx.attr.parse,
-            config_file = ctx.attr.config_file,
-            env = ctx.attr.env,
-        ),
-    ]
-
-codechecker_config = rule(
-    implementation = _codechecker_config_impl,
-    attrs = {
-        "analyze": attr.string_list(
-            default = [],
-            doc = "List of arguments for CodeChecker analyze command",
-        ),
-        "parse": attr.string_list(
-            default = [],
-            doc = "List of arguments for CodeChecker parse command",
-        ),
-        "config_file": attr.label(
-            default = None,
-            allow_single_file = True,
-        ),
-        "env": attr.string_list(
-            default = [],
-            doc = "List of environment variables for CodeChecker",
-        ),
-    },
-)
-
-def _copy_config_to_default(config_file, ctx):
-    ctx.actions.run(
-        inputs = [config_file],
-        outputs = [ctx.outputs.codechecker_config],
-        mnemonic = "CopyFile",
-        progress_message = "Copying CodeChecker config file",
-        executable = "cp",
-        arguments = [
-            config_file.path,
-            ctx.outputs.codechecker_config.path,
-        ],
-    )
 
 def _codechecker_impl(ctx):
     py_runtime_info = ctx.attr._python_runtime[PyRuntimeInfo]
@@ -129,42 +78,7 @@ def _codechecker_impl(ctx):
         is_executable = False,
     )
 
-    # Create CodeChecker JSON config file and env vars
-    if ctx.attr.config:
-        if type(ctx.attr.config) == "list":
-            config_info = ctx.attr.config[0][CodeCheckerConfigInfo]
-        else:
-            config_info = ctx.attr.config[CodeCheckerConfigInfo]
-        if config_info.config_file:
-            # Create a copy of CodeChecker configuration file
-            # provided via codechecker_config(config_file)
-            config_file = config_info.config_file.files.to_list()[0]
-            _copy_config_to_default(config_file, ctx)
-        else:
-            # Create CodeChecker configuration file in JSON format
-            # from Bazel codechecker_config(analyze, parse)
-            config_json = {}
-            if config_info.analyze:
-                config_json["analyze"] = config_info.analyze
-            if config_info.parse:
-                config_json["parse"] = config_info.parse
-            config_content = json.encode_indent(config_json)
-            ctx.actions.write(
-                output = ctx.outputs.codechecker_config,
-                content = config_content,
-                is_executable = False,
-            )
-
-        # Pack env vars for CodeChecker
-        codechecker_env = "; ".join(config_info.env)
-    else:
-        # Empty CodeChecker JSON config file
-        ctx.actions.write(
-            output = ctx.outputs.codechecker_config,
-            content = "{}",
-            is_executable = False,
-        )
-        codechecker_env = ""
+    config_file, codechecker_env = get_config_file(ctx)
 
     codechecker_files = ctx.actions.declare_directory(ctx.label.name + "/codechecker-files")
     ctx.actions.expand_template(
@@ -178,7 +92,7 @@ def _codechecker_impl(ctx):
             "{codechecker_bin}": CODECHECKER_BIN_PATH,
             "{compile_commands}": ctx.outputs.codechecker_commands.path,
             "{codechecker_skipfile}": ctx.outputs.codechecker_skipfile.path,
-            "{codechecker_config}": ctx.outputs.codechecker_config.path,
+            "{codechecker_config}": config_file.path,
             "{codechecker_analyze}": " ".join(ctx.attr.analyze),
             "{codechecker_files}": codechecker_files.path,
             "{codechecker_log}": ctx.outputs.codechecker_log.path,
@@ -192,7 +106,7 @@ def _codechecker_impl(ctx):
                 ctx.outputs.codechecker_script,
                 ctx.outputs.codechecker_commands,
                 ctx.outputs.codechecker_skipfile,
-                ctx.outputs.codechecker_config,
+                config_file,
             ] + source_files,
         ),
         outputs = [
@@ -211,7 +125,7 @@ def _codechecker_impl(ctx):
         ctx.outputs.compile_commands,
         ctx.outputs.codechecker_commands,
         ctx.outputs.codechecker_skipfile,
-        ctx.outputs.codechecker_config,
+        config_file,
         codechecker_files,
         ctx.outputs.codechecker_script,
         ctx.outputs.codechecker_log,
@@ -273,7 +187,6 @@ codechecker = rule(
         "compile_commands": "%{name}/compile_commands.json",
         "codechecker_commands": "%{name}/codechecker_commands.json",
         "codechecker_skipfile": "%{name}/codechecker_skipfile.cfg",
-        "codechecker_config": "%{name}/codechecker_config.json",
         "codechecker_script": "%{name}/codechecker_script.py",
         "codechecker_log": "%{name}/codechecker.log",
     },
@@ -378,7 +291,6 @@ _codechecker_test = rule(
         "compile_commands": "%{name}/compile_commands.json",
         "codechecker_commands": "%{name}/codechecker_commands.json",
         "codechecker_skipfile": "%{name}/codechecker_skipfile.cfg",
-        "codechecker_config": "%{name}/codechecker_config.json",
         "codechecker_script": "%{name}/codechecker_script.py",
         "codechecker_log": "%{name}/codechecker.log",
         "codechecker_test_script": "%{name}/codechecker_test_script.py",
@@ -406,6 +318,7 @@ def codechecker_test(
             name = name,
             targets = targets,
             options = analyze,
+            config = config,
             tags = tags,
             **kwargs
         )
