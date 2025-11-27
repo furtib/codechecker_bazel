@@ -1,0 +1,11 @@
+"""
+Module docs string
+"""
+module(
+    name = "bazel_codechecker",
+    version = "0.0.0",  # Update this to your release version
+)
+ext = use_extension("//src:extensions.bzl", "initialize_tools")
+use_repo(ext, "default_python_tools")
+use_repo(ext, "default_codechecker_tools")
+register_toolchains("@default_python_tools//:python_toolchain")
