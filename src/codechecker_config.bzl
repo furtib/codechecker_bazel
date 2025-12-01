@@ -17,7 +17,20 @@ def get_config_file(ctx):
     Returns (config_file, environment_variables)
     config_file is a file object that is readable during Codechecker execution
     """
+    
+    # Decide whether to use json or yaml for configuration
     config_file_name = ctx.attr.name + "/config.json"
+    if ctx.attr.config:
+        if type(ctx.attr.config) == "list":
+            config_info = ctx.attr.config[0][CodeCheckerConfigInfo]
+        else:
+            config_info = ctx.attr.config[CodeCheckerConfigInfo]
+        if config_info.config_file:
+            # Create a copy of CodeChecker configuration file
+            # provided via codechecker_config(config_file)
+            config_file = config_info.config_file.files.to_list()[0]
+            config_file_name = ctx.attr.name + \
+                                "/config." + config_file.extension
     ctx_config_file = ctx.actions.declare_file(config_file_name)
 
     # Create CodeChecker JSON config file and env vars
