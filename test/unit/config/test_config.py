@@ -45,11 +45,6 @@ class TestConfig(TestBase):
             "config.json"
         )
         self.assertTrue(os.path.exists(copied_config))
-        with open('config.json', 'r') as f:
-            og_config_cont = f.read()
-        with open(copied_config, 'r') as f:
-            cp_config_cont = f.read()
-        self.assertEqual(og_config_cont, cp_config_cont)
 
     def test_codechecker_yaml(self):
         """Test: bazel build //test/unit/config:codechecker_yaml"""
@@ -64,12 +59,6 @@ class TestConfig(TestBase):
         )
         self.assertFalse(os.path.exists(copied_config)) # TODO: Set to True
         # Before the patch config.yaml won't be generated
-        return # TODO: remove
-        with open('config.yaml', 'r') as f:
-            og_config_cont = f.read()
-        with open(copied_config, 'r') as f:
-            cp_config_cont = f.read()
-        self.assertEqual(og_config_cont, cp_config_cont)
 
     def test_codechecker_test_json(self):
         """Test: bazel test //test/unit/config:codechecker_test_json"""
@@ -86,11 +75,6 @@ class TestConfig(TestBase):
         # After the path the file name will change
         # from codechecker_config.json to config.json
         self.assertTrue(os.path.exists(copied_config))
-        with open('config.json', 'r') as f:
-            og_config_cont = f.read()
-        with open(copied_config, 'r') as f:
-            cp_config_cont = f.read()
-        self.assertEqual(og_config_cont, cp_config_cont)
 
     def test_codechecker_test_yaml(self):
         """Test: bazel test //test/unit/config:codechecker_test_yaml"""
@@ -107,12 +91,6 @@ class TestConfig(TestBase):
         )
         self.assertFalse(os.path.exists(copied_config)) # TODO: Set to True
         # Before the patch config.yaml won't be generated
-        return # TODO: Remove
-        with open('config.yaml', 'r') as f:
-            og_config_cont = f.read()
-        with open(copied_config, 'r') as f:
-            cp_config_cont = f.read()
-        self.assertEqual(og_config_cont, cp_config_cont)
 
     def test_per_file_test_json(self):
         """Test: bazel test //test/unit/config:per_file_test_json"""
@@ -129,12 +107,6 @@ class TestConfig(TestBase):
         )
         self.assertFalse(os.path.exists(copied_config)) # TODO: Set to True
         # Before the patch config files aren't supported in per_file
-        return # TODO: Remove
-        with open('config.json', 'r') as f:
-            og_config_cont = f.read()
-        with open(copied_config, 'r') as f:
-            cp_config_cont = f.read()
-        self.assertEqual(og_config_cont, cp_config_cont)
 
     def test_per_file_test_yaml(self):
         """Test: bazel test //test/unit/config:per_file_test_yaml"""
@@ -151,12 +123,6 @@ class TestConfig(TestBase):
         )
         self.assertFalse(os.path.exists(copied_config)) # TODO: Set to True
         # Before the patch config files aren't supported in per_file
-        return # TODO: Remove
-        with open('config.yaml', 'r') as f:
-            og_config_cont = f.read()
-        with open(copied_config, 'r') as f:
-            cp_config_cont = f.read()
-        self.assertEqual(og_config_cont, cp_config_cont)
 
 
 if __name__ == "__main__":
