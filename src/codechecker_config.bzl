@@ -88,7 +88,7 @@ def _codechecker_config_impl(ctx):
         ),
     ]
 
-codechecker_config = rule(
+codechecker_config_internal = rule(
     implementation = _codechecker_config_impl,
     attrs = {
         "analyze": attr.string_list(

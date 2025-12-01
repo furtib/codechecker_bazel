@@ -20,7 +20,8 @@ load(
 )
 load(
     "@bazel_codechecker//src:codechecker_config.bzl",
-    "get_config_file"
+    "get_config_file",
+    "codechecker_config_internal",
 )
 
 def get_platform_alias(platform):
@@ -367,5 +368,21 @@ def codechecker_suite(
         name = name,
         tests = tests,
         tags = tags,
+        **kwargs
+    )
+
+def codechecker_config(
+        name,
+        analyze = [],
+        parse = [],
+        config_file = None,
+        env = [],
+        **kwargs):
+    codechecker_config_internal(
+        name = name,
+        analyze = analyze,
+        parse = parse,
+        config_file = config_file,
+        env = env,
         **kwargs
     )
