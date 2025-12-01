@@ -345,11 +345,11 @@ def _check_source_files(source_files, compilation_db):
             fail("File: %s\nNot available in collected source files" % src)
 
 def _compile_commands_json(compilation_db):
-    json = "[\n"
-    entries = [entry.to_json() for entry in compilation_db]
-    json += ",\n".join(entries)
-    json += "]\n"
-    return json
+    json_cont = "[\n"
+    entries = [json.encode(entry) for entry in compilation_db]
+    json_cont += ",\n".join(entries)
+    json_cont += "]\n"
+    return json_cont
 
 def compile_commands_impl(ctx):
     """ Creates compile_commands.json file for given targets and platform

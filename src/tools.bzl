@@ -69,7 +69,7 @@ default_python_tools = repository_rule(
 
 def register_default_python_toolchain():
     default_python_tools(name = "default_python_tools")
-    native.register_toolchains("@default_python_tools//:python_toolchain")
+    #native.register_toolchains("@default_python_tools//:python_toolchain")
 
 def _codechecker_local_repository_impl(repository_ctx):
     repository_ctx.file(
