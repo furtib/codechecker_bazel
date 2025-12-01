@@ -42,10 +42,8 @@ class TestConfig(TestBase):
         copied_config = os.path.join(
             self.BAZEL_BIN_DIR, # type: ignore
             "codechecker_json",
-            "codechecker_config.json" # TODO: Change to config.json
+            "config.json"
         )
-        # After the path the file name will change
-        # from codechecker_config.json to config.json
         self.assertTrue(os.path.exists(copied_config))
         with open('config.json', 'r') as f:
             og_config_cont = f.read()
@@ -83,7 +81,7 @@ class TestConfig(TestBase):
         copied_config = os.path.join(
             self.BAZEL_BIN_DIR, # type: ignore
             "codechecker_test_json",
-            "codechecker_config.json" # TODO: Change to config.json
+            "config.json"
         )
         # After the path the file name will change
         # from codechecker_config.json to config.json
