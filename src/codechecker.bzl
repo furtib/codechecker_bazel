@@ -371,6 +371,11 @@ def codechecker_suite(
         **kwargs
     )
 
+# This rule definition is here for compatibility reasons
+# in the earliest versions, the entire codechecker_config definition was here,
+# but was later moved to its own .bzl file.
+# This macro is left here so that early adopters
+# don't need to change where the rule is loaded from.
 def codechecker_config(
         name,
         analyze = [],
