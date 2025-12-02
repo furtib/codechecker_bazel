@@ -12,13 +12,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-def get_config_file(ctx):
+def _get_config_file_name(ctx):
     """
-    Returns (config_file, environment_variables)
-    config_file is a file object that is readable during Codechecker execution
+    Returns the name of the config file to be used, with correct extension
+    If no config file is given, we write the configuration options into a 
+    config.json file. 
     """
-    
-    # Decide whether to use json or yaml for configuration
     config_file_name = ctx.attr.name + "/config.json"
     if ctx.attr.config:
         if type(ctx.attr.config) == "list":
@@ -31,13 +30,29 @@ def get_config_file(ctx):
             config_file = config_info.config_file.files.to_list()[0]
             config_file_name = ctx.attr.name + \
                                 "/config." + config_file.extension
+    return config_file_name
+
+
+def get_config_file(ctx):
+    """
+    Returns (config_file, environment_variables)
+    config_file is a file object that is readable during Codechecker execution
+    """
+    
+    # Decide whether to use json or yaml for configuration
+    config_file_name = _get_config_file_name(ctx)
     ctx_config_file = ctx.actions.declare_file(config_file_name)
 
     # Create CodeChecker JSON config file and env vars
     if ctx.attr.config:
+        if type(ctx.attr.config) == "list":
+            config_info = ctx.attr.config[0][CodeCheckerConfigInfo]
+        else:
+            config_info = ctx.attr.config[CodeCheckerConfigInfo]
         if config_info.config_file:
             # Create a copy of CodeChecker configuration file
             # provided via codechecker_config(config_file)
+            config_file = config_info.config_file.files.to_list()[0]
             ctx.actions.run(
                 inputs = [config_file],
                 outputs = [ctx_config_file],
