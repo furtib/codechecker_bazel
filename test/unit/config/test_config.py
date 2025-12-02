@@ -72,7 +72,7 @@ class TestConfig(TestBase):
             "codechecker_test_json",
             "config.json"
         )
-        # After the path the file name will change
+        # After the fix the file name will change
         # from codechecker_config.json to config.json
         self.assertTrue(os.path.exists(copied_config))
 
@@ -83,7 +83,7 @@ class TestConfig(TestBase):
         )
         # Should not find the division by zero bug
         self.assertEqual(ret, 3) # TODO: Set to 0, 
-        # since CodeChecker won't find the division by zero bug
+        # based on the config file won't find the division by zero bug
         copied_config = os.path.join(
             self.BAZEL_BIN_DIR, # type: ignore
             "codechecker_test_yaml",
