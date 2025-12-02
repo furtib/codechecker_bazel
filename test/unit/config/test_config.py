@@ -57,8 +57,7 @@ class TestConfig(TestBase):
             "codechecker_yaml",
             "config.yaml"
         )
-        self.assertFalse(os.path.exists(copied_config)) # TODO: Set to True
-        # Before the patch config.yaml won't be generated
+        self.assertTrue(os.path.exists(copied_config))
 
     def test_codechecker_test_json(self):
         """Test: bazel test //test/unit/config:codechecker_test_json"""
@@ -82,15 +81,13 @@ class TestConfig(TestBase):
             "bazel test //test/unit/config:codechecker_test_yaml"
         )
         # Should not find the division by zero bug
-        self.assertEqual(ret, 3) # TODO: Set to 0, 
-        # based on the config file won't find the division by zero bug
+        self.assertEqual(ret, 0)
         copied_config = os.path.join(
             self.BAZEL_BIN_DIR, # type: ignore
             "codechecker_test_yaml",
             "config.yaml"
         )
-        self.assertFalse(os.path.exists(copied_config)) # TODO: Set to True
-        # Before the patch config.yaml won't be generated
+        self.assertTrue(os.path.exists(copied_config))
 
     def test_per_file_test_json(self):
         """Test: bazel test //test/unit/config:per_file_test_json"""
