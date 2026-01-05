@@ -2,4 +2,4 @@ local_path_override(
     module_name = "bazel_codechecker",
     path = "../../../../",
 )
-bazel_dep(name = "bazel_codechecker", version = "0.0.0")
+bazel_dep(name = "bazel_codechecker")
