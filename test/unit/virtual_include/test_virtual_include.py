@@ -108,6 +108,22 @@ class TestVirtualInclude(TestBase):
             self.contains_in_files(r"/_virtual_includes/", plist_files), []
         )
 
+    def test_bazel_codechecker_implementation_deps_virtual_include(self):
+        """Test: bazel build :codechecker_impl_deps_include"""
+        ret, _, _ = self.run_command(
+            "bazel build //test/unit/virtual_include:codechecker_impl_deps_include"
+        )
+        # TODO: change to 0, CodeChecker should finish analysis successfully
+        self.assertEqual(ret, 1)
+
+    def test_bazel_per_file_implementation_deps_virtual_include(self):
+        """Test: bazel build :per_file_impl_deps_include"""
+        ret, _, _ = self.run_command(
+            "bazel build //test/unit/virtual_include:per_file_impl_deps_include"
+        )
+        # TODO: change to 0, CodeChecker should finish analysis successfully
+        self.assertEqual(ret, 1)
+
 
 if __name__ == "__main__":
     unittest.main(buffer=True)
