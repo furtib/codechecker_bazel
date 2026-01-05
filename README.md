@@ -149,7 +149,7 @@ git_override(
     remote = "https://github.com/Ericsson/codechecker_bazel.git",
     commit = "a32e9d75df4fb453c8bbfdf0fdf6a767797ae53d", # Update to latest
 )
-bazel_dep(name = "bazel_codechecker", version = "0.0.0")
+bazel_dep(name = "bazel_codechecker")
 
 ```
 ## CodeChecker
