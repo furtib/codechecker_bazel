@@ -21,8 +21,8 @@ from typing import final
 from common.base import TestBase
 
 
-class TestTemplate(TestBase):
-    """TODO: Add a description"""
+class TestImplementationDeps(TestBase):
+    """Test implementation_deps support"""
 
     # Set working directory
     __test_path__ = os.path.dirname(os.path.abspath(__file__))
