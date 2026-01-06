@@ -21,6 +21,24 @@ load(
     "compile_commands",
 )
 
+cc_library(
+    name = "dep_lib",
+    srcs = [
+        "dep.cpp",
+    ],
+    hdrs = ["dep.h"],
+    tags = ["manual"],
+)
+
+cc_library(
+    name = "main_lib",
+    srcs = [
+        "main.cpp",
+    ],
+    implementation_deps = ["dep_lib"],
+    tags = ["manual"],
+)
+
 compile_commands(
     name = "compile_commands_implementation_deps",
     targets = [
@@ -40,22 +58,4 @@ codechecker_test(
         ":main_lib",
     ],
     per_file = True,
-)
-
-cc_library(
-    name = "main_lib",
-    srcs = [
-        "main.cpp",
-    ],
-    implementation_deps = ["dep_lib"],
-    tags = ["manual"],
-)
-
-cc_library(
-    name = "dep_lib",
-    srcs = [
-        "dep.cpp",
-    ],
-    hdrs = ["dep.h"],
-    tags = ["manual"],
 )
