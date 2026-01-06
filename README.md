@@ -119,7 +119,7 @@ How to use
 To use these rules you should first add `codechecker_bazel` as an
 [external dependency](https://bazel.build/versions/6.5.0/external/overview#workspace-system)
 
-Old way: `WORKSPACE` file:
+Using the legacy `WORKSPACE` system:
 
 ```python
 load("@bazel_tools//tools/build_defs/repo:git.bzl", "git_repository")
@@ -141,8 +141,9 @@ register_default_python_toolchain()
 register_default_codechecker()
 ```
 
-Modern way: MODULE.bazel:
-<!--The git override part should not be needed after the project have been uploaded to a central registry-->
+Using the MODULE system:
+<!--The git override part should not be needed after the project have been uploaded to a central registry
+TODO: update this part-->
 ```
 git_override(
     module_name = "bazel_codechecker",
