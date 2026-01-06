@@ -29,8 +29,6 @@ load(
     "@bazel_codechecker//src:codechecker.bzl",
     "codechecker_test",
 )
-
-
 codechecker_test(
     name = "codechecker_test",
     targets = [
