@@ -143,7 +143,7 @@ register_default_codechecker()
 
 Using the MODULE system:
 <!--The git override part should not be needed after the project have been uploaded to a central registry
-TODO: update this part-->
+TODO: update this part when we have an actual release-->
 ```
 git_override(
     module_name = "bazel_codechecker",
