@@ -1,5 +1,9 @@
 load("@bazel_tools//tools/build_defs/cc:action_names.bzl", "ACTION_NAMES")
 load("@bazel_tools//tools/cpp:toolchain_utils.bzl", "find_cpp_toolchain")
+load(
+    "@bazel_codechecker//src:tools",
+    "source_attr"
+)
 
 CLANG_TIDY_WRAPPER_SCRIPT = """#!/usr/bin/env bash
 CLANG_TIDY=$1
@@ -357,7 +361,7 @@ def _compile_info_sources(deps):
 
 def _collect_all_sources(ctx):
     sources = _rule_sources(ctx)
-    for attr in ["srcs", "deps", "data", "exports"]:
+    for attr in source_attr:
         if hasattr(ctx.rule.attr, attr):
             deps = getattr(ctx.rule.attr, attr)
             sources += _compile_info_sources(deps)
