@@ -46,9 +46,7 @@ class TestImplementationDeps(TestBase):
         )
         self.assertTrue(
             self.contains_regex_in_file(test_log, r"core\.DivideZero"))
-        # TODO: Set to assertTrue
-        # rule should analyze source files under implementation_deps
-        self.assertFalse(
+        self.assertTrue(
             self.contains_regex_in_file(test_log, r"cplusplus\.NewDeleteLeaks"))
 
     def test_per_file_implementation_deps(self):
@@ -64,9 +62,7 @@ class TestImplementationDeps(TestBase):
         )
         self.assertTrue(
             self.contains_regex_in_file(test_log, r"core\.DivideZero"))
-        # TODO: Set to assertTrue
-        # rule should analyze source files under implementation_deps
-        self.assertFalse(
+        self.assertTrue(
             self.contains_regex_in_file(test_log, r"cplusplus\.NewDeleteLeaks"))
 
     def test_compile_commands_implementation_deps(self):
@@ -82,9 +78,7 @@ class TestImplementationDeps(TestBase):
         )
         self.assertTrue(
             self.contains_regex_in_file(compile_commands, r"main.cpp"))
-        # TODO: Set to assertTrue
-        # rule should find source files under implementation_deps
-        self.assertFalse(
+        self.assertTrue(
             self.contains_regex_in_file(compile_commands, r"dep.cpp"))
 
 
