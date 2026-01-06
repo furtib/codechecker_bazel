@@ -3,10 +3,14 @@
 
 load("@bazel_tools//tools/build_defs/cc:action_names.bzl", "ACTION_NAMES")
 load("@bazel_tools//tools/cpp:toolchain_utils.bzl", "find_cpp_toolchain")
+load("@bazel_codechecker//src:compile_commands.bzl",
+     "SourceFilesInfo",
+     "compile_commands_aspect")
 load("@bazel_codechecker//src:tools.bzl", "warning", "source_attr")
 
 def _run_code_checker(
         ctx,
+        target,
         src,
         arguments,
         label,
@@ -30,7 +34,11 @@ def _run_code_checker(
         inputs = [compile_commands_json] + sources_and_headers
     else:
         # NOTE: we collect only headers, so CTU may not work!
-        headers = depset([src], transitive = [compilation_context.headers])
+        trans_depsets = [compilation_context.headers]
+        for dset in target[SourceFilesInfo].headers.to_list():
+            trans_depsets.append(dset)
+        headers = depset(direct = [src],
+            transitive = trans_depsets)
         inputs = depset([compile_commands_json, src], transitive = [headers])
 
     outputs = [clang_tidy_plist, clangsa_plist, codechecker_log]
@@ -109,7 +117,7 @@ def _toolchain_flags(ctx, action_name = ACTION_NAMES.cpp_compile):
     )
     return [compiler] + flags
 
-def _compile_args(compilation_context):
+def _compile_args(ctx, compilation_context):
     compile_args = []
     for define in compilation_context.defines.to_list():
         compile_args.append("-D" + define)
@@ -123,6 +131,15 @@ def _compile_args(compilation_context):
         compile_args.append("-iquote " + include)
     for include in compilation_context.system_includes.to_list():
         compile_args.append("-isystem " + include)
+    for attr in source_attr:
+        if hasattr(ctx.rule.attr, attr):
+            deps = getattr(ctx.rule.attr, attr)
+            if type(deps) == "list":
+                for dep in deps:
+                    if CcInfo in dep:
+                        compilation_context = dep[CcInfo].compilation_context
+                        for include in compilation_context.includes.to_list():
+                            compile_args.append("-I{}".format(include))
     return compile_args
 
 def _safe_flags(flags):
@@ -175,7 +192,7 @@ def _compile_info_aspect_impl(target, ctx):
 
     srcs = _collect_all_sources(ctx)
 
-    compile_args = _compile_args(compilation_context)
+    compile_args = _compile_args(ctx, compilation_context)
     arguments = {}
     for src in srcs:
         if src.extension.lower() in ["c"]:
@@ -294,6 +311,7 @@ def _per_file_impl(ctx):
                     args = target[CompileInfo].arguments[src]
                     outputs = _run_code_checker(
                         ctx,
+                        target,
                         src,
                         args,
                         ctx.attr.name,
@@ -344,6 +362,7 @@ per_file_test = rule(
         "targets": attr.label_list(
             aspects = [
                 compile_info_aspect,
+                compile_commands_aspect,
             ],
             doc = "List of compilable targets which should be checked.",
         ),
