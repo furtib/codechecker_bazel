@@ -58,3 +58,30 @@ codechecker_test(
     ],
     per_file = True,
 )
+
+cc_library(
+    name = "virtual_implementation_deps_include",
+    srcs = ["source.cc"],
+    implementation_deps = ["test_inc"],
+)
+
+codechecker_test(
+    name = "codechecker_impl_deps_include",
+    tags = [
+        "manual",
+    ],
+    targets = [
+        "virtual_implementation_deps_include",
+    ],
+)
+
+codechecker_test(
+    name = "per_file_impl_deps_include",
+    tags = [
+        "manual",
+    ],
+    targets = [
+        "virtual_implementation_deps_include",
+    ],
+    per_file = True,
+)
