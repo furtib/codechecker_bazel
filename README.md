@@ -144,6 +144,7 @@ register_default_codechecker()
 Using the MODULE system:
 <!--The git override part should not be needed after the project have been uploaded to a central registry
 TODO: update this part when we have an actual release-->
+In Bazel 6, to activate the MODULE system, add `--enable_bzlmod` to the `.bazelrc` file
 ```
 git_override(
     module_name = "bazel_codechecker",
