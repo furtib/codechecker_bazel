@@ -44,12 +44,12 @@ class TestImplementationDeps(TestBase):
             "codechecker_implementation_deps",
             "test.log",
         )
-        self.assertNotEqual(self.grep_file(test_log, r"core\.DivideZero"), [])
-        # TODO: Set to not equals
+        self.assertTrue(
+            self.contains_regex_in_file(test_log, r"core\.DivideZero"))
+        # TODO: Set to assertTrue
         # rule should analyze source files under implementation_deps
-        self.assertEqual(
-            self.grep_file(test_log, r"cplusplus\.NewDeleteLeaks"), []
-        )
+        self.assertFalse(
+            self.contains_regex_in_file(test_log, r"cplusplus\.NewDeleteLeaks"))
 
     def test_per_file_implementation_deps(self):
         """Test: bazel test //test/unit/implementation_deps:pre_file_implementation_deps"""
@@ -62,12 +62,12 @@ class TestImplementationDeps(TestBase):
             "per_file_implementation_deps",
             "test.log",
         )
-        self.assertNotEqual(self.grep_file(test_log, r"core\.DivideZero"), [])
-        # TODO: Set to not equals
+        self.assertTrue(
+            self.contains_regex_in_file(test_log, r"core\.DivideZero"))
+        # TODO: Set to assertTrue
         # rule should analyze source files under implementation_deps
-        self.assertEqual(
-            self.grep_file(test_log, r"cplusplus\.NewDeleteLeaks"), []
-        )
+        self.assertFalse(
+            self.contains_regex_in_file(test_log, r"cplusplus\.NewDeleteLeaks"))
 
     def test_compile_commands_implementation_deps(self):
         """Test: bazel test //test/unit/implementation_deps:compile_commands_implementation_deps"""
@@ -80,12 +80,12 @@ class TestImplementationDeps(TestBase):
             "compile_commands_implementation_deps",
             "compile_commands.json",
         )
-        self.assertNotEqual(self.grep_file(compile_commands, r"main.cpp"), [])
-        # TODO: Set to not equals
+        self.assertTrue(
+            self.contains_regex_in_file(compile_commands, r"main.cpp"))
+        # TODO: Set to assertTrue
         # rule should find source files under implementation_deps
-        self.assertEqual(
-            self.grep_file(compile_commands, r"dep.cpp"), []
-        )
+        self.assertFalse(
+            self.contains_regex_in_file(compile_commands, r"dep.cpp"))
 
 
 if __name__ == "__main__":
