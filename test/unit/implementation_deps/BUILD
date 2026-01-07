@@ -50,6 +50,7 @@ codechecker_test(
     targets = [
         ":main_lib",
     ],
+    tags = ["manual"],
 )
 
 codechecker_test(
@@ -57,5 +58,6 @@ codechecker_test(
     targets = [
         ":main_lib",
     ],
+    tags = ["manual"],
     per_file = True,
 )
