@@ -3,7 +3,7 @@
 
 load("@bazel_tools//tools/build_defs/cc:action_names.bzl", "ACTION_NAMES")
 load("@bazel_tools//tools/cpp:toolchain_utils.bzl", "find_cpp_toolchain")
-load("@bazel_codechecker//src:tools.bzl", "warning")
+load("@bazel_codechecker//src:tools.bzl", "warning", "source_attr")
 
 def _run_code_checker(
         ctx,
@@ -155,7 +155,7 @@ def _compile_info_sources(deps):
 
 def _collect_all_sources(ctx):
     sources = _rule_sources(ctx)
-    for attr in ["srcs", "deps", "data", "exports"]:
+    for attr in source_attr:
         if hasattr(ctx.rule.attr, attr):
             deps = getattr(ctx.rule.attr, attr)
             sources += _compile_info_sources(deps)
@@ -201,7 +201,7 @@ compile_info_aspect = aspect(
     attrs = {
         "_cc_toolchain": attr.label(default = Label("@bazel_tools//tools/cpp:current_cc_toolchain")),
     },
-    attr_aspects = ["srcs", "deps", "data", "exports"],
+    attr_aspects = source_attr,
     toolchains = ["@bazel_tools//tools/cpp:toolchain_type"],
 )
 

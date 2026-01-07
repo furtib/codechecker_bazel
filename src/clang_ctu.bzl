@@ -1,5 +1,9 @@
 load("@bazel_tools//tools/build_defs/cc:action_names.bzl", "ACTION_NAMES")
 load("@bazel_tools//tools/cpp:toolchain_utils.bzl", "find_cpp_toolchain")
+load(
+    "@bazel_codechecker//src:tools.bzl",
+    "source_attr"
+)
 
 CLANG_CTU_WRAPPER_SCRIPT = """#!/usr/bin/env bash
 #set -x
@@ -247,7 +251,7 @@ compile_info_aspect = aspect(
     attrs = {
         "_cc_toolchain": attr.label(default = Label("@bazel_tools//tools/cpp:current_cc_toolchain")),
     },
-    attr_aspects = ["srcs", "deps", "data", "exports"],
+    attr_aspects = source_attr,
     toolchains = ["@bazel_tools//tools/cpp:toolchain_type"],
 )
 

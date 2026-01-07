@@ -38,6 +38,14 @@ python3_bin_path = "{}"
 python2_bin_path = "{}"
 """
 
+source_attr = [
+    "srcs",
+    "deps",
+    "data",
+    "exports",
+    "implementation_deps",
+]
+
 def _python_local_repository_impl(repository_ctx):
     repository_ctx.file(
         repository_ctx.path("BUILD"),
