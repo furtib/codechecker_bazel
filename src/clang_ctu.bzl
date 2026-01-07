@@ -1,7 +1,7 @@
 load("@bazel_tools//tools/build_defs/cc:action_names.bzl", "ACTION_NAMES")
 load("@bazel_tools//tools/cpp:toolchain_utils.bzl", "find_cpp_toolchain")
 load(
-    "@bazel_codechecker//src:tools",
+    "@bazel_codechecker//src:tools.bzl",
     "source_attr"
 )
 
