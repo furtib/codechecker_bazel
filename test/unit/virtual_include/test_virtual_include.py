@@ -111,7 +111,7 @@ class TestVirtualInclude(TestBase):
     def test_bazel_codechecker_implementation_deps_virtual_include(self):
         """Test: bazel build :codechecker_impl_deps_include"""
         ret, _, _ = self.run_command(
-            "bazel build //test/unit/virtual_include:codechecker_impl_deps_include"
+            "bazel build --experimental_cc_implementation_deps //test/unit/virtual_include:codechecker_impl_deps_include"
         )
         # TODO: change to 0, CodeChecker should finish analysis successfully
         self.assertEqual(ret, 1)
@@ -119,7 +119,7 @@ class TestVirtualInclude(TestBase):
     def test_bazel_per_file_implementation_deps_virtual_include(self):
         """Test: bazel build :per_file_impl_deps_include"""
         ret, _, _ = self.run_command(
-            "bazel build //test/unit/virtual_include:per_file_impl_deps_include"
+            "bazel build --experimental_cc_implementation_deps //test/unit/virtual_include:per_file_impl_deps_include"
         )
         # TODO: change to 0, CodeChecker should finish analysis successfully
         self.assertEqual(ret, 1)
