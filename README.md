@@ -118,7 +118,8 @@ How to use
 
 To use these rules you should first add `codechecker_bazel` as an
 [external dependency](https://bazel.build/versions/6.5.0/external/overview#workspace-system)
-to your `WORKSPACE` file:
+
+Using the legacy `WORKSPACE` system:
 
 ```python
 load("@bazel_tools//tools/build_defs/repo:git.bzl", "git_repository")
@@ -138,6 +139,20 @@ load(
 register_default_python_toolchain()
 
 register_default_codechecker()
+```
+
+Using the MODULE system:
+<!--The git override part should not be needed after the project have been uploaded to a central registry
+TODO: update this part when we have an actual release-->
+In Bazel 6, to activate the MODULE system, add `--enable_bzlmod` to the `.bazelrc` file
+```
+git_override(
+    module_name = "bazel_codechecker",
+    remote = "https://github.com/Ericsson/codechecker_bazel.git",
+    commit = "a32e9d75df4fb453c8bbfdf0fdf6a767797ae53d", # Update to latest
+)
+bazel_dep(name = "bazel_codechecker")
+
 ```
 ## CodeChecker
 
