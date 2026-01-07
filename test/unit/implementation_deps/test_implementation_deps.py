@@ -36,7 +36,7 @@ class TestImplementationDeps(TestBase):
     def test_codechecker_implementation_deps(self):
         """Test: bazel test //test/unit/implementation_deps:codechecker_implementation_deps"""
         ret, _, _ = self.run_command(
-            "bazel test //test/unit/implementation_deps:codechecker_implementation_deps"
+            "bazel test --experimental_cc_implementation_deps //test/unit/implementation_deps:codechecker_implementation_deps"
         )
         self.assertEqual(ret, 3)
         test_log = os.path.join(
@@ -52,7 +52,7 @@ class TestImplementationDeps(TestBase):
     def test_per_file_implementation_deps(self):
         """Test: bazel test //test/unit/implementation_deps:pre_file_implementation_deps"""
         ret, _, _ = self.run_command(
-            "bazel test //test/unit/implementation_deps:per_file_implementation_deps"
+            "bazel test --experimental_cc_implementation_deps //test/unit/implementation_deps:per_file_implementation_deps"
         )
         self.assertEqual(ret, 3)
         test_log = os.path.join(
@@ -66,9 +66,9 @@ class TestImplementationDeps(TestBase):
             self.contains_regex_in_file(test_log, r"cplusplus\.NewDeleteLeaks"))
 
     def test_compile_commands_implementation_deps(self):
-        """Test: bazel test //test/unit/implementation_deps:compile_commands_implementation_deps"""
+        """Test: bazel build //test/unit/implementation_deps:compile_commands_implementation_deps"""
         ret, _, _ = self.run_command(
-            "bazel build //test/unit/implementation_deps:compile_commands_implementation_deps"
+            "bazel build --experimental_cc_implementation_deps //test/unit/implementation_deps:compile_commands_implementation_deps"
         )
         self.assertEqual(ret, 0)
         compile_commands = os.path.join(
