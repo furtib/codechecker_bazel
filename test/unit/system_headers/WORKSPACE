@@ -1,0 +1,21 @@
+workspace(name = "minimal_isystem_example")
+
+local_repository(
+    name = "external_lib",
+    path = "third_party/my_lib",
+)
+
+local_repository(
+    name = "bazel_codechecker",
+    path = "../../../",
+)
+
+load(
+    "@bazel_codechecker//src:tools.bzl",
+    "register_default_codechecker",
+    "register_default_python_toolchain",
+)
+
+register_default_python_toolchain()
+
+register_default_codechecker()
