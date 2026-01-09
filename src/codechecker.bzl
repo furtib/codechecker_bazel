@@ -20,6 +20,10 @@ load(
     "warning"
 )
 load(
+    "common.bzl",
+    "old_bazel_attributes",
+)
+load(
     "@codechecker_bazel//src:codechecker_config.bzl",
     "get_config_file",
     "codechecker_config_internal",
@@ -284,10 +288,7 @@ _codechecker_test = rule(
             default = [],
             doc = "List of analyze command arguments, e.g. --ctu",
         ),
-    } | ({"_whitelist_function_transition": attr.label(
-        default = "@bazel_tools//tools/whitelists/function_transition_whitelist",
-        doc = "needed for transitions",
-    )} if BAZEL_VERSION.split(".")[0] in "0123456" else {}),
+    } | old_bazel_attributes(),
     outputs = {
         "compile_commands": "%{name}/compile_commands.json",
         "codechecker_commands": "%{name}/codechecker_commands.json",
@@ -319,7 +320,10 @@ def codechecker_test(
             name = name,
             targets = targets,
             options = analyze,
-            config = config,
+            # Bazel 7 recognizes that the per_file_rule does not yet have a
+            # config attribute, and fails. TODO: uncomment when config files
+            # are supported in per_file rule
+            #config = config,
             tags = tags,
             **kwargs
         )

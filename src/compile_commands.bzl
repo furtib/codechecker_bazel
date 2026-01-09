@@ -49,6 +49,11 @@ load(
     "source_attr"
 )
 
+load(
+    "@codechecker_bazel//src:common.bzl",
+    "old_bazel_attributes"
+)
+
 SourceFilesInfo = provider(
     doc = "Source files and corresponding compilation database (or compile commands)",
     fields = {
@@ -436,10 +441,7 @@ _compile_commands = rule(
             cfg = platforms_transition,
             doc = "List of compilable targets which should be checked.",
         ),
-    } | ({"_whitelist_function_transition": attr.label(
-        default = "@bazel_tools//tools/whitelists/function_transition_whitelist",
-        doc = "needed for transitions",
-    )} if BAZEL_VERSION.split(".")[0] in "0123456" else {}),
+    } | old_bazel_attributes(),
     outputs = {
         "compile_commands": "%{name}/compile_commands.json",
     },
