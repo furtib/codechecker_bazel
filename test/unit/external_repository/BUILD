@@ -17,6 +17,11 @@ load(
     "compile_commands",
 )
 
+load(
+    "@bazel_codechecker//src:codechecker.bzl",
+    "codechecker_test",
+)
+
 cc_library(
     name = "intermediate_lib",
     srcs = ["intermediate.cpp"],
@@ -36,5 +41,17 @@ compile_commands(
     targets = [
         ":ISYSTEM",
     ],
+)
+
+codechecker_test(
+    name = "codechecker_external_deps",
+    targets = ["ISYSTEM"],
     tags = ["manual"],
+)
+
+codechecker_test(
+    name = "per_file_external_deps",
+    targets = ["ISYSTEM"],
+    tags = ["manual"],
+    per_file = True,
 )
