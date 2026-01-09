@@ -120,7 +120,7 @@ class TestVirtualInclude(TestBase):
         ret, _, _ = self.run_command(
             "bazel build //test/unit/virtual_include:per_file_impl_deps_include"
         )
-        # TODO: set to 0
+        # TODO: change to 0, CodeChecker should finish analysis successfully
         self.assertEqual(ret, 1)
 
 
