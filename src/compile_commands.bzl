@@ -79,7 +79,7 @@ QUOTE_INCLUDE = "-iquote "
 
 # Function copied from https://gist.github.com/oquenchil/7e2c2bd761aa1341b458cc25608da50c
 # NOTE: added local_defines
-def get_compile_flags(dep):
+def get_compile_flags(ctx, dep):
     """ Return a list of compile options
 
     Returns:
@@ -108,6 +108,24 @@ def get_compile_flags(dep):
         if len(quote_include) == 0:
             quote_include = "."
         options.append(QUOTE_INCLUDE + quote_include)
+
+    for attr in source_attr:
+        if not hasattr(ctx.rule.attr, attr):
+            continue
+
+        deps = getattr(ctx.rule.attr, attr)
+        if not type(deps) == "list":
+            continue
+
+        for dep in deps:
+            if CcInfo not in dep:
+                continue
+
+            compilation_context = dep[CcInfo].compilation_context
+            for include in compilation_context.includes.to_list():
+                if len(include) == 0:
+                    include = "."
+                options.append("-I{}".format(include))
 
     return options
 
@@ -174,7 +192,7 @@ def _cc_compiler_info(ctx, target, src, feature_configuration, cc_toolchain):
     )
 
     compile_flags = (compiler_options +
-                     get_compile_flags(target) +
+                     get_compile_flags(ctx, target) +
                      (ctx.rule.attr.copts if "copts" in dir(ctx.rule.attr) else []))
 
     return struct(
