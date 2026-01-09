@@ -25,9 +25,29 @@ concurrency:
 
 jobs:
   # TODO: Parallelize the running of projects
-  foss_ubuntu_test:
-    name: "Test rules on FOSS projects (ubuntu)"
+  load_versions:
+    name: "Load bazel versions for FOSS tests"
     runs-on: ubuntu-24.04
+    outputs:
+      bazel_version: ${{ steps.generate_matrix.outputs.matrix_json }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        
+      - name: Load versions
+        id: generate_matrix
+        run: |
+          JSON=$(jq -c . ./.github/bazel_version.json)
+          echo "matrix_json=$JSON" >> $GITHUB_OUTPUT
+
+  foss_ubuntu_test:
+    name: "Test rules on FOSS projects Bazel: ${{ matrix.bazel_version }} (ubuntu)"
+    runs-on: ubuntu-24.04
+    needs: load_versions
+    strategy:
+      fail-fast: false
+      matrix:
+        bazel_version: ${{ fromJson(needs.load_versions.outputs.bazel_version) }}
 
     steps:
       - name: Checkout repository
@@ -36,14 +56,22 @@ jobs:
       - name: Setup environment
         uses: ./.github/platform_environment_setup/ubuntu
 
+      - name: Set Bazel version
+        run: echo ${{ matrix.bazel_version }} >> test/foss/templates/.bazelversion
+
       - name: Run Test On Opensource Projects
         working-directory: test
         run: python3 -m unittest foss/test_foss.py -vvv
 
   foss_rhel_test:
-    name: "Test rules on FOSS projects (RHEL)"
+    name: "Test rules on FOSS projects Bazel ${{ matrix.bazel_version }} (RHEL)"
     runs-on: ubuntu-24.04
     container: redhat/ubi9:latest
+    needs: load_versions
+    strategy:
+      fail-fast: false
+      matrix:
+        bazel_version: ${{ fromJson(needs.load_versions.outputs.bazel_version) }}
 
     steps:
       - name: Checkout repository
@@ -51,6 +79,9 @@ jobs:
 
       - name: Setup environment
         uses: ./.github/platform_environment_setup/rhel9
+
+      - name: Set Bazel version
+        run: echo ${{ matrix.bazel_version }} >> test/foss/templates/.bazelversion
 
       - name: Run Test On Opensource Projects
         working-directory: test
