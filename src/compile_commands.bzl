@@ -110,16 +110,22 @@ def get_compile_flags(ctx, dep):
         options.append(QUOTE_INCLUDE + quote_include)
 
     for attr in source_attr:
-        if hasattr(ctx.rule.attr, attr):
-            deps = getattr(ctx.rule.attr, attr)
-            if type(deps) == "list":
-                for dep in deps:
-                    if CcInfo in dep:
-                        compilation_context = dep[CcInfo].compilation_context
-                        for include in compilation_context.includes.to_list():
-                            if len(include) == 0:
-                                include = "."
-                            options.append("-I{}".format(include))
+        if not hasattr(ctx.rule.attr, attr):
+            continue
+
+        deps = getattr(ctx.rule.attr, attr)
+        if not type(deps) == "list":
+            continue
+
+        for dep in deps:
+            if CcInfo not in dep:
+                continue
+
+            compilation_context = dep[CcInfo].compilation_context
+            for include in compilation_context.includes.to_list():
+                if len(include) == 0:
+                    include = "."
+                options.append("-I{}".format(include))
 
     return options
 
