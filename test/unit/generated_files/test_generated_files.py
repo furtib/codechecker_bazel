@@ -120,7 +120,6 @@ class TestGeneratedFiles(TestBase):
             f"compile_commands_{target}",
             "compile_commands.json"
         )
-        print(compile_commands)
         self.assertTrue(os.path.exists(compile_commands))
         self.assertTrue(
             self.contains_regex_in_file(
@@ -144,7 +143,6 @@ class TestGeneratedFiles(TestBase):
             f"compile_commands_{target}",
             "compile_commands.json"
         )
-        print(compile_commands)
         self.assertTrue(os.path.exists(compile_commands))
         self.assertTrue(
             self.contains_regex_in_file(
