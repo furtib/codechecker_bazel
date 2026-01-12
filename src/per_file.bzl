@@ -379,12 +379,7 @@ per_file_test = rule(
         ),
         "config": attr.label(
             default = None,
-            cfg = platforms_transition,
             doc = "CodeChecker configuration",
-        ),
-        "platform": attr.string(
-            default = "",  #"@platforms//os:linux",
-            doc = "Platform to build for",
         ),
         "_per_file_script_template": attr.label(
             default = ":per_file_script.py",
@@ -393,10 +388,7 @@ per_file_test = rule(
         "_python_runtime": attr.label(
             default = "@default_python_tools//:py3_runtime",
         ),
-        "_whitelist_function_transition": attr.label(
-            default = "@bazel_tools//tools/whitelists/function_transition_whitelist",
-            doc = "needed for transitions",
-        ),
+
     },
     outputs = {
         "test_script": "%{name}/test_script.sh",
