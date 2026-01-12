@@ -19,12 +19,12 @@ load(
 )
 
 load(
-    "@bazel_codechecker//src:codechecker.bzl",
+    "@codechecker_bazel//src:codechecker.bzl",
     "codechecker_test",
 )
 
 load(
-    "@bazel_codechecker//src:compile_commands.bzl",
+    "@codechecker_bazel//src:compile_commands.bzl",
     "compile_commands",
 )
 

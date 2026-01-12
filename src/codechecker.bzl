@@ -19,7 +19,7 @@ load(
     "warning"
 )
 load(
-    "@bazel_codechecker//src:codechecker_config.bzl",
+    "@codechecker_bazel//src:codechecker_config.bzl",
     "get_config_file",
     "codechecker_config_internal",
 )

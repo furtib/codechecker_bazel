@@ -41,7 +41,7 @@ load(
 )
 
 load(
-    "@bazel_codechecker//src:tools.bzl",
+    "@codechecker_bazel//src:tools.bzl",
     "source_attr"
 )
 

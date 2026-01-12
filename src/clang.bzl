@@ -1,7 +1,7 @@
 load("@bazel_tools//tools/build_defs/cc:action_names.bzl", "ACTION_NAMES")
 load("@bazel_tools//tools/cpp:toolchain_utils.bzl", "find_cpp_toolchain")
 load(
-    "@bazel_codechecker//src:tools.bzl",
+    "@codechecker_bazel//src:tools.bzl",
     "source_attr"
 )
 
@@ -334,9 +334,9 @@ clang_tidy_aspect = aspect(
     fragments = ["cpp"],
     attrs = {
         "_cc_toolchain": attr.label(default = Label("@bazel_tools//tools/cpp:current_cc_toolchain")),
-        "_clang_tidy_executable": attr.label(default = Label("@bazel_codechecker//src:clang_tidy_executable")),
-        "_clang_tidy_additional_deps": attr.label(default = Label("@bazel_codechecker//src:clang_tidy_additional_deps")),
-        "_clang_tidy_config": attr.label(default = Label("@bazel_codechecker//src:clang_tidy_config")),
+        "_clang_tidy_executable": attr.label(default = Label("@codechecker_bazel//src:clang_tidy_executable")),
+        "_clang_tidy_additional_deps": attr.label(default = Label("@codechecker_bazel//src:clang_tidy_additional_deps")),
+        "_clang_tidy_config": attr.label(default = Label("@codechecker_bazel//src:clang_tidy_config")),
         "_default_options": attr.string_list(default = ["--use-color", "--warnings-as-errors=*"]),
     },
     toolchains = ["@bazel_tools//tools/cpp:toolchain_type"],

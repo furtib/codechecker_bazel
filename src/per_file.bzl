@@ -3,7 +3,7 @@
 
 load("@bazel_tools//tools/build_defs/cc:action_names.bzl", "ACTION_NAMES")
 load("@bazel_tools//tools/cpp:toolchain_utils.bzl", "find_cpp_toolchain")
-load("@bazel_codechecker//src:tools.bzl", "warning", "source_attr")
+load("@codechecker_bazel//src:tools.bzl", "warning", "source_attr")
 
 def _run_code_checker(
         ctx,
@@ -309,7 +309,7 @@ def _per_file_impl(ctx):
         content = """
             DATA_DIR=$(dirname {})
             # ls -la $DATA_DIR/data
-            # find $DATA_DIR/data -name *.plist -exec sed -i -e "s|<string>.*execroot/bazel_codechecker/|<string>|g" {{}} \\;
+            # find $DATA_DIR/data -name *.plist -exec sed -i -e "s|<string>.*execroot/codechecker_bazel/|<string>|g" {{}} \\;
             # cat $DATA_DIR/data/test-src-lib.cc_clangsa.plist
             echo "Running: CodeChecker parse $DATA_DIR/data"
             CodeChecker parse $DATA_DIR/data

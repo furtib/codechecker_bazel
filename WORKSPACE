@@ -1,7 +1,7 @@
-workspace(name = "bazel_codechecker")
+workspace(name = "codechecker_bazel")
 
 load(
-    "@bazel_codechecker//src:tools.bzl",
+    "@codechecker_bazel//src:tools.bzl",
     "register_default_codechecker",
     "register_default_python_toolchain",
 )

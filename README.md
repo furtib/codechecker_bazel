@@ -125,13 +125,13 @@ Using the legacy `WORKSPACE` system:
 load("@bazel_tools//tools/build_defs/repo:git.bzl", "git_repository")
 
 git_repository(
-    name = "bazel_codechecker",
+    name = "codechecker_bazel",
     remote = "https://github.com/Ericsson/codechecker_bazel.git",
     branch = "main",
 )
 
 load(
-    "@bazel_codechecker//src:tools.bzl",
+    "@codechecker_bazel//src:tools.bzl",
     "register_default_codechecker",
     "register_default_python_toolchain",
 )
@@ -147,11 +147,11 @@ TODO: update this part when we have an actual release-->
 In Bazel 6, to activate the MODULE system, add `--enable_bzlmod` to the `.bazelrc` file
 ```
 git_override(
-    module_name = "bazel_codechecker",
+    module_name = "codechecker_bazel",
     remote = "https://github.com/Ericsson/codechecker_bazel.git",
     commit = "a32e9d75df4fb453c8bbfdf0fdf6a767797ae53d", # Update to latest
 )
-bazel_dep(name = "bazel_codechecker")
+bazel_dep(name = "codechecker_bazel")
 
 ```
 ## CodeChecker
@@ -172,7 +172,7 @@ To use `codechecker_test()` include it to your BUILD file:
 
 ```python
 load(
-    "@bazel_codechecker//src:codechecker.bzl",
+    "@codechecker_bazel//src:codechecker.bzl",
     "codechecker_test",
 )
 ```
@@ -241,7 +241,7 @@ You can include and use it similarly as well:
 
 ```python
 load(
-    "@bazel_codechecker//src:codechecker.bzl",
+    "@codechecker_bazel//src:codechecker.bzl",
     "codechecker"
 )
 ```
@@ -256,7 +256,7 @@ You can include and use it similarly as well:
 
 ```python
 load(
-    "@bazel_codechecker//src:codechecker.bzl",
+    "@codechecker_bazel//src:codechecker.bzl",
     "codechecker_suite"
 )
 ```
@@ -269,7 +269,7 @@ First, include the rule in your BUILD file:
 
 ```python
 load(
-    "@bazel_codechecker//src:codechecker.bzl",
+    "@codechecker_bazel//src:codechecker.bzl",
     "codechecker_config"
 )
 ```
@@ -319,7 +319,7 @@ The Bazel rule `clang_tidy_test()` runs clang-tidy natively without CodeChecker.
 
 ```python
 load(
-    "@bazel_codechecker//src:clang.bzl",
+    "@codechecker_bazel//src:clang.bzl",
     "clang_tidy_test",
 )
 
@@ -331,10 +331,10 @@ clang_tidy_test(
 )
 ```
 
-You can also run clang-tidy via the Bazel aspect `clang_tidy_aspect()` that can be invoked from the command line by passing the following parameter to Bazel build/test: `--aspects @bazel_codechecker//src:clang.bzl%clang_tidy_aspect`:
+You can also run clang-tidy via the Bazel aspect `clang_tidy_aspect()` that can be invoked from the command line by passing the following parameter to Bazel build/test: `--aspects @codechecker_bazel//src:clang.bzl%clang_tidy_aspect`:
 
 ```bash
-bazel build ... --aspects @bazel_codechecker//src:clang.bzl%clang_tidy_aspect --output_groups=report
+bazel build ... --aspects @codechecker_bazel//src:clang.bzl%clang_tidy_aspect --output_groups=report
 ```
 
 ### Clang Static Analyzer: `clang_analyze_test()`
@@ -343,7 +343,7 @@ The Bazel rule `clang_analyze_test()` runs The Clang Static Analyzer natively wi
 
 ```python
 load(
-    "@bazel_codechecker//src:clang.bzl",
+    "@codechecker_bazel//src:clang.bzl",
     "clang_analyze_test",
 )
 
@@ -361,7 +361,7 @@ As generating a compilation database for C/C++ is a known pain point for bazel, 
 
 ```python
 load(
-    "@bazel_codechecker//src:compile_commands.bzl",
+    "@codechecker_bazel//src:compile_commands.bzl",
     "compile_commands",
 )
 ```
@@ -389,7 +389,7 @@ The Bazel rule `clang_analyze_test()` runs The Clang Static Analyzer with [cross
 
 ```python
 load(
-    "@bazel_codechecker//src:clang_ctu.bzl",
+    "@codechecker_bazel//src:clang_ctu.bzl",
     "clang_ctu_test",
 )
 
@@ -423,4 +423,4 @@ After that you can find all artifacts in `bazel-bin` directory:
 
 To run `clang_tidy_aspect()` on all C/C++ code:
 
-    bazel build ... --aspects @bazel_codechecker//src:clang.bzl%clang_tidy_aspect --output_groups=report
+    bazel build ... --aspects @codechecker_bazel//src:clang.bzl%clang_tidy_aspect --output_groups=report

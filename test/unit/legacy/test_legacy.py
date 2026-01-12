@@ -133,7 +133,7 @@ class TestBasic(TestBase):
     def test_bazel_aspect_clang_tidy_pass(self):
         """Test: bazel build :test_pass --aspects"""
         command = "bazel build :test_pass " + \
-            "--aspects @bazel_codechecker//src:clang.bzl%clang_tidy_aspect" + \
+            "--aspects @codechecker_bazel//src:clang.bzl%clang_tidy_aspect" + \
             " --output_groups=report"
         self.check_command(command, exit_code=0)
 
@@ -142,7 +142,7 @@ class TestBasic(TestBase):
         # NOTE: we should use :test_fail but transitive dependencies do not
         # work
         command = "bazel build :test_lib " + \
-            "--aspects @bazel_codechecker//src:clang.bzl%clang_tidy_aspect" + \
+            "--aspects @codechecker_bazel//src:clang.bzl%clang_tidy_aspect" + \
             " --output_groups=report"
         self.check_command(command, exit_code=1)
 

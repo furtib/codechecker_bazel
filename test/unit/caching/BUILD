@@ -20,7 +20,7 @@ load(
 )
 
 load(
-    "@bazel_codechecker//src:codechecker.bzl",
+    "@codechecker_bazel//src:codechecker.bzl",
     "codechecker_test",
 )
 
