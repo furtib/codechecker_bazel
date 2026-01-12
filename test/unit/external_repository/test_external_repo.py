@@ -30,6 +30,7 @@ class TestImplDepExternalDep(TestBase):
     __test_path__ = os.path.dirname(os.path.abspath(__file__))
     BAZEL_BIN_DIR = os.path.join("bazel-bin")
     BAZEL_TESTLOGS_DIR = os.path.join("bazel-testlogs")
+    BAZEL_VERSION = None
 
     @final
     @classmethod
@@ -40,6 +41,8 @@ class TestImplDepExternalDep(TestBase):
         """
         super().setUpClass()
         try:
+            with open("../../../.bazelversion") as f:
+                cls.BAZEL_VERSION = f.read()
             shutil.copy("../../../.bazelversion", ".bazelversion")
             shutil.copy(
                 "../../../.bazelversion", "third_party/my_lib/.bazelversion")
@@ -71,13 +74,21 @@ class TestImplDepExternalDep(TestBase):
             "compile_commands.json")
 
         # The ~override part is a consquence of using Bzlmod.
+        if self.BAZEL_VERSION.startswith("6"): # type: ignore
+            pattern1 = "-isystem external/external_lib~override/include"
+            pattern2 = "-isystem " + \
+            "bazel-out/k8-fastbuild/bin/external/external_lib~override/include"
+        else:
+            pattern1 = "-isystem external/external_lib~/include"
+            pattern2 = "-isystem " + \
+            "bazel-out/k8-fastbuild/bin/external/external_lib~/include"
+
         self.assertTrue(self.contains_regex_in_file(
             comp_json_file,
-            "-isystem external/external_lib~override/include"))
+            pattern1))
         self.assertTrue(self.contains_regex_in_file(
             comp_json_file,
-            "-isystem " +
-            "bazel-out/k8-fastbuild/bin/external/external_lib~override/include"))
+            pattern2))
 
     def test_codechecker_external_lib(self):
         """Test: bazel build :codechecker_external_deps"""
