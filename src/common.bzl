@@ -27,7 +27,7 @@ def old_bazel_attributes():
 
     In older Bazel versions (e.g. 6) rulesets using transitions
     must have the attribute _whitelist_function_transition.
-    In newer versions this is an error.
+    In newer versions (e.g. 7) this is an error.
     """
     if BAZEL_VERSION.split(".")[0] in "0123456":
         return ({"_whitelist_function_transition": attr.label(
