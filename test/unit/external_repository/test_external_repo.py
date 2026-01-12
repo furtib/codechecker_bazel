@@ -30,6 +30,7 @@ class TestImplDepExternalDep(TestBase):
     __test_path__ = os.path.dirname(os.path.abspath(__file__))
     BAZEL_BIN_DIR = os.path.join("bazel-bin")
     BAZEL_TESTLOGS_DIR = os.path.join("bazel-testlogs")
+    BAZEL_VERSION = None
 
     @final
     @classmethod
@@ -38,19 +39,31 @@ class TestImplDepExternalDep(TestBase):
         Copy bazelversion from main, otherwise bazelisk will download the latest
         bazel version.
         """
+        # The folder bazel-external_repository contains this script
+        # and the unittest test discovery finds it.
+        # This is why, it is imperative that these directories get cleared
+        cls.run_command("bazel clean")
         super().setUpClass()
         try:
             shutil.copy("../../../.bazelversion", ".bazelversion")
             shutil.copy(
                 "../../../.bazelversion", "third_party/my_lib/.bazelversion")
+
         except:
             logging.debug("No bazel version set, using system default")
+        _, stdout, _ = cls.run_command("bazel --version")
+        cls.BAZEL_VERSION = stdout.split(' ')[2].strip()
+        logging.debug("Using Bazel", cls.BAZEL_VERSION)
 
     @final
     @classmethod
     def tearDownClass(cls):
         """Remove bazelversion from this test"""
         super().tearDownClass()
+        # The folder bazel-external_repository contains this script
+        # and the unittest test discovery finds it.
+        # This is why, it is imperative that these directories get cleared
+        cls.run_command("bazel clean")
         try:
             os.remove(".bazelversion")
         except:
@@ -71,13 +84,21 @@ class TestImplDepExternalDep(TestBase):
             "compile_commands.json")
 
         # The ~override part is a consquence of using Bzlmod.
+        if self.BAZEL_VERSION.startswith("6"): # type: ignore
+            pattern1 = "-isystem external/external_lib~override/include"
+            pattern2 = "-isystem " + \
+            "bazel-out/k8-fastbuild/bin/external/external_lib~override/include"
+        else:
+            pattern1 = "-isystem external/external_lib~/include"
+            pattern2 = "-isystem " + \
+            "bazel-out/k8-fastbuild/bin/external/external_lib~/include"
+
         self.assertTrue(self.contains_regex_in_file(
             comp_json_file,
-            "-isystem external/external_lib~override/include"))
+            pattern1))
         self.assertTrue(self.contains_regex_in_file(
             comp_json_file,
-            "-isystem " +
-            "bazel-out/k8-fastbuild/bin/external/external_lib~override/include"))
+            pattern2))
 
     def test_codechecker_external_lib(self):
         """Test: bazel build :codechecker_external_deps"""

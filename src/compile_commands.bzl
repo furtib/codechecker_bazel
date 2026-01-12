@@ -39,10 +39,14 @@ load(
     "CPP_COMPILE_ACTION_NAME",
     "C_COMPILE_ACTION_NAME",
 )
-
 load(
     "@codechecker_bazel//src:tools.bzl",
     "source_attr"
+)
+
+load(
+    "@codechecker_bazel//src:common.bzl",
+    "old_bazel_attributes"
 )
 
 SourceFilesInfo = provider(
@@ -432,11 +436,7 @@ _compile_commands = rule(
             cfg = platforms_transition,
             doc = "List of compilable targets which should be checked.",
         ),
-        "_whitelist_function_transition": attr.label(
-            default = "@bazel_tools//tools/whitelists/function_transition_whitelist",
-            doc = "needed for transitions",
-        ),
-    },
+    } | old_bazel_attributes(),
     outputs = {
         "compile_commands": "%{name}/compile_commands.json",
     },
