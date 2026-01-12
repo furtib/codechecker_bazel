@@ -13,7 +13,7 @@
 # limitations under the License.
 
 """
-Rulesets for running codechecker in a different Bazel job
+Rulesets for running codechecker in a different Bazel action
 for each translation unit.
 """
 
