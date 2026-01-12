@@ -19,11 +19,7 @@ for each translation unit.
 
 load("@bazel_tools//tools/build_defs/cc:action_names.bzl", "ACTION_NAMES")
 load("@bazel_tools//tools/cpp:toolchain_utils.bzl", "find_cpp_toolchain")
-load("@codechecker_bazel//src:tools.bzl", "warning")
-load(
-    "compile_commands.bzl",
-    "platforms_transition",
-)
+load("@codechecker_bazel//src:tools.bzl", "warning", "source_attr")
 load(
     "@codechecker_bazel//src:codechecker_config.bzl",
     "get_config_file"
