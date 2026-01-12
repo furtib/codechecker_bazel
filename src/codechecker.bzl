@@ -335,10 +335,7 @@ def codechecker_test(
             name = name,
             targets = targets,
             options = analyze,
-            # Bazel 7 recognizes that the per_file_rule does not yet have a
-            # config attribute, and fails. TODO: uncomment when config files
-            # are supported in per_file rule
-            #config = config,
+            config = config,
             tags = tags,
             **kwargs
         )
