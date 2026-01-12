@@ -41,13 +41,14 @@ class TestImplDepExternalDep(TestBase):
         """
         super().setUpClass()
         try:
-            with open("../../../.bazelversion") as f:
-                cls.BAZEL_VERSION = f.read()
             shutil.copy("../../../.bazelversion", ".bazelversion")
             shutil.copy(
                 "../../../.bazelversion", "third_party/my_lib/.bazelversion")
+
         except:
             logging.debug("No bazel version set, using system default")
+        _, stdout, _ = cls.run_command("bazel --version")
+        cls.BAZEL_VERSION = stdout.split(' ')[2].strip()
 
     @final
     @classmethod
