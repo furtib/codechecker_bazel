@@ -9,7 +9,6 @@ load(
 load(
     "@default_codechecker_tools//:defs.bzl",
     "CODECHECKER_BIN_PATH",
-    "BAZEL_VERSION"
 )
 load(
     "per_file.bzl",

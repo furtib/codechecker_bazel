@@ -40,11 +40,6 @@ load(
     "C_COMPILE_ACTION_NAME",
 )
 load(
-    "@default_codechecker_tools//:defs.bzl",
-    "BAZEL_VERSION"
-)
-
-load(
     "@codechecker_bazel//src:tools.bzl",
     "source_attr"
 )
