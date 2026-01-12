@@ -1,4 +1,3 @@
-""" Bazel test rules for CodeChecker """
 # Copyright 2023 Ericsson AB
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,6 +11,10 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+
+"""
+Rulesets for running codechecker in a single Bazel job.
+"""
 
 load(
     "compile_commands.bzl",

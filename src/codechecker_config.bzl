@@ -12,6 +12,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""
+Ruleset for configuring codechecker. 
+"""
+
 def _get_config_file_name(ctx):
     """
     Returns the name of the config file to be used, with correct extension

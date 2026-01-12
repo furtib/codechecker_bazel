@@ -12,6 +12,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""
+Toolchain setup for python and CodeChecker
+Provide tools used by more rulesets.
+"""
+
 BUILD_FILE = """
 load("@bazel_tools//tools/python:toolchain.bzl", "py_runtime_pair")
 load(":defs.bzl", "python3_bin_path", "python2_bin_path")
