@@ -39,6 +39,10 @@ class TestImplDepExternalDep(TestBase):
         Copy bazelversion from main, otherwise bazelisk will download the latest
         bazel version.
         """
+        # The folder bazel-external_repository contains this script
+        # and the unittest test discovery finds it.
+        # This is why, it is imperative that these directories get cleared
+        cls.run_command("bazel clean")
         super().setUpClass()
         try:
             shutil.copy("../../../.bazelversion", ".bazelversion")
@@ -49,12 +53,17 @@ class TestImplDepExternalDep(TestBase):
             logging.debug("No bazel version set, using system default")
         _, stdout, _ = cls.run_command("bazel --version")
         cls.BAZEL_VERSION = stdout.split(' ')[2].strip()
+        logging.debug("Using Bazel", cls.BAZEL_VERSION)
 
     @final
     @classmethod
     def tearDownClass(cls):
         """Remove bazelversion from this test"""
         super().tearDownClass()
+        # The folder bazel-external_repository contains this script
+        # and the unittest test discovery finds it.
+        # This is why, it is imperative that these directories get cleared
+        cls.run_command("bazel clean")
         try:
             os.remove(".bazelversion")
         except:
