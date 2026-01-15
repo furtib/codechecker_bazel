@@ -233,7 +233,7 @@ def _codechecker_test_impl(ctx):
         output = ctx.outputs.codechecker_test_script,
         is_executable = True,
         substitutions = {
-            "#{Python_path}": py_toolchain.stub_shebang,
+            #"#{Python_path}": py_toolchain.stub_shebang,
             "{Mode}": "Test",
             "{Verbosity}": "INFO",
             "{codechecker_bin}": CODECHECKER_BIN_PATH,
@@ -241,13 +241,21 @@ def _codechecker_test_impl(ctx):
             "{Severities}": " ".join(ctx.attr.severities),
         },
     )
+    ctx.actions.write(
+        output = ctx.outputs.test_script_wrapper,
+        is_executable = True,
+        content = """
+            {} {}
+        """.format(py_toolchain.interpreter.short_path, ctx.outputs.codechecker_test_script.short_path)
+    )
     # Return test script and all required files
-    run_files = default_runfiles + [ctx.outputs.codechecker_test_script]
+    run_files = default_runfiles + [ctx.outputs.codechecker_test_script, ctx.outputs.test_script_wrapper, py_toolchain.interpreter]
     return [
         DefaultInfo(
             files = depset(all_files),
             runfiles = ctx.runfiles(files = run_files),
-            executable = ctx.outputs.codechecker_test_script,
+            #executable = ctx.outputs.codechecker_test_script,
+            executable = ctx.outputs.test_script_wrapper,
         ),
     ]
 
@@ -302,6 +310,7 @@ _codechecker_test = rule(
         "codechecker_script": "%{name}/codechecker_script.py",
         "codechecker_log": "%{name}/codechecker.log",
         "codechecker_test_script": "%{name}/codechecker_test_script.py",
+        "test_script_wrapper": "%{name}/test_script_wrapper.sh"
     },
     test = True,
 )
