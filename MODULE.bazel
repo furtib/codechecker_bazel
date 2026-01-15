@@ -17,6 +17,7 @@ module(
     name = "codechecker_bazel",
 )
 
+# newest version working with Bazel 6.5.0
 bazel_dep(name = "rules_python", version = "0.38.0")
 bazel_dep(name = "rules_cc", version = "0.2.16")
 codechecker_extension = use_extension(
