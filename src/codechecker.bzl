@@ -104,6 +104,8 @@ def _codechecker_impl(ctx):
         output = ctx.outputs.codechecker_script,
         is_executable = True,
         substitutions = {
+            # Don't place shebang
+            # this script will be run with the python interpreter
             "{Mode}": "Run",
             "{Verbosity}": "DEBUG",
             "{codechecker_bin}": CODECHECKER_BIN_PATH,
@@ -224,12 +226,14 @@ def _codechecker_test_impl(ctx):
     if not codechecker_files:
         fail("Execution results required for codechecker test are not available")
 
+    py_toolchain = ctx.toolchains["@rules_python//python:toolchain_type"].py3_runtime
     # Create test script from template
     ctx.actions.expand_template(
         template = ctx.file._codechecker_script_template,
         output = ctx.outputs.codechecker_test_script,
         is_executable = True,
         substitutions = {
+            "#{Python_path}": py_toolchain.stub_shebang,
             "{Mode}": "Test",
             "{Verbosity}": "INFO",
             "{codechecker_bin}": CODECHECKER_BIN_PATH,
@@ -237,7 +241,6 @@ def _codechecker_test_impl(ctx):
             "{Severities}": " ".join(ctx.attr.severities),
         },
     )
-
     # Return test script and all required files
     run_files = default_runfiles + [ctx.outputs.codechecker_test_script]
     return [
