@@ -55,8 +55,6 @@ def get_platform_alias(platform):
     return platform
 
 def _codechecker_impl(ctx):
-    py_runtime_info = ctx.attr._python_runtime[PyRuntimeInfo]
-    python_path = py_runtime_info.interpreter_path
 
     # Get compile_commands.json file and source files
     compile_commands = None
@@ -72,11 +70,14 @@ def _codechecker_impl(ctx):
     if compile_commands != ctx.outputs.compile_commands:
         fail("Seems compile_commands.json file is incorrect!")
 
+    py_toolchain = ctx.toolchains["@rules_python//python:toolchain_type"].py3_runtime
+
     # Convert flacc calls to clang in compile_commands.json
     # and save to codechecker_commands.json
     ctx.actions.run(
         inputs = [ctx.outputs.compile_commands],
         outputs = [ctx.outputs.codechecker_commands],
+        # This is a py_binary rule
         executable = ctx.executable._compile_commands_filter,
         arguments = [
             # "-v",  # -vv for debug
@@ -105,7 +106,6 @@ def _codechecker_impl(ctx):
         substitutions = {
             "{Mode}": "Run",
             "{Verbosity}": "DEBUG",
-            "{PythonPath}": python_path,
             "{codechecker_bin}": CODECHECKER_BIN_PATH,
             "{compile_commands}": ctx.outputs.codechecker_commands.path,
             "{codechecker_skipfile}": ctx.outputs.codechecker_skipfile.path,
@@ -130,8 +130,8 @@ def _codechecker_impl(ctx):
             codechecker_files,
             ctx.outputs.codechecker_log,
         ],
-        executable = ctx.outputs.codechecker_script,
-        arguments = [],
+        executable = py_toolchain.interpreter,
+        arguments = [ctx.outputs.codechecker_script.path],
         mnemonic = "CodeChecker",
         progress_message = "CodeChecker %s" % str(ctx.label),
         # use_default_shell_env = True,
@@ -196,10 +196,8 @@ codechecker = rule(
             default = ":codechecker_script.py",
             allow_single_file = True,
         ),
-        "_python_runtime": attr.label(
-            default = "@default_python_tools//:py3_runtime",
-        ),
     },
+    toolchains = ["@rules_python//python:toolchain_type"],
     outputs = {
         "compile_commands": "%{name}/compile_commands.json",
         "codechecker_commands": "%{name}/codechecker_commands.json",
@@ -210,9 +208,6 @@ codechecker = rule(
 )
 
 def _codechecker_test_impl(ctx):
-    py_runtime_info = ctx.attr._python_runtime[PyRuntimeInfo]
-    python_path = py_runtime_info.interpreter_path
-
     # Run CodeChecker at build step
     info = _codechecker_impl(ctx)
     all_files = []
@@ -237,7 +232,6 @@ def _codechecker_test_impl(ctx):
         substitutions = {
             "{Mode}": "Test",
             "{Verbosity}": "INFO",
-            "{PythonPath}": python_path,
             "{codechecker_bin}": CODECHECKER_BIN_PATH,
             "{codechecker_files}": codechecker_files.short_path,
             "{Severities}": " ".join(ctx.attr.severities),
@@ -278,9 +272,6 @@ _codechecker_test = rule(
             default = ":codechecker_script.py",
             allow_single_file = True,
         ),
-        "_python_runtime": attr.label(
-            default = "@default_python_tools//:py3_runtime",
-        ),
         "severities": attr.string_list(
             default = ["HIGH"],
             doc = "List of defect severities: HIGH, MEDIUM, LOW, STYLE etc",
@@ -300,6 +291,7 @@ _codechecker_test = rule(
             doc = "List of analyze command arguments, e.g. --ctu",
         ),
     } | version_specific_attributes(),
+    toolchains = ["@rules_python//python:toolchain_type"],
     outputs = {
         "compile_commands": "%{name}/compile_commands.json",
         "codechecker_commands": "%{name}/codechecker_commands.json",
