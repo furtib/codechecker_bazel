@@ -17,13 +17,6 @@ Toolchain setup for CodeChecker
 Provide tools used by more rulesets.
 """
 
-source_attr = [
-    "srcs",
-    "deps",
-    "data",
-    "exports",
-    "implementation_deps",
-]
 
 def _codechecker_local_repository_impl(repository_ctx):
     repository_ctx.file(
