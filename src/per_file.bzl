@@ -222,11 +222,11 @@ compile_info_aspect = aspect(
 )
 
 def _compile_commands_json(compile_commands):
-    json = "[\n"
-    entries = [entry.to_json() for entry in compile_commands]
-    json += ",\n".join(entries)
-    json += "]\n"
-    return json
+    json_file = "[\n"
+    entries = [json.encode(entry) for entry in compile_commands]
+    json_file += ",\n".join(entries)
+    json_file += "]\n"
+    return json_file
 
 def _compile_commands_data(ctx):
     compile_commands = []
