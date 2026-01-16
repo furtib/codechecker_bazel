@@ -41,6 +41,11 @@ runs:
           VERSION=1.26.0; \
           wget "https://github.com/bazelbuild/bazelisk/releases/download/v$VERSION/bazelisk-linux-amd64" && \
           chmod +x bazelisk-linux-amd64 && \
-          mv bazelisk-linux-amd64 /usr/local/bin/bazel && \
-          USE_BAZEL_VERSION=6.5.0 bazel version
+          mv bazelisk-linux-amd64 /usr/local/bin/bazel
+        shell: bash
+      
+      - name: Change to a non-root user
+        run: |
+          useradd -m test
+          chown -R test:test $GITHUB_WORKSPACE 
         shell: bash
