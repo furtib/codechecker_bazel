@@ -20,7 +20,7 @@ for each translation unit.
 load(
     "compile_commands.bzl",
     "compile_commands_aspect",
-    "get_compile_commands_json_and_srcs",
+    "compile_commands_impl",
     "platforms_transition",
     "SourceFilesInfo",
 )
@@ -145,9 +145,14 @@ def _create_wrapper_script(ctx, options, compile_commands_json, config_file):
     )
 
 def _per_file_impl(ctx):
-    compile_commands_json, source_files = \
-        get_compile_commands_json_and_srcs(ctx)
-
+    compile_commands = None
+    for output in compile_commands_impl(ctx):
+        if type(output) == "DefaultInfo":
+            compile_commands = output.files.to_list()[0]
+    if not compile_commands:
+        fail("Failed to generate compile_commands.json file!")
+    if compile_commands != ctx.outputs.compile_commands:
+        fail("Seems compile_commands.json file is incorrect!")
     sources_and_headers = _collect_all_sources_and_headers(ctx)
     options = ctx.attr.default_options + ctx.attr.options
     all_files = [compile_commands_json]
