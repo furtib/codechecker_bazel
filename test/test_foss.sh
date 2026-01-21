@@ -22,7 +22,7 @@ jq -rc '.[]' "$JSON_FILE" | while read -r element; do
     echo "Bazel: $element"
     echo "------------------------------------"
     echo $element > "$BAZELVERSION_FILE"
-    python3 -m unittest discover unit "$@"
+    python3 -m unittest discover foss "$@"
     echo "------------------------------------"
 
 done
