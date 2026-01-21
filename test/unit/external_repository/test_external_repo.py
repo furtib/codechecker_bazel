@@ -79,7 +79,7 @@ class TestImplDepExternalDep(TestBase):
             "bazel build :compile_commands_isystem")
         self.assertEqual(ret, 0)
         comp_json_file = os.path.join(
-            self.BAZEL_BIN_DIR, # pyright: ignore[reportOptionalOperand]
+            self.BAZEL_BIN_DIR, # pyright: ignore
             "compile_commands_isystem",
             "compile_commands.json")
 
