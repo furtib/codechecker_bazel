@@ -44,6 +44,8 @@ load(
     "SOURCE_ATTR",
     "version_specific_attributes",
 )
+load("@rules_cc//cc/common:cc_common.bzl", "cc_common")
+load("@rules_cc//cc:defs.bzl", "CcInfo")
 
 SourceFilesInfo = provider(
     doc = "Source files and corresponding compilation database (or compile commands)",

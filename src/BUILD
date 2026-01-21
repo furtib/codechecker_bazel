@@ -13,6 +13,8 @@
 # limitations under the License.
 
 # Tool filter compile_commands.json file
+
+load("@rules_python//python:py_binary.bzl", "py_binary")
 py_binary(
     name = "compile_commands_filter",
     srcs = ["compile_commands_filter.py"],
