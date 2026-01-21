@@ -29,6 +29,12 @@ load("@bazel_tools//tools/cpp:toolchain_utils.bzl", "find_cpp_toolchain")
 load("codechecker_config.bzl", "get_config_file")
 load("common.bzl", "SOURCE_ATTR")
 
+def _flatten_depset(in_depset):
+    depset_list = []
+    for d_set in in_depset.to_list():
+        depset_list.append(d_set)
+    return depset(direct=[], transitive=depset_list)
+
 def _run_code_checker(
         ctx,
         src,
@@ -57,10 +63,11 @@ def _run_code_checker(
         inputs = [compile_commands_json, config_file] + sources_and_headers
     else:
         # NOTE: we collect only headers, so CTU may not work!
-        trans_depsets = [compilation_context.headers]
-        for dset in target[SourceFilesInfo].headers.to_list():
-            trans_depsets.append(dset)
-        headers = depset(direct = [src],
+        trans_depsets = [
+            compilation_context.headers,
+            _flatten_depset(target[SourceFilesInfo].headers)
+            ]
+        headers = depset(direct = [],
             transitive = trans_depsets)
         inputs = depset([compile_commands_json, config_file, src], transitive = [headers])
 
@@ -114,13 +121,9 @@ def _collect_all_sources_and_headers(ctx):
             if (hasattr(target[SourceFilesInfo], "transitive_source_files")
             and hasattr(target[SourceFilesInfo], "headers")):
                 srcs = target[SourceFilesInfo].transitive_source_files.to_list()
-                headers_mid = target[SourceFilesInfo].headers.to_list()
-                headers = []
-                for elem in headers_mid:
-                    if type(elem) == "depset":
-                        headers.extend(elem.to_list())
-                    else:
-                        headers.append(elem)
+                headers = _flatten_depset(
+                    target[SourceFilesInfo].headers
+                    ).to_list()
                 all_files += srcs
                 all_files += headers
     return all_files
