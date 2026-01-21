@@ -44,3 +44,17 @@ runs:
           mv bazelisk-linux-amd64 /usr/local/bin/bazel && \
           USE_BAZEL_VERSION=6.5.0 bazel version
         shell: bash
+
+      # A non root user is required by the python toolchain
+      # This is only needed because this is a Docker container.
+      # See error message below:
+      # ERROR: no such package
+      # '@@rules_python~~python~python_3_11_x86_64-unknown-linux-gnu//':
+      # The current user is root, please run as non-root when using the
+      # hermetic Python interpreter.
+      # See https://github.com/bazelbuild/rules_python/pull/713.
+      - name: Create a non-root user
+        run: |
+          useradd -m test
+          chown -R test:test $GITHUB_WORKSPACE 
+        shell: bash
