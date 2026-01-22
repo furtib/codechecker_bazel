@@ -30,6 +30,13 @@ load("codechecker_config.bzl", "get_config_file")
 load("common.bzl", "SOURCE_ATTR")
 
 def _flatten_depset(in_depset):
+    """
+        in_depset - Multi level depset
+
+        Flattens the input depset by 1, like so:
+        [[A,B],[C],[D,E]] -> [A,B,C,D,E]
+        [[[A],[B]],[[C]]] -> [[A,B],[C]]
+    """
     depset_list = []
     for d_set in in_depset.to_list():
         depset_list.append(d_set)
@@ -63,12 +70,17 @@ def _run_code_checker(
         inputs = [compile_commands_json, config_file] + sources_and_headers
     else:
         # NOTE: we collect only headers, so CTU may not work!
-        trans_depsets = [
-            compilation_context.headers,
-            _flatten_depset(target[SourceFilesInfo].headers)
-            ]
         headers = depset(direct = [],
-            transitive = trans_depsets)
+                         transitive = [
+                             compilation_context.headers,
+                             # This is necessary because
+                             # target[SourceFilesInfo].headers contains
+                             # depsets of header files, and we can only
+                             # append depsets of files not depset of depsets
+                             # to the headers depset.
+                             _flatten_depset(target[SourceFilesInfo].headers)
+                         ]
+                        )
         inputs = depset([compile_commands_json, config_file, src], transitive = [headers])
 
     outputs = [clang_tidy_plist, clangsa_plist, codechecker_log]
@@ -155,9 +167,9 @@ def _per_file_impl(ctx):
         fail("Seems compile_commands.json file is incorrect!")
     sources_and_headers = _collect_all_sources_and_headers(ctx)
     options = ctx.attr.default_options + ctx.attr.options
-    all_files = [compile_commands_json]
+    all_files = [compile_commands]
     config_file, env_vars = get_config_file(ctx)
-    _create_wrapper_script(ctx, options, compile_commands_json, config_file)
+    _create_wrapper_script(ctx, options, compile_commands, config_file)
     for target in ctx.attr.targets:
         if not CcInfo in target:
             continue
@@ -179,7 +191,7 @@ def _per_file_impl(ctx):
                         options,
                         config_file,
                         env_vars,
-                        compile_commands_json,
+                        compile_commands,
                         compilation_context,
                         sources_and_headers,
                     )
