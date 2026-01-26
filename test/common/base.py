@@ -142,16 +142,17 @@ class TestBase(unittest.TestCase):
             stdin=subprocess.PIPE,
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
+            universal_newlines=True,
             cwd=working_dir,
         ) as process:
             stdout, stderr = process.communicate()
             if process.returncode != exp_retcode:
-                logging.debug(stdout.decode('utf-8'))
-                logging.debug(stderr.decode('utf-8'))
+                logging.debug(f"stdout:\n{stdout}")
+                logging.debug(f"stderr:\n{stderr}")
             return (
                 process.returncode,
-                f"stdout: {stdout.decode('utf-8')}",
-                f"stderr: {stderr.decode('utf-8')}",
+                f"stdout: {stdout}",
+                f"stderr: {stderr}",
             )
 
     @classmethod
