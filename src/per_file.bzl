@@ -58,10 +58,7 @@ def _run_code_checker(
     else:
         # NOTE: we collect only headers, so CTU may not work!
         headers = depset(direct = [],
-                         transitive = (
-                                    [compilation_context.headers] +
-                                    target[SourceFilesInfo].headers.to_list()
-                                )
+                         transitive = target[SourceFilesInfo].headers.to_list()
                         )
         inputs = depset([compile_commands_json, config_file, src], transitive = [headers])
 
