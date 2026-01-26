@@ -13,12 +13,12 @@
 # limitations under the License.
 
 """
-This file runs tests.
+This script replaces the content of the .bazelversion file
+from .github/bazel_version.json and runs the equivalent of
+python3 -m unittest discover @a
 For unittest pass `unit` as parameter
-For FOSS tests pass `foss` as parameter
+For FOSS tests pass `foss` as parameter #TODO: Add cleanup between FOSS runs
 For verbosity use `-vvv`
-To clean up FOSS test artifacts use `--clean`
-To run the specified tests on all supported Bazel versions use `--all`
 """
 
 import glob
@@ -33,27 +33,15 @@ JSON_FILE = Path("../.github/bazel_version.json")
 BAZELVERSION_FILE = Path("../.bazelversion")
 
 
-def perform_system_clean():
-    """
-    Removes the test-proj folders from FOSS testing
-
-    This function should not be necessary to re-run FOSS tests
-    even if there was changes in the templates or init.sh files
-    """
-    print("Performing system cleanup (foss/*/test-proj)...")
-    # Use glob to find all matching patterns
-    targets = glob.glob("foss/*/test-proj")
-    for target in targets:
-        try:
-            shutil.rmtree(target)
-            print(f"Removed: {target}")
-        except Exception as e:
-            print(f"Failed to remove {target}: {e}")
-
-
 def run_unittest_discovery(start_dir="unit", verbosity=1):
+    """
+    The equivalent of python3 -m unittest discover $start_dir
+    
+    :param start_dir: The directory in which it searches for tests
+    :param verbosity: How verbose the output should be
+    """
     loader = unittest.TestLoader()
-    suite = loader.discover(start_dir, pattern="test*.py")
+    suite = loader.discover(start_dir)
 
     runner = unittest.TextTestRunner(verbosity=verbosity)
     result = runner.run(suite)
@@ -66,13 +54,7 @@ def main():
     )
     parser.add_argument(
         "directory",
-        nargs="?",
         help="The directory to explore for tests (e.g., 'unit' or 'tests/integration')",
-    )
-    parser.add_argument(
-        "--all",
-        action="store_true",
-        help="Run tests for all Bazel versions defined in the JSON file.",
     )
     parser.add_argument(
         "-v",
@@ -81,30 +63,9 @@ def main():
         default=1,
         help="Increase verbosity (e.g., -v, -vv, -vvv)",
     )
-    parser.add_argument(
-        "--clean", action="store_true", help="Perform cleanup and exit."
-    )
 
     args, unknown = parser.parse_known_args()
 
-    # Cleanup
-    if args.clean:
-        perform_system_clean()
-        sys.exit(0)
-
-    if not args.directory:
-        parser.error(
-            "the following arguments are required: directory (unless using --clean)"
-        )
-
-    # Run with user set version
-    if not args.all:
-        success = run_unittest_discovery(
-            start_dir=args.directory, verbosity=args.verbose
-        )
-        sys.exit(0 if success else 1)
-
-    # Run on all supported versions
     original_content = None
     version_was_set = BAZELVERSION_FILE.exists()
 

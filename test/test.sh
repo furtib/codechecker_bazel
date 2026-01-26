@@ -14,4 +14,4 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-python3 test_runner.py unit @a
+python3 -m unittest discover unit @a
