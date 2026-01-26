@@ -115,12 +115,22 @@ class TestBase(unittest.TestCase):
         logging.debug("\n%s", "-" * 70)
 
     @classmethod
-    def run_command(
-        self, cmd: str, working_dir: Optional[str] = None
+    def run_command(self,
+                    cmd: str,
+                    working_dir: Optional[str] = None,
+                    exp_retcode : int =0
     ) -> tuple[int, str, str]:
         """
         Run shell command.
-        returns:
+        
+        :param str cmd:
+        The command
+        :param Optional[str] working_dir:
+        Optional, working directory for the command
+        :param int exp_retcode:
+        Expected return code for the command, logs output if return code differs
+        Does NOT assert on the return code!
+        Returns:
         - exit code
         - stdout
         - stderr
@@ -135,6 +145,9 @@ class TestBase(unittest.TestCase):
             cwd=working_dir,
         ) as process:
             stdout, stderr = process.communicate()
+            if process.returncode != exp_retcode:
+                logging.debug(stdout.decode('utf-8'))
+                logging.debug(stderr.decode('utf-8'))
             return (
                 process.returncode,
                 f"stdout: {stdout.decode('utf-8')}",
