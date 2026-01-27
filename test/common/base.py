@@ -120,10 +120,12 @@ class TestBase(unittest.TestCase):
     ) -> tuple[int, str, str]:
         """
         Run shell command.
-        returns:
-        - exit code
-        - stdout
-        - stderr
+
+        Args:
+            cmd: The command
+            working_dir: Optional, working directory for the command
+        Returns:
+            A tuple containing (exit code, stdout, stderr)
         """
         logging.debug("Running: %s", cmd)
         commands = shlex.split(cmd)
@@ -132,13 +134,16 @@ class TestBase(unittest.TestCase):
             stdin=subprocess.PIPE,
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
+            universal_newlines=True,
             cwd=working_dir,
         ) as process:
             stdout, stderr = process.communicate()
+            logging.debug(f"stdout:\n{stdout}")
+            logging.debug(f"stderr:\n{stderr}")
             return (
                 process.returncode,
-                f"stdout: {stdout.decode('utf-8')}",
-                f"stderr: {stderr.decode('utf-8')}",
+                f"stdout: {stdout}",
+                f"stderr: {stderr}",
             )
 
     @classmethod
