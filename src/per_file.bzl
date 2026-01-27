@@ -57,9 +57,7 @@ def _run_code_checker(
         inputs = [compile_commands_json, config_file] + sources_and_headers
     else:
         # NOTE: we collect only headers, so CTU may not work!
-        headers = depset(direct = [],
-                         transitive = target[SourceFilesInfo].headers.to_list()
-                        )
+        headers = depset(transitive = target[SourceFilesInfo].headers.to_list())
         inputs = depset([compile_commands_json, config_file, src], transitive = [headers])
 
     outputs = [clang_tidy_plist, clangsa_plist, codechecker_log]
