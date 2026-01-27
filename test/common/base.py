@@ -120,18 +120,12 @@ class TestBase(unittest.TestCase):
     ) -> tuple[int, str, str]:
         """
         Run shell command.
-        
-        :param str cmd:
-        The command
-        :param Optional[str] working_dir:
-        Optional, working directory for the command
-        :param int exp_retcode:
-        Expected return code for the command, logs output if return code differs
-        Does NOT assert on the return code!
+
+        Args:
+            cmd: The command
+            working_dir: Optional, working directory for the command
         Returns:
-        - exit code
-        - stdout
-        - stderr
+            A tuple containing (exit code, stdout, stderr)
         """
         logging.debug("Running: %s", cmd)
         commands = shlex.split(cmd)
