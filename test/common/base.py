@@ -115,10 +115,8 @@ class TestBase(unittest.TestCase):
         logging.debug("\n%s", "-" * 70)
 
     @classmethod
-    def run_command(self,
-                    cmd: str,
-                    working_dir: Optional[str] = None,
-                    exp_retcode : int =0
+    def run_command(
+        self, cmd: str, working_dir: Optional[str] = None
     ) -> tuple[int, str, str]:
         """
         Run shell command.
@@ -146,9 +144,8 @@ class TestBase(unittest.TestCase):
             cwd=working_dir,
         ) as process:
             stdout, stderr = process.communicate()
-            if process.returncode != exp_retcode:
-                logging.debug(f"stdout:\n{stdout}")
-                logging.debug(f"stderr:\n{stderr}")
+            logging.debug(f"stdout:\n{stdout}")
+            logging.debug(f"stderr:\n{stderr}")
             return (
                 process.returncode,
                 f"stdout: {stdout}",
