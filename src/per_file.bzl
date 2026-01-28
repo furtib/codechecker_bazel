@@ -115,6 +115,7 @@ def _collect_all_sources_and_headers(ctx):
                 all_files += srcs
                 all_files += headers
     return all_files
+testing_only_collect_all_sources_and_headers = _collect_all_sources_and_headers
 
 def _create_wrapper_script(ctx, options, compile_commands_json, config_file):
     options_str = ""
