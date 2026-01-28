@@ -67,8 +67,8 @@ class TestCaching(TestBase):
 
     def test_bazel_test_codechecker_caching(self):
         """
-        Test whether bazel correctly reanalyses
-        the whole project when run with the monolithic rule
+        Verify that Bazel performs a full project re-analysis when using
+        the monolithic rule, as expected from architectural constrains.
         """
         target = "//test/unit/caching/tmp:codechecker_caching"
         ret, _, _ = self.run_command(f"bazel build {target}")
