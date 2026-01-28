@@ -49,6 +49,13 @@ cc_binary(
 )
 
 codechecker_test(
+    name = "codechecker_caching",
+    targets = [
+        "primary",
+    ],
+)
+
+codechecker_test(
     name = "per_file_caching",
     targets = [
         "primary",

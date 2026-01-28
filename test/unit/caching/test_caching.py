@@ -65,6 +65,27 @@ class TestCaching(TestBase):
         except FileNotFoundError:
             self.fail("Temporary working directory does not exists!")
 
+    def test_bazel_test_codechecker_caching(self):
+        """
+        Verify that Bazel performs a full project re-analysis when using
+        the monolithic rule, as expected from architectural constrains.
+        """
+        target = "//test/unit/caching/tmp:codechecker_caching"
+        ret, _, _ = self.run_command(f"bazel build {target}")
+        self.assertEqual(ret, 0)
+        try:
+            with open("tmp/secondary.cc", "a", encoding="utf-8") as f:
+                f.write("//test")
+        except FileNotFoundError:
+            self.fail(f"File not found!")
+        ret, _, stderr = self.run_command(f"bazel build {target} --subcommands")
+        self.assertEqual(ret, 0)
+        # Since everything in the monolithic rule is a single action,
+        # we expect that action to rerun for any modified file.
+        self.assertEqual(
+            stderr.count(f"SUBCOMMAND: # {target} [action 'CodeChecker"), 1
+        )
+
     def test_bazel_test_per_file_caching(self):
         """
         Test whether bazel correctly uses cached analysis
