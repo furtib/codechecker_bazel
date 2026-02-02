@@ -17,17 +17,17 @@ Rulesets for running codechecker in a different Bazel action
 for each translation unit.
 """
 
-load(
-    "compile_commands.bzl",
-    "compile_commands_aspect",
-    "compile_commands_impl",
-    "platforms_transition",
-    "SourceFilesInfo",
-)
 load("@bazel_tools//tools/build_defs/cc:action_names.bzl", "ACTION_NAMES")
 load("@bazel_tools//tools/cpp:toolchain_utils.bzl", "find_cpp_toolchain")
 load("codechecker_config.bzl", "get_config_file")
 load("common.bzl", "SOURCE_ATTR")
+load(
+    "compile_commands.bzl",
+    "SourceFilesInfo",
+    "compile_commands_aspect",
+    "compile_commands_impl",
+    "platforms_transition",
+)
 
 def _run_code_checker(
         ctx,
@@ -63,7 +63,8 @@ def _run_code_checker(
     outputs = [clang_tidy_plist, clangsa_plist, codechecker_log]
 
     analyzer_output_paths = "clangsa," + clangsa_plist.path + \
-                        ";clang-tidy," + clang_tidy_plist.path
+                            ";clang-tidy," + clang_tidy_plist.path
+
     # Action to run CodeChecker for a file
     ctx.actions.run(
         inputs = inputs,
@@ -73,8 +74,8 @@ def _run_code_checker(
             data_dir,
             src.path,
             codechecker_log.path,
-            analyzer_output_paths
-            ],
+            analyzer_output_paths,
+        ],
         mnemonic = "CodeChecker",
         use_default_shell_env = True,
         progress_message = "CodeChecker analyze {}".format(src.short_path),
@@ -106,12 +107,12 @@ def _collect_all_sources_and_headers(ctx):
         if not CcInfo in target:
             continue
         if SourceFilesInfo in target:
-            if (hasattr(target[SourceFilesInfo], "transitive_source_files")
-            and hasattr(target[SourceFilesInfo], "headers")):
+            if (hasattr(target[SourceFilesInfo], "transitive_source_files") and
+                hasattr(target[SourceFilesInfo], "headers")):
                 srcs = target[SourceFilesInfo].transitive_source_files.to_list()
                 headers = depset(
-                    transitive = target[SourceFilesInfo].headers.to_list()
-                    ).to_list()
+                    transitive = target[SourceFilesInfo].headers.to_list(),
+                ).to_list()
                 all_files += srcs
                 all_files += headers
     return all_files
@@ -227,7 +228,6 @@ per_file_test = rule(
         "_python_runtime": attr.label(
             default = "@default_python_tools//:py3_runtime",
         ),
-
     },
     outputs = {
         "compile_commands": "%{name}/compile_commands.json",

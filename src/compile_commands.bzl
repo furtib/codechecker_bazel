@@ -31,13 +31,13 @@ for given targets and platform, then just saves to JSON file.
 """
 
 load(
-    "@bazel_tools//tools/cpp:toolchain_utils.bzl",
-    "find_cpp_toolchain",
-)
-load(
     "@bazel_tools//tools/build_defs/cc:action_names.bzl",
     "CPP_COMPILE_ACTION_NAME",
     "C_COMPILE_ACTION_NAME",
+)
+load(
+    "@bazel_tools//tools/cpp:toolchain_utils.bzl",
+    "find_cpp_toolchain",
 )
 load(
     "common.bzl",
@@ -233,8 +233,12 @@ def get_compilation_database(target, ctx):
         if src.extension not in _c_and_cpp_extensions:
             continue
         compiler_info = _cc_compiler_info(
-            ctx, target, src, feature_configuration, cc_toolchain
-            )
+            ctx,
+            target,
+            src,
+            feature_configuration,
+            cc_toolchain,
+        )
         compile_flags = compiler_info.compile_flags
         compile_flags += [
             # Use -I to indicate that we want to keep the normal position in the system include chain.
@@ -243,7 +247,7 @@ def get_compilation_database(target, ctx):
             for d in cc_toolchain.built_in_include_directories
         ]
         compile_command = compiler_info.compiler + " " + \
-            " ".join(compile_flags) + compiler_info.force_language_mode_option
+                          " ".join(compile_flags) + compiler_info.force_language_mode_option
         command = compile_command + " -c " + src.path
         compilation_db.append(
             struct(

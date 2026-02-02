@@ -13,12 +13,21 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 """
+
 module(name = "codechecker_bazel")
 
 python_extension = use_extension(
-    "//src:tools.bzl", "module_register_default_python_toolchain")
+    "//src:tools.bzl",
+    "module_register_default_python_toolchain",
+)
+
 codechecker_extension = use_extension(
-    "//src:tools.bzl", "module_register_default_codechecker")
+    "//src:tools.bzl",
+    "module_register_default_codechecker",
+)
+
 use_repo(python_extension, "default_python_tools")
+
 use_repo(codechecker_extension, "default_codechecker_tools")
+
 register_toolchains("@default_python_tools//:python_toolchain")

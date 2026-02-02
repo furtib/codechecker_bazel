@@ -156,7 +156,6 @@ def check_valid_file_type(src):
     return False
 
 def _rule_sources(ctx):
-
     srcs = []
     if hasattr(ctx.rule.attr, "srcs"):
         for src in ctx.rule.attr.srcs:

@@ -17,29 +17,29 @@ Rulesets for running codechecker in a single Bazel job.
 """
 
 load(
-    "compile_commands.bzl",
-    "compile_commands_aspect",
-    "compile_commands_impl",
-    "platforms_transition",
-)
-load(
     "@default_codechecker_tools//:defs.bzl",
     "CODECHECKER_BIN_PATH",
 )
 load(
     "codechecker_config.bzl",
-    "get_config_file",
     "codechecker_config_internal",
-)
-load(
-    "per_file.bzl",
-    "per_file_test",
+    "get_config_file",
 )
 load(
     "common.bzl",
     "python_path",
     "python_toolchain_type",
     "version_specific_attributes",
+)
+load(
+    "compile_commands.bzl",
+    "compile_commands_aspect",
+    "compile_commands_impl",
+    "platforms_transition",
+)
+load(
+    "per_file.bzl",
+    "per_file_test",
 )
 
 def get_platform_alias(platform):
