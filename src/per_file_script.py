@@ -14,6 +14,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""
+Codechecker wrapper script for per-file analysis
+"""
 
 import os
 import re
@@ -39,6 +42,7 @@ def parse_args():
     """
     Parse arguments that may change from file-to-file.
     """
+    # pylint: disable=global-statement
     if len(sys.argv) != 5:
         print("Wrong amount of arguments")
         sys.exit(1)
@@ -58,7 +62,7 @@ def log(msg: str) -> None:
     """
     Append message to the log file
     """
-    with open(LOG_FILE, "a") as log_file:  # type: ignore
+    with open(LOG_FILE, "a", encoding="utf-8") as log_file:  # type: ignore
         log_file.write(msg)
 
 
@@ -67,8 +71,10 @@ def _create_compile_commands_json_with_absolute_paths():
     Modifies the paths in compile_commands.json to contain the absolute path
     of the files.
     """
-    with open(COMPILE_COMMANDS_JSON, "r") as original_file, open(
-        COMPILE_COMMANDS_ABSOLUTE, "w"
+    with open(
+        COMPILE_COMMANDS_JSON, "r", encoding="utf-8"
+    ) as original_file, open(
+        COMPILE_COMMANDS_ABSOLUTE, "w", encoding="utf-8"
     ) as new_file:
         content = original_file.read()
         # Replace "directory":"." with the absolute path
@@ -102,12 +108,12 @@ def _run_codechecker() -> None:
         env=os.environ,
         capture_output=True,
         text=True,
+        check=False,
     )
     log(result.stdout)
 
-
     try:
-        with open(LOG_FILE, "a") as log_file:  # type: ignore
+        with open(LOG_FILE, "a", encoding="utf-8") as log_file:  # type: ignore
             subprocess.run(
                 codechecker_cmd,
                 env=os.environ,
@@ -128,7 +134,7 @@ def _display_error(ret_code: int) -> None:
     # Log and exit on error
     print("===-----------------------------------------------------===")
     print(f"[ERROR]: CodeChecker returned with {ret_code}!")
-    with open(LOG_FILE, "r") as log_file:  # type: ignore
+    with open(LOG_FILE, "r", encoding="utf-8") as log_file:  # type: ignore
         print(log_file.read())
     sys.exit(1)
 
@@ -144,12 +150,18 @@ def _move_plist_files():
             if re.search(
                 rf"_{analyzer_info[0]}_.*\.plist$", file
             ) and os.path.isfile(
-                os.path.join(DATA_DIR, file)
-            ):  # type: ignore
-                shutil.move(os.path.join(DATA_DIR, file), analyzer_info[1])  # type: ignore
+                os.path.join(DATA_DIR, file)  # type: ignore
 
+            ):
+                shutil.move(
+                    os.path.join(DATA_DIR, file),   # type: ignore
+                    analyzer_info[1],
+                    )
 
 def main():
+    """
+    Main function of CodeChecker wrapper
+    """
     parse_args()
     _create_compile_commands_json_with_absolute_paths()
     _run_codechecker()
@@ -162,5 +174,6 @@ if __name__ == "__main__":
 
 # I have conserved this comment from the original bash script
 # The sed commands are commented out, so we won't implement them
-# # sed -i -e "s|<string>.*execroot/bazel_codechecker/|<string>|g" $CLANG_TIDY_PLIST
-# # sed -i -e "s|<string>.*execroot/bazel_codechecker/|<string>|g" $CLANGSA_PLIST
+# sed -i -e "s|<string>.*execroot/bazel_codechecker/|<string>|g" \
+# $CLANG_TIDY_PLIST
+# sed -i -e "s|<string>.*execroot/bazel_codechecker/|<string>|g" $CLANGSA_PLIST
