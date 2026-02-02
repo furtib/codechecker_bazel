@@ -158,6 +158,7 @@ def _move_plist_files():
                     analyzer_info[1],
                     )
 
+
 def main():
     """
     Main function of CodeChecker wrapper
