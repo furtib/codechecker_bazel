@@ -53,7 +53,7 @@ class TestImplDepExternalDep(TestBase):
             logging.debug("No bazel version set, using system default")
         _, stdout, _ = cls.run_command("bazel --version")
         cls.BAZEL_VERSION = stdout.split(' ')[2].strip()
-        logging.debug("Using Bazel", cls.BAZEL_VERSION)
+        logging.debug("Using Bazel %s", cls.BAZEL_VERSION)
 
     @final
     @classmethod
@@ -74,9 +74,9 @@ class TestImplDepExternalDep(TestBase):
             pass
 
     def test_compile_commands_external_lib(self):
-        """Test: bazel build :compile_commands_isystem"""
+        """Test: bazel build :compile_commands_isystem --experimental_cc_implementation_deps"""
         ret, _, _ = self.run_command(
-            "bazel build :compile_commands_isystem")
+            "bazel build :compile_commands_isystem --experimental_cc_implementation_deps --enable_bzlmod")
         self.assertEqual(ret, 0)
         comp_json_file = os.path.join(
             self.BAZEL_BIN_DIR, # pyright: ignore[reportOptionalOperand]
@@ -101,15 +101,15 @@ class TestImplDepExternalDep(TestBase):
             pattern2))
 
     def test_codechecker_external_lib(self):
-        """Test: bazel build :codechecker_external_deps"""
+        """Test: bazel build :codechecker_external_deps --experimental_cc_implementation_deps"""
         ret, _, _ = self.run_command(
-            "bazel build :codechecker_external_deps")
+            "bazel build :codechecker_external_deps --experimental_cc_implementation_deps --enable_bzlmod")
         self.assertEqual(ret, 0)
 
     def test_per_file_external_lib(self):
-        """Test: bazel build :per_file_external_deps"""
+        """Test: bazel build :per_file_external_deps --experimental_cc_implementation_deps"""
         ret, _, _ = self.run_command(
-            "bazel build :per_file_external_deps")
+            "bazel build :per_file_external_deps --experimental_cc_implementation_deps --enable_bzlmod")
         self.assertEqual(ret, 0)
 
 
