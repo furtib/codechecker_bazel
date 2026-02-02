@@ -101,7 +101,7 @@ class TestVirtualInclude(TestBase):
         self.assertEqual(ret, 0)
         plist_files = glob.glob(
             os.path.join(
-                self.BAZEL_BIN_DIR, # pyright: ignore
+                self.BAZEL_BIN_DIR,  # pyright: ignore
                 "codechecker_virtual_include",
                 "**",
                 "*.plist",
