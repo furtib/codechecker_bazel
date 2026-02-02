@@ -138,9 +138,10 @@ def input_data():
     logging.debug("COMPILE_COMMANDS     : %s", str(COMPILE_COMMANDS))
     logging.debug("")
 
-# pylint: disable=dangerous-default-value
-def execute(cmd, env=None, codes=[0]):
+def execute(cmd, env=None, codes=None):
     """ Execute CodeChecker commands """
+    if codes is None:
+        codes = [0]
     with subprocess.Popen(
         cmd,
         env=env,
@@ -233,6 +234,8 @@ def realpath(filename):
 
 def resolve_plist_symlinks(filepath):
     """ Resolve the symbolic links in plist files to real file paths """
+    # plistlib will only have one version of these function calls
+    # pylint will check both branch, regardless of python version
     # pylint: disable=no-member
     logging.info("Processing plist file: %s", filepath)
     if sys.version_info >= (3, 9):
@@ -380,7 +383,6 @@ def check_results():
     issues = dict.fromkeys(severities, 0)
     logging.debug("Issues: %s", str(issues))
     # Grep results for defects according to severities
-    # pylint: disable=consider-using-dict-items
     for issue in issues:
         found = re.findall(rf"^{issue} .* (\d+)", results, re.M)
         defects = sum(int(number) for number in found)
@@ -390,10 +392,10 @@ def check_results():
     # Check collected defects
     passed = True
     conclusion = ""
-    for issue in issues:
-        if issues[issue] > 0:
+    for issue, num in issues.items():
+        if num > 0:
             passed = False
-            conclusion += f"{issue:>15} : {issues[issue]}\n"
+            conclusion += f"{issue:>15} : {num}\n"
     if passed:
         logging.info("No defects found by CodeChecker")
     else:
@@ -416,6 +418,7 @@ def main():
             test()
         else:
             fail(f"Wrong codechecker script mode: {EXECUTION_MODE}")
+    # We want to fail explicitly here
     # pylint: disable=broad-exception-caught
     except Exception as error:
         logging.exception(error)
