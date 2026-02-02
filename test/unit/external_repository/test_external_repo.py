@@ -49,8 +49,7 @@ class TestImplDepExternalDep(TestBase):
             shutil.copy(
                 "../../../.bazelversion", "third_party/my_lib/.bazelversion"
             )
-        # pylint: disable=broad-exception-caught
-        except Exception:
+        except FileNotFoundError:
             logging.debug("No bazel version set, using system default")
         _, stdout, _ = cls.run_command("bazel --version")
         cls.BAZEL_VERSION = stdout.split(' ')[2].strip()
@@ -67,13 +66,11 @@ class TestImplDepExternalDep(TestBase):
         cls.run_command("bazel clean")
         try:
             os.remove(".bazelversion")
-        # pylint: disable=broad-exception-caught
-        except Exception:
+        except FileNotFoundError:
             pass
         try:
             os.remove("third_party/my_lib/.bazelversion")
-        # pylint: disable=broad-exception-caught
-        except Exception:
+        except FileNotFoundError:
             pass
 
     def test_compile_commands_external_lib(self):
