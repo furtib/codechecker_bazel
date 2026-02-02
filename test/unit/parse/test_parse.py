@@ -50,10 +50,10 @@ class TestTemplate(TestBase):
 
     def test_parse_html(self):
         """Test: Parse results into html"""
-        ret, _, _ = self.run_command(
+        ret, _, stderr = self.run_command(
             "bazel build //test/unit/parse:codechecker"
         )
-        self.assertEqual(ret, 0)
+        self.assertEqual(ret, 0, stderr)
         self.check_parse(
             f"{self.BAZEL_BIN_DIR}/codechecker/codechecker-files/data"
         )
@@ -64,11 +64,11 @@ class TestTemplate(TestBase):
         # the report folder. Bazel's output folder however is readonly.
         # Adding the flag: "--experimental_writable_outputs"
         # makes the directory writeable
-        ret, _, _ = self.run_command(
+        ret, _, stderr = self.run_command(
             "bazel build //test/unit/parse:codechecker "
             "--experimental_writable_outputs"
         )
-        self.assertEqual(ret, 0)
+        self.assertEqual(ret, 0, stderr)
         self.check_store(
             f"{self.BAZEL_BIN_DIR}/codechecker/codechecker-files/data",
             "unit_test_bazel",

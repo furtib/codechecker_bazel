@@ -69,10 +69,10 @@ class TestVirtualInclude(TestBase):
 
     def test_bazel_per_file_plist_path_resolved(self):
         """Test: bazel build :per_file_virtual_include"""
-        ret, _, _ = self.run_command(
+        ret, _, stderr = self.run_command(
             "bazel build //test/unit/virtual_include:per_file_virtual_include",
         )
-        self.assertEqual(ret, 0)
+        self.assertEqual(ret, 0, stderr)
         plist_files = glob.glob(
             os.path.join(
                 self.BAZEL_BIN_DIR,  # pyright: ignore
@@ -94,11 +94,11 @@ class TestVirtualInclude(TestBase):
 
     def test_bazel_codechecker_plist_path_resolved(self):
         """Test: bazel build :codechecker_virtual_include"""
-        ret, _, _ = self.run_command(
+        ret, _, stderr = self.run_command(
             "bazel build "
             "//test/unit/virtual_include:codechecker_virtual_include"
         )
-        self.assertEqual(ret, 0)
+        self.assertEqual(ret, 0, stderr)
         plist_files = glob.glob(
             os.path.join(
                 self.BAZEL_BIN_DIR,  # pyright: ignore
@@ -120,19 +120,19 @@ class TestVirtualInclude(TestBase):
 
     def test_bazel_codechecker_implementation_deps_virtual_include(self):
         """Test: bazel build :codechecker_impl_deps_include"""
-        ret, _, _ = self.run_command(
+        ret, _, stderr = self.run_command(
             "bazel build --experimental_cc_implementation_deps "
             "//test/unit/virtual_include:codechecker_impl_deps_include"
         )
-        self.assertEqual(ret, 0)
+        self.assertEqual(ret, 0, stderr)
 
     def test_bazel_per_file_implementation_deps_virtual_include(self):
         """Test: bazel build :per_file_impl_deps_include"""
-        ret, _, _ = self.run_command(
+        ret, _, stderr = self.run_command(
             "bazel build --experimental_cc_implementation_deps "
             "//test/unit/virtual_include:per_file_impl_deps_include"
         )
-        self.assertEqual(ret, 0)
+        self.assertEqual(ret, 0, stderr)
 
 
 if __name__ == "__main__":
