@@ -12,18 +12,18 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# cc_binary for simple C++ tests
-load(
-    "@rules_cc//cc:defs.bzl",
-    "cc_binary",
-)
-
 # codechecker rules
 load(
     "@codechecker_bazel//src:codechecker.bzl",
     "codechecker",
-    "codechecker_test",
     "codechecker_config",
+    "codechecker_test",
+)
+
+# cc_binary for simple C++ tests
+load(
+    "@rules_cc//cc:defs.bzl",
+    "cc_binary",
 )
 
 # C++ binary containing a division by zero bug
@@ -73,38 +73,37 @@ codechecker(
 codechecker_test(
     name = "codechecker_test_json",
     config = "config_json",
+    tags = ["manual"],
     targets = [
         "test_zero",
     ],
-    tags = ["manual"]
 )
 
 codechecker_test(
     name = "codechecker_test_yaml",
     config = "config_yaml",
+    tags = ["manual"],
     targets = [
         "test_zero",
     ],
-    tags = ["manual"]
 )
 
 codechecker_test(
     name = "per_file_test_json",
     config = "config_json",
+    per_file = True,
+    tags = ["manual"],
     targets = [
         "test_zero",
     ],
-    tags = ["manual"],
-    per_file = True,
 )
 
 codechecker_test(
     name = "per_file_test_yaml",
     config = "config_yaml",
+    per_file = True,
+    tags = ["manual"],
     targets = [
         "test_zero",
     ],
-    tags = ["manual"],
-    per_file = True,
 )
-

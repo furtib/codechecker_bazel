@@ -15,6 +15,7 @@ limitations under the License.
 
 Dummy external lib for tests
 """
+
 module(
     name = "external_lib",
 )

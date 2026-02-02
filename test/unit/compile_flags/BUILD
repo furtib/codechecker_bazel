@@ -31,7 +31,10 @@ load(
 
 cc_library(
     name = "target_with_both_extension",
-    srcs = ["simple_c.c", "simple_cc.cc"],
+    srcs = [
+        "simple_c.c",
+        "simple_cc.cc",
+    ],
     tags = ["manual"],
 )
 
@@ -46,9 +49,9 @@ compile_commands(
 # method for generating compile_commands.json
 codechecker_test(
     name = "per_file_filter",
+    per_file = True,
+    tags = ["manual"],
     targets = [
         "target_with_both_extension",
     ],
-    tags = ["manual"],
-    per_file = True,
 )

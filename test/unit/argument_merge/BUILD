@@ -12,15 +12,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+load(
+    "@codechecker_bazel//src:codechecker.bzl",
+    "codechecker_test",
+)
+
 # cc_binary for simple C++ tests
 load(
     "@rules_cc//cc:defs.bzl",
     "cc_library",
-)
-
-load(
-    "@codechecker_bazel//src:codechecker.bzl",
-    "codechecker_test",
 )
 
 cc_library(
@@ -33,11 +33,11 @@ cc_library(
 # there are no default options to be merged.
 codechecker_test(
     name = "per_file_argument_merge",
-    targets = [
-        "main",
-    ],
     analyze = [
         "--analyzers clangsa clang-tidy",
     ],
     per_file = True,
+    targets = [
+        "main",
+    ],
 )

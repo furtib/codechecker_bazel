@@ -1,25 +1,3 @@
-# cc_binary for simple C++ tests
-load(
-    "@rules_cc//cc:defs.bzl",
-    "cc_binary",
-    "cc_library",
-)
-
-# compile_commands rule
-load(
-    "@codechecker_bazel//src:compile_commands.bzl",
-    "compile_commands",
-)
-
-# codechecker rules
-load(
-    "@codechecker_bazel//src:codechecker.bzl",
-    "codechecker",
-    "codechecker_config",
-    "codechecker_suite",
-    "codechecker_test",
-)
-
 # clang-tidy and clang -analyze rules
 load(
     "@codechecker_bazel//src:clang.bzl",
@@ -31,6 +9,28 @@ load(
 load(
     "@codechecker_bazel//src:clang_ctu.bzl",
     "clang_ctu_test",
+)
+
+# codechecker rules
+load(
+    "@codechecker_bazel//src:codechecker.bzl",
+    "codechecker",
+    "codechecker_config",
+    "codechecker_suite",
+    "codechecker_test",
+)
+
+# compile_commands rule
+load(
+    "@codechecker_bazel//src:compile_commands.bzl",
+    "compile_commands",
+)
+
+# cc_binary for simple C++ tests
+load(
+    "@rules_cc//cc:defs.bzl",
+    "cc_binary",
+    "cc_library",
 )
 
 # Test for strip_include_prefix
@@ -253,14 +253,15 @@ codechecker_test(
     analyze = [
         "--ctu",
     ],
+    per_file = True,
     targets = [
         "test_pass",
     ],
-    per_file = True,
 )
 
 codechecker_test(
     name = "code_checker_fail",
+    per_file = True,
     tags = [
         "manual",
     ],
@@ -268,7 +269,6 @@ codechecker_test(
         "test_pass",
         "test_fail",
     ],
-    per_file = True,
 )
 
 # FIXME: The following test does not detect CTU problem
@@ -278,6 +278,7 @@ codechecker_test(
     analyze = [
         "--ctu",
     ],
+    per_file = True,
     tags = [
         "manual",
     ],
@@ -285,5 +286,4 @@ codechecker_test(
         "test_pass",
         "test_fail",
     ],
-    per_file = True,
 )

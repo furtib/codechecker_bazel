@@ -12,20 +12,19 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# cc_binary for simple C++ tests
-load(
-    "@rules_cc//cc:defs.bzl",
-    "cc_binary",
-)
-
 load(
     "@codechecker_bazel//src:codechecker.bzl",
     "codechecker_test",
 )
-
 load(
     "@codechecker_bazel//src:compile_commands.bzl",
     "compile_commands",
+)
+
+# cc_binary for simple C++ tests
+load(
+    "@rules_cc//cc:defs.bzl",
+    "cc_binary",
 )
 
 # First, define the rule that generates our file.
@@ -46,22 +45,22 @@ cc_binary(
 
 codechecker_test(
     name = "codechecker_genrule_header",
-    targets = [
-        ":genrule_header_cpp",
-    ],
     tags = [
         "manual",
+    ],
+    targets = [
+        ":genrule_header_cpp",
     ],
 )
 
 codechecker_test(
     name = "per_file_genrule_header",
-    targets = [
-        ":genrule_header_cpp",
-    ],
     per_file = True,
     tags = [
         "manual",
+    ],
+    targets = [
+        ":genrule_header_cpp",
     ],
 )
 
@@ -77,28 +76,28 @@ genrule(
 cc_binary(
     name = "genrule_source_cpp",
     srcs = [
-        ":genrule_source.cc"
+        ":genrule_source.cc",
     ],
 )
 
 codechecker_test(
     name = "codechecker_genrule_source",
-    targets = [
-        ":genrule_source_cpp",
-    ],
     tags = [
         "manual",
+    ],
+    targets = [
+        ":genrule_source_cpp",
     ],
 )
 
 codechecker_test(
     name = "per_file_genrule_source",
-    targets = [
-        ":genrule_source_cpp",
-    ],
     per_file = True,
     tags = [
         "manual",
+    ],
+    targets = [
+        ":genrule_source_cpp",
     ],
 )
 

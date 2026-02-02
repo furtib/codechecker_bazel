@@ -13,13 +13,12 @@
 # limitations under the License.
 
 load(
-    "@codechecker_bazel//src:compile_commands.bzl",
-    "compile_commands",
-)
-
-load(
     "@codechecker_bazel//src:codechecker.bzl",
     "codechecker_test",
+)
+load(
+    "@codechecker_bazel//src:compile_commands.bzl",
+    "compile_commands",
 )
 
 # This is the important bit -- not only do we have an external dependency here
@@ -48,13 +47,13 @@ compile_commands(
 
 codechecker_test(
     name = "codechecker_external_deps",
-    targets = ["isystem_impl_dep"],
     tags = ["manual"],
+    targets = ["isystem_impl_dep"],
 )
 
 codechecker_test(
     name = "per_file_external_deps",
-    targets = ["isystem_impl_dep"],
-    tags = ["manual"],
     per_file = True,
+    tags = ["manual"],
+    targets = ["isystem_impl_dep"],
 )

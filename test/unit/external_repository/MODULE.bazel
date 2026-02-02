@@ -16,13 +16,17 @@ limitations under the License.
 Test project for using headers thought implementation_deps,
 from external repositories
 """
+
 local_path_override(
     module_name = "codechecker_bazel",
     path = "../../../",
 )
+
 bazel_dep(name = "codechecker_bazel")
+
 local_path_override(
     module_name = "external_lib",
     path = "third_party/my_lib",
 )
+
 bazel_dep(name = "external_lib")

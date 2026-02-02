@@ -12,16 +12,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+load(
+    "@codechecker_bazel//src:codechecker.bzl",
+    "codechecker_test",
+)
+
 # cc_binary for simple C++ tests
 load(
     "@rules_cc//cc:defs.bzl",
     "cc_binary",
     "cc_library",
-)
-
-load(
-    "@codechecker_bazel//src:codechecker.bzl",
-    "codechecker_test",
 )
 
 # We are not interested in finding bugs, we are only interested in whether the
@@ -43,8 +43,8 @@ cc_binary(
     name = "primary",
     srcs = ["primary.cc"],
     deps = [
+        "linking",
         "secondary",
-        "linking"
     ],
 )
 
@@ -57,17 +57,17 @@ codechecker_test(
 
 codechecker_test(
     name = "per_file_caching",
+    per_file = True,
     targets = [
         "primary",
     ],
-    per_file = True,
 )
 
 codechecker_test(
     name = "per_file_caching_ctu",
+    analyze = ["--ctu"],
+    per_file = True,
     targets = [
         "primary",
     ],
-    analyze = ["--ctu"],
-    per_file = True,
 )
