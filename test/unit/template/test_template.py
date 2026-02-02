@@ -56,7 +56,8 @@ class TestTemplate(TestBase):
 
     def test_template(self):
         """Test: TODO: describe your test"""
-        self.assertTrue(True)
+        return_code, stdout, stderr = self.run_command("bazel build //src:*")
+        self.assertEqual(0, return_code, stderr)
 
 
 if __name__ == "__main__":
