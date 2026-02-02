@@ -138,6 +138,7 @@ def input_data():
     logging.debug("COMPILE_COMMANDS     : %s", str(COMPILE_COMMANDS))
     logging.debug("")
 
+
 def execute(cmd, env=None, codes=None):
     """ Execute CodeChecker commands """
     if codes is None:
@@ -326,9 +327,9 @@ def parse():
     command = f"{codechecker_parse} --export=json > " \
               f"{CODECHECKER_FILES}/result.json"
     execute(command, codes=[0, 2])
-    #logging.debug(
-    #    "JSON:\n\n%s\n", read_file(CODECHECKER_FILES + "/result.json")
-    #)
+    # logging.debug(
+    #     "JSON:\n\n%s\n", read_file(CODECHECKER_FILES + "/result.json")
+    # )
     # Save results as HTML report
     logging.info("CodeChecker parse -e html")
     command = (
