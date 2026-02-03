@@ -36,26 +36,10 @@ COMPILE_COMMANDS_JSON: str = "{compile_commands_json}"
 COMPILE_COMMANDS_ABSOLUTE: str = f"{COMPILE_COMMANDS_JSON}.abs"
 CODECHECKER_ARGS: str = "{codechecker_args}"
 CONFIG_FILE: str = "{config_file}"
-
-
-def parse_args():
-    """
-    Parse arguments that may change from file-to-file.
-    """
-    # pylint: disable=global-statement
-    if len(sys.argv) != 5:
-        print("Wrong amount of arguments")
-        sys.exit(1)
-
-    global DATA_DIR
-    global FILE_PATH
-    global LOG_FILE
-    global ANALYZER_PLIST_PATHS
-
-    DATA_DIR = sys.argv[1]
-    FILE_PATH = sys.argv[2]
-    LOG_FILE = sys.argv[3]
-    ANALYZER_PLIST_PATHS = [item.split(",") for item in sys.argv[4].split(";")]
+DATA_DIR = sys.argv[1]
+FILE_PATH = sys.argv[2]
+LOG_FILE = sys.argv[3]
+ANALYZER_PLIST_PATHS = [item.split(",") for item in sys.argv[4].split(";")]
 
 
 def log(msg: str) -> None:
@@ -163,7 +147,9 @@ def main():
     """
     Main function of CodeChecker wrapper
     """
-    parse_args()
+    if len(sys.argv) != 5:
+        print("Wrong amount of arguments")
+        sys.exit(1)
     _create_compile_commands_json_with_absolute_paths()
     _run_codechecker()
     _move_plist_files()
