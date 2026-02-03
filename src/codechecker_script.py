@@ -235,8 +235,9 @@ def realpath(filename):
 
 def resolve_plist_symlinks(filepath):
     """ Resolve the symbolic links in plist files to real file paths """
-    # plistlib will only have one version of these function calls
-    # pylint will check both branch, regardless of python version
+    # plistlib replaced readPlist/writePlist with load/dump in Python 3.9.
+    # Since Pylint analyzes every line,
+    # it flags the methods missing in the current environment.
     # pylint: disable=no-member
     logging.info("Processing plist file: %s", filepath)
     if sys.version_info >= (3, 9):
