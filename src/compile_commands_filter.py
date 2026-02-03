@@ -20,7 +20,6 @@ from __future__ import print_function
 import argparse
 import json
 import logging
-import os
 import re
 import shlex
 import subprocess
@@ -52,21 +51,33 @@ def parse_args():
     """
     Parse command line arguments or show help.
     """
-    parser = argparse.ArgumentParser(formatter_class=argparse.RawTextHelpFormatter,
-                                     description=__doc__)
-    parser.add_argument("-i", "--input",
-                        default="compile_commands.json",
-                        help="input compile_commands.json file")
-    parser.add_argument("-o", "--output",
-                        default="compile_commands.json",
-                        help="output compile_commands.json file")
-    parser.add_argument("-v", "--verbosity",
-                        default=0,
-                        action="count",
-                        help="increase output verbosity (e.g., -v or -vv)")
-    parser.add_argument("--log-format",
-                        default="[FILTER] %(levelname)5s: %(message)s",
-                        help=argparse.SUPPRESS)
+    parser = argparse.ArgumentParser(
+        formatter_class=argparse.RawTextHelpFormatter, description=__doc__
+    )
+    parser.add_argument(
+        "-i",
+        "--input",
+        default="compile_commands.json",
+        help="input compile_commands.json file",
+    )
+    parser.add_argument(
+        "-o",
+        "--output",
+        default="compile_commands.json",
+        help="output compile_commands.json file",
+    )
+    parser.add_argument(
+        "-v",
+        "--verbosity",
+        default=0,
+        action="count",
+        help="increase output verbosity (e.g., -v or -vv)",
+    )
+    parser.add_argument(
+        "--log-format",
+        default="[FILTER] %(levelname)5s: %(message)s",
+        help=argparse.SUPPRESS,
+    )
 
     options = parser.parse_args()
 
@@ -95,11 +106,11 @@ def run_command(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE):
     Run shell command
     """
     cmd = split_to_list(command)
-    process = subprocess.Popen(cmd, stdout=stdout, stderr=stderr)
-    out, err = process.communicate()
-    if err:
-        logging.error("Command: %s...\nError: %s", command, err)
-    return out
+    with subprocess.Popen(cmd, stdout=stdout, stderr=stderr) as process:
+        out, err = process.communicate()
+        if err:
+            logging.error("Command: %s...\nError: %s", command, err)
+        return out
 
 
 def filter_compile_flags(compile_commands):
@@ -109,13 +120,14 @@ def filter_compile_flags(compile_commands):
     logging.info("Filtering compile flags")
     for item in compile_commands:
         command = item["command"]
-        for rule in COMPILE_COMMANDS_FILTER:
+        for rule, rules in COMPILE_COMMANDS_FILTER.items():
             if re.match(rule, command):
-                rules = COMPILE_COMMANDS_FILTER[rule]
-                for pattern in rules:
-                    logging.debug("applying: '%s' -> '%s'", pattern, rules[pattern])
+                for pattern, replacement in rules.items():
+                    logging.debug(
+                        "applying: '%s' -> '%s'", pattern, replacement
+                    )
                     logging.debug("    from: %s...", command)
-                    command = re.sub(pattern, rules[pattern], command)
+                    command = re.sub(pattern, replacement, command)
                     logging.debug("      to: %s...", command)
         item["command"] = command
 
@@ -130,7 +142,7 @@ def main():
     logging.debug("Options: %s", options)
 
     logging.info("Input file: %s", options.input)
-    with open(options.input, "r") as input_file:
+    with open(options.input, "r", encoding="utf-8") as input_file:
         compile_commands = json.load(input_file)
         logging.info("Compile commands size: %d", len(compile_commands))
         logging.debug("Read compile commands:\n\n%s\n", compile_commands)
@@ -139,7 +151,7 @@ def main():
 
     logging.debug("Converted compile commands:\n\n%s\n", compile_commands)
     logging.info("Saving to: %s", options.output)
-    with open(options.output, "w") as output_file:
+    with open(options.output, "w", encoding="utf-8") as output_file:
         json.dump(compile_commands, output_file, indent=4)
 
 
