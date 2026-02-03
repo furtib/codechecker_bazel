@@ -39,7 +39,9 @@ class TestImplDepExternalDep(TestBase):
         Copy bazelversion from main, otherwise bazelisk will download the latest
         bazel version.
         """
-        # The folder bazel-external_repository contains this script
+        # The folder bazel-external_repository
+        # created by bazel during bazel build/test
+        # contains a copy of this test file
         # and the unittest test discovery finds it.
         # This is why, it is imperative that these directories get cleared
         cls.run_command("bazel clean")
@@ -49,6 +51,8 @@ class TestImplDepExternalDep(TestBase):
             shutil.copy(
                 "../../../.bazelversion", "third_party/my_lib/.bazelversion"
             )
+        # If no such file exists assume user doesn't use bazelisk
+        # This file is not needed
         except FileNotFoundError:
             logging.debug("No bazel version set, using system default")
         _, stdout, _ = cls.run_command("bazel --version")
@@ -66,10 +70,14 @@ class TestImplDepExternalDep(TestBase):
         cls.run_command("bazel clean")
         try:
             os.remove(".bazelversion")
+        # If no such file exists assume user doesn't use bazelisk
+        # This file was not needed
         except FileNotFoundError:
             pass
         try:
             os.remove("third_party/my_lib/.bazelversion")
+        # If no such file exists assume user doesn't use bazelisk
+        # This file was not needed
         except FileNotFoundError:
             pass
 

@@ -42,7 +42,7 @@ class TestGeneratedFiles(TestBase):
         test_log = os.path.join(
             self.BAZEL_TESTLOGS_DIR,  # type: ignore
             "codechecker_genrule_header",
-            "test.log",
+            "test.log"
         )
         self.assertTrue(os.path.exists(test_log))
         self.assertTrue(
@@ -62,7 +62,7 @@ class TestGeneratedFiles(TestBase):
         test_log = os.path.join(
             self.BAZEL_TESTLOGS_DIR,  # type: ignore
             "codechecker_genrule_source",
-            "test.log",
+            "test.log"
         )
         self.assertTrue(os.path.exists(test_log))
         self.assertTrue(
@@ -82,7 +82,7 @@ class TestGeneratedFiles(TestBase):
         test_log = os.path.join(
             self.BAZEL_TESTLOGS_DIR,  # type: ignore
             "per_file_genrule_header",
-            "test.log",
+            "test.log"
         )
         self.assertTrue(os.path.exists(test_log))
         self.assertTrue(
@@ -125,7 +125,7 @@ class TestGeneratedFiles(TestBase):
         compile_commands = os.path.join(
             self.BAZEL_BIN_DIR,  # type: ignore
             f"compile_commands_{target}",
-            "compile_commands.json",
+            "compile_commands.json"
         )
         self.assertTrue(os.path.exists(compile_commands))
         self.assertTrue(
@@ -142,13 +142,13 @@ class TestGeneratedFiles(TestBase):
         target = "genrule_header"
         ret, _, _ = self.run_command(
             "bazel build "
-            + f"//test/unit/generated_files:compile_commands_{target}"
+            f"//test/unit/generated_files:compile_commands_{target}"
         )
         self.assertEqual(ret, 0)
         compile_commands = os.path.join(
             self.BAZEL_BIN_DIR,  # type: ignore
             f"compile_commands_{target}",
-            "compile_commands.json",
+            "compile_commands.json"
         )
         self.assertTrue(os.path.exists(compile_commands))
         self.assertTrue(
