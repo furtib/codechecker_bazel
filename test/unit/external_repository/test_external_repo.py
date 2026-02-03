@@ -15,7 +15,6 @@
 """
 Test external repositories with codechecker
 """
-from logging import debug
 import logging
 import os
 import shutil
@@ -26,6 +25,7 @@ from common.base import TestBase
 
 class TestImplDepExternalDep(TestBase):
     """Test external repositories with codechecker"""
+
     # Set working directory
     __test_path__ = os.path.dirname(os.path.abspath(__file__))
     BAZEL_BIN_DIR = os.path.join("bazel-bin")
@@ -39,7 +39,9 @@ class TestImplDepExternalDep(TestBase):
         Copy bazelversion from main, otherwise bazelisk will download the latest
         bazel version.
         """
-        # The folder bazel-external_repository contains this script
+        # The folder bazel-external_repository
+        # created by bazel during bazel build/test
+        # contains a copy of this test file
         # and the unittest test discovery finds it.
         # This is why, it is imperative that these directories get cleared
         cls.run_command("bazel clean")
@@ -47,12 +49,14 @@ class TestImplDepExternalDep(TestBase):
         try:
             shutil.copy("../../../.bazelversion", ".bazelversion")
             shutil.copy(
-                "../../../.bazelversion", "third_party/my_lib/.bazelversion")
-
-        except:
+                "../../../.bazelversion", "third_party/my_lib/.bazelversion"
+            )
+        # If no such file exists assume user doesn't use bazelisk
+        # This file is not needed
+        except FileNotFoundError:
             logging.debug("No bazel version set, using system default")
         _, stdout, _ = cls.run_command("bazel --version")
-        cls.BAZEL_VERSION = stdout.split(' ')[2].strip()
+        cls.BAZEL_VERSION = stdout.split(" ")[2].strip()
         logging.debug("Using Bazel %s", cls.BAZEL_VERSION)
 
     @final
@@ -66,50 +70,68 @@ class TestImplDepExternalDep(TestBase):
         cls.run_command("bazel clean")
         try:
             os.remove(".bazelversion")
-        except:
+        # If no such file exists assume user doesn't use bazelisk
+        # This file was not needed
+        except FileNotFoundError:
             pass
         try:
             os.remove("third_party/my_lib/.bazelversion")
-        except:
+        # If no such file exists assume user doesn't use bazelisk
+        # This file was not needed
+        except FileNotFoundError:
             pass
 
     def test_compile_commands_external_lib(self):
-        """Test: bazel build :compile_commands_isystem --experimental_cc_implementation_deps"""
+        """
+        Test: bazel build :compile_commands_isystem "
+        "--experimental_cc_implementation_deps --enable_bzlmod
+        """
         ret, _, _ = self.run_command(
-            "bazel build :compile_commands_isystem --experimental_cc_implementation_deps --enable_bzlmod")
+            "bazel build :compile_commands_isystem "
+            "--experimental_cc_implementation_deps --enable_bzlmod"
+        )
         self.assertEqual(ret, 0)
         comp_json_file = os.path.join(
-            self.BAZEL_BIN_DIR, # pyright: ignore[reportOptionalOperand]
+            self.BAZEL_BIN_DIR,  # pyright: ignore
             "compile_commands_isystem",
-            "compile_commands.json")
+            "compile_commands.json",
+        )
 
         # The ~override part is a consquence of using Bzlmod.
-        if self.BAZEL_VERSION.startswith("6"): # type: ignore
+        if self.BAZEL_VERSION.startswith("6"):  # type: ignore
             pattern1 = "-isystem external/external_lib~override/include"
-            pattern2 = "-isystem " + \
-            "bazel-out/k8-fastbuild/bin/external/external_lib~override/include"
+            pattern2 = (
+                "-isystem bazel-out/k8-fastbuild/bin/external/"
+                "external_lib~override/include"
+            )
         else:
             pattern1 = "-isystem external/external_lib~/include"
-            pattern2 = "-isystem " + \
-            "bazel-out/k8-fastbuild/bin/external/external_lib~/include"
+            pattern2 = (
+                "-isystem bazel-out/k8-fastbuild/bin/external/"
+                "external_lib~/include"
+            )
 
-        self.assertTrue(self.contains_regex_in_file(
-            comp_json_file,
-            pattern1))
-        self.assertTrue(self.contains_regex_in_file(
-            comp_json_file,
-            pattern2))
+        self.assertTrue(self.contains_regex_in_file(comp_json_file, pattern1))
+        self.assertTrue(self.contains_regex_in_file(comp_json_file, pattern2))
 
     def test_codechecker_external_lib(self):
-        """Test: bazel build :codechecker_external_deps --experimental_cc_implementation_deps"""
+        """
+        Test: bazel build :codechecker_external_deps
+        --experimental_cc_implementation_deps --enable_bzlmod
+        """
         ret, _, _ = self.run_command(
-            "bazel build :codechecker_external_deps --experimental_cc_implementation_deps --enable_bzlmod")
+            "bazel build :codechecker_external_deps "
+            "--experimental_cc_implementation_deps --enable_bzlmod"
+        )
         self.assertEqual(ret, 0)
 
     def test_per_file_external_lib(self):
-        """Test: bazel build :per_file_external_deps --experimental_cc_implementation_deps"""
+        """Test: bazel build :per_file_external_deps "
+        "--experimental_cc_implementation_deps"""
         ret, _, _ = self.run_command(
-            "bazel build :per_file_external_deps --experimental_cc_implementation_deps --enable_bzlmod")
+            "bazel build :per_file_external_deps "
+            "--experimental_cc_implementation_deps --enable_bzlmod"
+        )
         self.assertEqual(ret, 0)
 
 
