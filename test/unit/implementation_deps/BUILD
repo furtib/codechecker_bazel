@@ -41,10 +41,10 @@ cc_library(
 
 compile_commands(
     name = "compile_commands_implementation_deps",
+    tags = ["manual"],
     targets = [
         ":main_lib",
     ],
-    tags = ["manual"]
 )
 
 codechecker_test(
