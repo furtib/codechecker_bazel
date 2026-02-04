@@ -18,8 +18,8 @@ Rulesets for running clang-tidy and the clang static analyzer.
 
 load("@bazel_tools//tools/build_defs/cc:action_names.bzl", "ACTION_NAMES")
 load("@bazel_tools//tools/cpp:toolchain_utils.bzl", "find_cpp_toolchain")
-load("compile_commands.bzl", "platforms_transition")
 load("common.bzl", "SOURCE_ATTR", "version_specific_attributes")
+load("compile_commands.bzl", "platforms_transition")
 
 CLANG_TIDY_WRAPPER_SCRIPT = """#!/usr/bin/env bash
 OUTPUT=$1
@@ -62,6 +62,7 @@ def _run_tidy(
     # If config file is from a filegroup
     if config and hasattr(config, "files"):
         config = config.files.to_list()[0]
+
     # Create clang-tidy config file
     if not config:
         config = ctx.actions.declare_file(label + ".clang_tidy_config.yaml")
@@ -349,7 +350,7 @@ def _process_all_deps(ctx, arguments, headers):
 
 def _get_sources(ctx):
     sources = _rule_sources(ctx)
-    arguments = { src: [] for src in sources }
+    arguments = {src: [] for src in sources}
     headers = []
     _process_all_deps(ctx, arguments, headers)
     return arguments.keys()

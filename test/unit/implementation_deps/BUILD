@@ -41,24 +41,25 @@ cc_library(
 
 compile_commands(
     name = "compile_commands_implementation_deps",
+    tags = ["manual"],
     targets = [
         ":main_lib",
     ],
-    tags = ["manual"]
 )
+
 codechecker_test(
     name = "codechecker_implementation_deps",
+    tags = ["manual"],
     targets = [
         ":main_lib",
     ],
-    tags = ["manual"],
 )
 
 codechecker_test(
     name = "per_file_implementation_deps",
+    per_file = True,
+    tags = ["manual"],
     targets = [
         ":main_lib",
     ],
-    tags = ["manual"],
-    per_file = True,
 )

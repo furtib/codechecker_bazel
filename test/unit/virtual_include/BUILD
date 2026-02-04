@@ -12,16 +12,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# cc_binary for simple C++ tests
-load(
-    "@rules_cc//cc:defs.bzl",
-    "cc_library",
-)
-
 # codechecker rules
 load(
     "@codechecker_bazel//src:codechecker.bzl",
     "codechecker_test",
+)
+
+# cc_binary for simple C++ tests
+load(
+    "@rules_cc//cc:defs.bzl",
+    "cc_library",
 )
 
 # Test for strip_include_prefix
@@ -50,13 +50,13 @@ codechecker_test(
 
 codechecker_test(
     name = "per_file_virtual_include",
+    per_file = True,
     tags = [
         "manual",
     ],
     targets = [
         "virtual_include",
     ],
-    per_file = True,
 )
 
 cc_library(
@@ -78,11 +78,11 @@ codechecker_test(
 
 codechecker_test(
     name = "per_file_impl_deps_include",
+    per_file = True,
     tags = [
         "manual",
     ],
     targets = [
         "virtual_implementation_deps_include",
     ],
-    per_file = True,
 )
