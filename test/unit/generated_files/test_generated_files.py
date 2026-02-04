@@ -35,10 +35,10 @@ class TestGeneratedFiles(TestBase):
         """
         Test: bazel test //test/unit/generated_files:codechecker_genrule_header
         """
-        ret, _, _ = self.run_command(
+        ret, _, stderr = self.run_command(
             "bazel test //test/unit/generated_files:codechecker_genrule_header"
         )
-        self.assertEqual(ret, 3)
+        self.assertEqual(ret, 3, stderr)
         test_log = os.path.join(
             self.BAZEL_TESTLOGS_DIR,  # type: ignore
             "codechecker_genrule_header",
@@ -55,10 +55,10 @@ class TestGeneratedFiles(TestBase):
         """
         Test: bazel test //test/unit/generated_files:codechecker_genrule_source
         """
-        ret, _, _ = self.run_command(
+        ret, _, stderr = self.run_command(
             "bazel test //test/unit/generated_files:codechecker_genrule_source"
         )
-        self.assertEqual(ret, 3)
+        self.assertEqual(ret, 3, stderr)
         test_log = os.path.join(
             self.BAZEL_TESTLOGS_DIR,  # type: ignore
             "codechecker_genrule_source",
@@ -75,10 +75,10 @@ class TestGeneratedFiles(TestBase):
         """
         Test: bazel test //test/unit/generated_files:per_file_genrule_header
         """
-        ret, _, _ = self.run_command(
+        ret, _, stderr = self.run_command(
             "bazel test //test/unit/generated_files:per_file_genrule_header"
         )
-        self.assertEqual(ret, 3)
+        self.assertEqual(ret, 3, stderr)
         test_log = os.path.join(
             self.BAZEL_TESTLOGS_DIR,  # type: ignore
             "per_file_genrule_header",
@@ -95,10 +95,10 @@ class TestGeneratedFiles(TestBase):
         """
         Test: bazel test //test/unit/generated_files:per_file_genrule_source
         """
-        ret, _, _ = self.run_command(
+        ret, _, stderr = self.run_command(
             "bazel test //test/unit/generated_files:per_file_genrule_source"
         )
-        self.assertEqual(ret, 3)
+        self.assertEqual(ret, 3, stderr)
         test_log = os.path.join(
             self.BAZEL_TESTLOGS_DIR,  # type: ignore
             "per_file_genrule_source",
@@ -117,11 +117,11 @@ class TestGeneratedFiles(TestBase):
         bazel build //test/unit/generated_files:compile_commands_genrule_source
         """
         target = "genrule_source"
-        ret, _, _ = self.run_command(
+        ret, _, stderr = self.run_command(
             "bazel build "
             + f"//test/unit/generated_files:compile_commands_{target}"
         )
-        self.assertEqual(ret, 0)
+        self.assertEqual(ret, 0, stderr)
         compile_commands = os.path.join(
             self.BAZEL_BIN_DIR,  # type: ignore
             f"compile_commands_{target}",
@@ -140,11 +140,11 @@ class TestGeneratedFiles(TestBase):
         bazel build //test/unit/generated_files:compile_commands_genrule_header
         """
         target = "genrule_header"
-        ret, _, _ = self.run_command(
+        ret, _, stderr = self.run_command(
             "bazel build "
             f"//test/unit/generated_files:compile_commands_{target}"
         )
-        self.assertEqual(ret, 0)
+        self.assertEqual(ret, 0, stderr)
         compile_commands = os.path.join(
             self.BAZEL_BIN_DIR,  # type: ignore
             f"compile_commands_{target}",

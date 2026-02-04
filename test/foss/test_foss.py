@@ -71,14 +71,14 @@ def create_test_method(directory_name: str) -> FunctionType:
         if not os.path.exists(project_working_dir):
             ret, _, _ = self.run_command("sh init.sh", project_root)
         self.assertTrue(os.path.exists(project_working_dir))
-        ret, _, _ = self.run_command(
+        ret, _, stderr = self.run_command(
             "bazel build :codechecker_test", project_working_dir
         )
-        self.assertEqual(ret, 0)
-        ret, _, _ = self.run_command(
+        self.assertEqual(ret, 0, stderr)
+        ret, _, stderr = self.run_command(
             "bazel build :per_file_test", project_working_dir
         )
-        self.assertEqual(ret, 0)
+        self.assertEqual(ret, 0, stderr)
 
     return test_runner
 

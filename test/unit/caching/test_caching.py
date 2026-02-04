@@ -72,15 +72,15 @@ class TestCaching(TestBase):
         the monolithic rule, as expected from architectural constrains.
         """
         target = "//test/unit/caching/tmp:codechecker_caching"
-        ret, _, _ = self.run_command(f"bazel build {target}")
-        self.assertEqual(ret, 0)
+        ret, _, stderr = self.run_command(f"bazel build {target}")
+        self.assertEqual(ret, 0, stderr)
         try:
             with open("tmp/secondary.cc", "a", encoding="utf-8") as f:
                 f.write("//test")
         except FileNotFoundError:
             self.fail("File not found!")
         ret, _, stderr = self.run_command(f"bazel build {target} --subcommands")
-        self.assertEqual(ret, 0)
+        self.assertEqual(ret, 0, stderr)
         # Since everything in the monolithic rule is a single action,
         # we expect that action to rerun for any modified file.
         self.assertEqual(
@@ -93,15 +93,15 @@ class TestCaching(TestBase):
         results for unchanged input files.
         """
         target = "//test/unit/caching/tmp:per_file_caching"
-        ret, _, _ = self.run_command(f"bazel build {target}")
-        self.assertEqual(ret, 0)
+        ret, _, stderr = self.run_command(f"bazel build {target}")
+        self.assertEqual(ret, 0, stderr)
         try:
             with open("tmp/secondary.cc", "a", encoding="utf-8") as f:
                 f.write("//test")
         except FileNotFoundError:
             self.fail("File not found!")
         ret, _, stderr = self.run_command(f"bazel build {target} --subcommands")
-        self.assertEqual(ret, 0)
+        self.assertEqual(ret, 0, stderr)
         self.assertEqual(
             stderr.count(f"SUBCOMMAND: # {target} [action 'CodeChecker"), 1
         )
@@ -112,15 +112,15 @@ class TestCaching(TestBase):
         the whole project when CTU is enabled
         """
         target = "//test/unit/caching/tmp:per_file_caching_ctu"
-        ret, _, _ = self.run_command(f"bazel build {target}")
-        self.assertEqual(ret, 0)
+        ret, _, stderr = self.run_command(f"bazel build {target}")
+        self.assertEqual(ret, 0, stderr)
         try:
             with open("tmp/secondary.cc", "a", encoding="utf-8") as f:
                 f.write("//test")
         except FileNotFoundError:
             self.fail("File not found!")
         ret, _, stderr = self.run_command(f"bazel build {target} --subcommands")
-        self.assertEqual(ret, 0)
+        self.assertEqual(ret, 0, stderr)
         # We expect both files to be reanalyzed, since there is no caching
         # implemented for CTU analysis
         self.assertEqual(

@@ -43,8 +43,8 @@ class TestBasic(TestBase):
             + "//test/unit/compile_flags:compile_commands_filter "
             + "--cxxopt=__CXX__ --conlyopt=__CONLY__"
         )
-        exit_code, _, _ = self.run_command(build_cmd)
-        self.assertEqual(0, exit_code)
+        exit_code, _, stderr = self.run_command(build_cmd)
+        self.assertEqual(0, exit_code, stderr)
         compile_commands = os.path.join(
             self.BAZEL_BIN_DIR,  # pyright: ignore
             "compile_commands_filter",
@@ -80,8 +80,8 @@ class TestBasic(TestBase):
             + "//test/unit/compile_flags:per_file_filter "
             + "--cxxopt=__CXX__ --conlyopt=__CONLY__"
         )
-        exit_code, _, _ = self.run_command(build_cmd)
-        self.assertEqual(0, exit_code)
+        exit_code, _, stderr = self.run_command(build_cmd)
+        self.assertEqual(0, exit_code, stderr)
         compile_commands = os.path.join(
             self.BAZEL_BIN_DIR,  # pyright: ignore
             "per_file_filter",

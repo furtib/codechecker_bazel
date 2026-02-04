@@ -86,11 +86,11 @@ class TestImplDepExternalDep(TestBase):
         Test: bazel build :compile_commands_isystem "
         "--experimental_cc_implementation_deps --enable_bzlmod
         """
-        ret, _, _ = self.run_command(
+        ret, _, stderr = self.run_command(
             "bazel build :compile_commands_isystem "
             "--experimental_cc_implementation_deps --enable_bzlmod"
         )
-        self.assertEqual(ret, 0)
+        self.assertEqual(ret, 0, stderr)
         comp_json_file = os.path.join(
             self.BAZEL_BIN_DIR,  # pyright: ignore
             "compile_commands_isystem",
@@ -119,20 +119,20 @@ class TestImplDepExternalDep(TestBase):
         Test: bazel build :codechecker_external_deps
         --experimental_cc_implementation_deps --enable_bzlmod
         """
-        ret, _, _ = self.run_command(
+        ret, _, stderr = self.run_command(
             "bazel build :codechecker_external_deps "
             "--experimental_cc_implementation_deps --enable_bzlmod"
         )
-        self.assertEqual(ret, 0)
+        self.assertEqual(ret, 0, stderr)
 
     def test_per_file_external_lib(self):
         """Test: bazel build :per_file_external_deps "
         "--experimental_cc_implementation_deps"""
-        ret, _, _ = self.run_command(
+        ret, _, stderr = self.run_command(
             "bazel build :per_file_external_deps "
             "--experimental_cc_implementation_deps --enable_bzlmod"
         )
-        self.assertEqual(ret, 0)
+        self.assertEqual(ret, 0, stderr)
 
 
 if __name__ == "__main__":
