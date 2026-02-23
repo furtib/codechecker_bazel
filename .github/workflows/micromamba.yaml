@@ -14,15 +14,16 @@
 
 name: codechecker-bazel-micromamba-tests
 
+on: [push, pull_request]
 # Trigger the workflow manually
-on:
-  workflow_dispatch:
-    inputs:
-      arguments:
-        description: "Arguments: test to run"
-        default: "pytest test/unit -v"
-        required: true
-        type: string
+#on:
+#  workflow_dispatch:
+#    inputs:
+#      arguments:
+#        description: "Arguments: test to run"
+#        default: "pytest test/unit -v"
+#        required: true
+#        type: string
 
 permissions: read-all
 
@@ -49,4 +50,5 @@ jobs:
       - name: Install micromamba and run tests
         run: |
           . .ci/micromamba/init.sh -v
-          ${{ inputs.arguments }}
+          pytest test/unit -v
+          #${{ inputs.arguments }}
