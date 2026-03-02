@@ -29,7 +29,7 @@ shift
 # (clang-tidy doesn't create a patch file if there are no errors).
 touch $OUTPUT
 
-# echo "$@"
+echo "$@"
 $@
 """
 
