@@ -449,7 +449,7 @@ clang_tidy_test = rule(
             doc = "List of compilable targets which should be checked.",
         ),
         "options": attr.string_list(
-            default = [],
+            default = ["--checks=bugprone-*"],
             doc = "List of clang-tidy options, e.g.: --checks=",
         ),
         "default_options": attr.string_list(
