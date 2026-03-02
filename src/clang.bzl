@@ -28,8 +28,8 @@ shift
 # Make sure the output exists, and empty if there are no errors,
 # (clang-tidy doesn't create a patch file if there are no errors).
 touch $OUTPUT
-#clang-tidy --version
-#echo "$@"
+# clang-tidy --version
+# echo "$@"
 $@
 """
 
@@ -449,6 +449,7 @@ clang_tidy_test = rule(
             doc = "List of compilable targets which should be checked.",
         ),
         "options": attr.string_list(
+            # Since clang-tidy-22 clang-tidy fails if no checkers are enabled
             default = ["--checks=bugprone-*"],
             doc = "List of clang-tidy options, e.g.: --checks=",
         ),
