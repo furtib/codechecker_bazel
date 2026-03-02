@@ -27,7 +27,6 @@ load(
 )
 load(
     "common.bzl",
-    "python_path",
     "python_toolchain_type",
     "version_specific_attributes",
 )
@@ -231,7 +230,6 @@ def _codechecker_test_impl(ctx):
     environment_variables = {
         "RULES_CODECHECKER_MODE": "Test",
         "RULES_CODECHECKER_VERBOSITY": "INFO",
-        "RULES_CODECHECKER_PYTHONPATH": python_path(ctx),  # "/usr/bin/env python3",
         "RULES_CODECHECKER_CODECHECKER_BIN": CODECHECKER_BIN_PATH,
         "RULES_CODECHECKER_CODECHECKER_FILES": codechecker_files.short_path,
         "RULES_CODECHECKER_SEVERITIES": " ".join(ctx.attr.severities),
