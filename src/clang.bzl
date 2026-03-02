@@ -28,7 +28,7 @@ shift
 # Make sure the output exists, and empty if there are no errors,
 # (clang-tidy doesn't create a patch file if there are no errors).
 touch $OUTPUT
-
+clang-tidy --version
 echo "$@"
 $@
 """
