@@ -22,7 +22,8 @@ import re
 import shlex
 import shutil
 import signal
-import socket
+import urllib.request
+import urllib.error
 import subprocess
 import tempfile
 import time
@@ -31,32 +32,27 @@ import sys
 from typing import Optional
 
 
-# Based on:
-# https://dev.to/farcellier/wait-for-a-server-to-respond-in-python-488e
-def wait_port(
-    port: int,
+def wait_codechecker_server(
+    product: str = "Default",
     host: str = "localhost",
-    timeout: int = 3000,
+    port: int = 8001,
+    timeout: int = 10000,
     attempt_every: int = 100,
 ) -> bool:
     """
-    Wait until a port would be open,
-    for example the port 8001 for CodeChecker server
+    Wait until the product is available in the CodeChecker server
     """
     start = time.monotonic()
-    while True:
-        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-            try:
-                s.connect((host, port))
-                s.close()
-                return True
-            except ConnectionRefusedError:
-                if timeout is not None and time.monotonic() - start > (
-                    timeout / 1000
-                ):
-                    return False
-
+    url = f"http://{host}:{port}/{product}"
+    while time.monotonic() - start < timeout:
+        try:
+            with urllib.request.urlopen(url, timeout=timeout/1000) as resp:
+                if resp.getcode() == 200:
+                    return True
+        except(urllib.error.URLError, urllib.error.HTTPError):
+            pass
         time.sleep(attempt_every / 1000)
+    return False
 
 
 class TestBase(unittest.TestCase):
@@ -191,9 +187,7 @@ class TestBase(unittest.TestCase):
         cls.server_process: subprocess.Popen = subprocess.Popen(
             server_command, stdout=cls.devnull
         )
-        assert wait_port(
-            port=8001, timeout=10000
-        ), "Failed to start CodeChecker server"
+        assert wait_codechecker_server(), "Failed to start CodeChecker server"
 
     @classmethod
     def stop_codechecker_server(cls):
