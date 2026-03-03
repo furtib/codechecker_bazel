@@ -22,6 +22,7 @@ import re
 import shlex
 import shutil
 import signal
+import socket
 import urllib.request
 import urllib.error
 import subprocess
@@ -31,6 +32,11 @@ import unittest
 import sys
 from typing import Optional
 
+
+def find_free_port():
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+        s.bind(("", 0))
+        return s.getsockname()[1]
 
 def wait_codechecker_server(
     product: str = "Default",
@@ -46,10 +52,10 @@ def wait_codechecker_server(
     url = f"http://{host}:{port}/{product}"
     while time.monotonic() - start < timeout:
         try:
-            with urllib.request.urlopen(url, timeout=timeout/1000) as resp:
+            with urllib.request.urlopen(url, timeout=timeout / 1000) as resp:
                 if resp.getcode() == 200:
                     return True
-        except(urllib.error.URLError, urllib.error.HTTPError):
+        except (urllib.error.URLError, urllib.error.HTTPError):
             pass
         time.sleep(attempt_every / 1000)
     return False
@@ -173,21 +179,24 @@ class TestBase(unittest.TestCase):
         This server must be shutdown with stop_codechecker_sever
         """
         cls.temp_workspace = tempfile.mkdtemp()
+        cls.port: int = find_free_port()
         server_command = [
             "CodeChecker",
             "server",
             "--workspace",
             cls.temp_workspace,
             "--port",
-            "8001",  # user running unittest must make this port free!
+            str(cls.port),
         ]
         # pylint: disable=consider-using-with
-        cls.devnull = open(os.devnull, "w", encoding='utf-8')
+        cls.devnull = open(os.devnull, "w", encoding="utf-8")
         # pylint: disable=consider-using-with
         cls.server_process: subprocess.Popen = subprocess.Popen(
             server_command, stdout=cls.devnull
         )
-        assert wait_codechecker_server(), "Failed to start CodeChecker server"
+        assert wait_codechecker_server(
+            port=cls.port
+        ), "Failed to start CodeChecker server"
 
     @classmethod
     def stop_codechecker_server(cls):
@@ -208,9 +217,10 @@ class TestBase(unittest.TestCase):
             path - Path of the result files
             name - name of the project to be saved under
         """
+        port = getattr(self, 'port', 8001)
         ret, stdout, stderr = self.run_command(
             f"CodeChecker store {path} -n {name}"
-            " --url=http://localhost:8001/Default"
+            f" --url=http://localhost:{port}/Default"
         )
         self.assertEqual(ret, 0, stdout + "\n" + stderr)
 
