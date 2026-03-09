@@ -33,7 +33,10 @@ import sys
 from typing import Optional
 
 
-def find_free_port():
+def _get_free_port():
+    """
+    Return a port number that is free
+    """
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         s.bind(("", 0))
         return s.getsockname()[1]
@@ -179,7 +182,7 @@ class TestBase(unittest.TestCase):
         This server must be shutdown with stop_codechecker_sever
         """
         cls.temp_workspace = tempfile.mkdtemp()
-        cls.port: int = find_free_port()
+        cls.port: int = _get_free_port()
         server_command = [
             "CodeChecker",
             "server",
