@@ -16,6 +16,12 @@ limitations under the License.
 
 module(name = "rules_codechecker")
 
+bazel_dep(
+    name = "buildifier_prebuilt",
+    version = "6.4.0",
+    dev_dependency = True,
+)
+
 python_extension = use_extension(
     "//src:tools.bzl",
     "module_register_default_python_toolchain",
