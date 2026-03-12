@@ -224,15 +224,6 @@ def _codechecker_test_impl(ctx):
     if not codechecker_files:
         fail("Execution results required for codechecker test are not available")
 
-    # Use environment variables instead of expand_template
-    environment_variables = {
-        "RULES_CODECHECKER_MODE": "Test",
-        "RULES_CODECHECKER_VERBOSITY": "INFO",
-        "RULES_CODECHECKER_CODECHECKER_BIN": CODECHECKER_BIN_PATH,
-        "RULES_CODECHECKER_CODECHECKER_FILES": codechecker_files.short_path,
-        "RULES_CODECHECKER_SEVERITIES": " ".join(ctx.attr.severities),
-    }
-
     # Create test script
     codechecker_test_script = ctx.actions.declare_file(ctx.label.name + "/codechecker_test_script")
     ctx.actions.symlink(
@@ -251,7 +242,7 @@ def _codechecker_test_impl(ctx):
             tool = ctx.outputs.codechecker_test_script.short_path,
             codechecker_path = CODECHECKER_BIN_PATH,
             codechecker_files = codechecker_files.short_path,
-            severities = " ".join(ctx.attr.severities)
+            severities = " ".join(ctx.attr.severities),
         ),
         is_executable = True,
     )
@@ -259,6 +250,7 @@ def _codechecker_test_impl(ctx):
     # Return test script and all required files
     run_files = default_runfiles + [ctx.outputs.codechecker_test_script, launcher]
     all_runfiles = ctx.runfiles(files = run_files)
+
     # Add runfiles from the py_binary target:
     all_runfiles = all_runfiles.merge(ctx.attr._codechecker_script[DefaultInfo].default_runfiles)
     return [
@@ -267,9 +259,6 @@ def _codechecker_test_impl(ctx):
             runfiles = all_runfiles,
             executable = launcher,
         ),
-        RunEnvironmentInfo(
-            environment = environment_variables,
-        )
     ]
 
 _codechecker_test = rule(

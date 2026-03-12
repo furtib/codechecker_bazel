@@ -75,7 +75,7 @@ def _run_code_checker(
         executable = per_file_script,
         arguments = [
             compile_commands_json.path,
-            ' '.join(options),
+            " ".join(options),
             config_file.path,
             data_dir,
             src.path,
@@ -124,21 +124,6 @@ def _collect_all_sources_and_headers(ctx):
                 all_files += headers
     return all_files
 
-def _update_env_vars(
-    ctx,
-    options,
-    compile_commands_json,
-    config_file,
-    env_vars):
-    options_str = " ".join(options)
-    if not env_vars:
-        env_vars = {}
-    return (env_vars | {
-        "RULES_CODECHECKER_COMPILE_COMMANDS_JSON": compile_commands_json.path,
-        "RULES_CODECHECKER_CODECHECKER_ARGS": options_str,
-        "RULES_CODECHECKER_CONFIG_FILE": config_file.path,
-    })
-
 def _per_file_impl(ctx):
     compile_commands = None
     for output in compile_commands_impl(ctx):
@@ -152,7 +137,7 @@ def _per_file_impl(ctx):
     options = ctx.attr.default_options + ctx.attr.options
     all_files = [compile_commands]
     config_file, env_vars = get_config_file(ctx)
-    env_vars =_update_env_vars(ctx, options, compile_commands, config_file, env_vars)
+
     # Create per_file_script
     per_file_script = ctx.actions.declare_file(ctx.label.name + "/per_file_script")
     ctx.actions.symlink(
