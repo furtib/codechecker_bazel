@@ -32,7 +32,13 @@ import tempfile
 
 
 def parse_args(argv=None):
-    """Parse command-line arguments."""
+    """Parse command-line arguments.
+
+    Returns a `(args, passthrough)` tuple where `args` holds the
+    arguments consumed by this wrapper (`--codechecker_path` and
+    `--files`) and `passthrough` is the list of arguments
+    provided by the user as "real" command line argument.
+    """
     parser = argparse.ArgumentParser(
         description="CodeChecker store wrapper"
     )
@@ -53,20 +59,8 @@ def parse_args(argv=None):
             ".plist (per_file_test)."
         ),
     )
-    parser.add_argument(
-        "--url",
-        required=True,
-        help=(
-            "URL of the CodeChecker server product "
-            "e.g. http://localhost:8001/Default"
-        ),
-    )
-    parser.add_argument(
-        "--name",
-        required=True,
-        help="Name of the analysis run on the server",
-    )
-    return parser.parse_args(argv)
+    args, passthrough = parser.parse_known_args(argv)
+    return args, passthrough
 
 
 def _symlink_tree(src_dir, dst_dir):
@@ -141,19 +135,19 @@ def copy_data_to_tmpdir(codechecker_files_entries):
     return tmpdir
 
 
-def run_store(codechecker_path, tmpdir, url, name):
+def run_store(codechecker_path, tmpdir, store_args):
     """
     Execute CodeChecker store on the temporary directory.
+
+    `store_args` is the list of extra arguments given by the user to
+    `CodeChecker store` (e.g. --url, --name/-n, --trim-path-prefix).
     Returns the process exit code.
     """
     cmd = [
         codechecker_path,
         "store",
         tmpdir,
-        "--url",
-        url,
-        "-n",
-        name,
+        *store_args,
     ]
     print(f"Running: {' '.join(cmd)}")
     result = subprocess.run(
@@ -166,7 +160,7 @@ def run_store(codechecker_path, tmpdir, url, name):
 
 def main():
     """Main entry point."""
-    args = parse_args()
+    args, passthrough = parse_args()
 
     codechecker = os.path.realpath(args.codechecker_path)
     if not os.path.isfile(codechecker):
@@ -180,7 +174,7 @@ def main():
     tmpdir = copy_data_to_tmpdir(args.files)
 
     try:
-        ret = run_store(codechecker, tmpdir, args.url, args.name)
+        ret = run_store(codechecker, tmpdir, passthrough)
     finally:
         shutil.rmtree(tmpdir, ignore_errors=True)
 
