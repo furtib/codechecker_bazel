@@ -68,7 +68,7 @@ exec {script} \
     "$@"
 """.format(
             script = store_script.executable.short_path,
-            codechecker = info.codechecker.path,
+            codechecker = info.codechecker.short_path,
             files_args = files_args,
         ),
         is_executable = True,
